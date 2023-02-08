@@ -1,0 +1,78 @@
+heat_template_version: 2018-08-31
+
+description: Bastion server template
+
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+    default: dr_ew
+  image_id:
+    type: string
+    label: Image ID
+    description: Image to be used for compute instance
+    default: 012cb821-5b05-48a5-b33e-89040561fbc4 
+  instance_type:
+    type: string
+    label: Instance Type
+    description: Type of instance (flavor) to be used
+    default: alt.st1.large
+  networks:
+    type: comma_delimited_list
+    label: networks
+    default: "External, Internal"
+  subnets:
+    type: comma_delimited_list
+    label: subnets
+    default: "Internet_d85720c0, Internet_d8572080, Default Subnet #202"
+  security_groups:
+    type: comma_delimited_list
+    label: security-groups-list
+    default: "78868c78-4294-47e1-be25-2b0e8134c5a6, b4f3b47f-d1d2-4066-b344-27e7ade0492a"
+
+resources:
+  kube-master:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: instance_type }
+      networks:
+        - network: "Internal"
+      security_groups:
+        - 78868c78-4294-47e1-be25-2b0e8134c5a6
+        - b4f3b47f-d1d2-4066-b344-27e7ade0492a
+  kube-worker1:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: instance_type }
+      networks:
+        - network: "Internal"
+      security_groups:
+        - 78868c78-4294-47e1-be25-2b0e8134c5a6
+        - b4f3b47f-d1d2-4066-b344-27e7ade0492a
+  kube-worker2:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: instance_type }
+      networks:
+        - network: "Internal"
+      security_groups:
+        - 78868c78-4294-47e1-be25-2b0e8134c5a6
+        - b4f3b47f-d1d2-4066-b344-27e7ade0492a 
+  kube-worker3:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: instance_type }
+      networks:
+        - network: "Internal"
+      security_groups:
+        - 78868c78-4294-47e1-be25-2b0e8134c5a6
+        - b4f3b47f-d1d2-4066-b344-27e7ade0492a 

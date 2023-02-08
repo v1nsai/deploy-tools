@@ -1,0 +1,62 @@
+heat_template_version: 2018-08-31
+
+description: Bastion server template
+
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+    default: dr_ew
+  image_id:
+    type: string
+    label: Image ID 
+    description: Image to be used for compute instance
+    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 
+  instance_type:
+    type: string
+    label: Instance Type
+    description: Type of instance (flavor) to be used
+    default: alt.c2.medium
+  networks:
+    type: comma_delimited_list
+    label: networks
+    default: "External, Internal"
+  subnets:
+    type: comma_delimited_list
+    label: subnets
+    default: "Internet_d85720c0, Internet_d8572080, Default Subnet #202"
+  security_groups:
+    type: comma_delimited_list
+    label: security-groups-list
+    default: "78868c78-4294-47e1-be25-2b0e8134c5a6, b4f3b47f-d1d2-4066-b344-27e7ade0492a"
+
+resources:
+  bastion:
+    type: OS::Nova::Server
+    properties:
+      key_name: dr_ew
+      image: 5557a492-f9f9-4a8a-98ec-5f642b611d23
+      flavor: alt.c2.medium
+      networks:
+        - network: "External"
+        - network: "Internal"
+      security_groups:
+        - "SSH ingress"
+        - "default"
+  cloud_config:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        #cloud-config
+
+        # modify SSH configuration
+        write_files:
+          - content: |
+              Port 1355
+              PermitRootLogin no
+            path: /etc/ssh/sshd_config
+
+        # restart SSH to pick up changes
+        runcmd:
+          - systemctl restart ssh

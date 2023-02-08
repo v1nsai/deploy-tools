@@ -1,0 +1,16 @@
+  # cloud_config:
+  #   type: OS::Heat::CloudConfig
+  #   properties:
+  #     cloud_config:
+  #       #cloud-config
+
+  #       # modify SSH configuration
+  #       write_files:
+  #         - content: |
+  #             Port 1355
+  #             PermitRootLogin no
+  #           path: /etc/ssh/sshd_config
+
+  #       # restart SSH to pick up changes
+  #       runcmd:
+  #         - systemctl restart ssh
