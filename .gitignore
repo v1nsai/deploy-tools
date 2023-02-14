@@ -1,4 +1,4 @@
 .env
-account-202-openrc.sh
+env.sh
 clouds.yaml
 openrc.sh

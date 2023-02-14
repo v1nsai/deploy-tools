@@ -1,10 +1,12 @@
 #!/bin/bash
 
-source .env
-source account-202-openrc.sh
+# Load environment vars
+./auth/refresh_token.sh
 
-# curl -H "X-Auth-Token:$OS_TOKEN" https://vpc2-console.cloud.alterncloud.com:8004/v1/67c039e6447f40ac8a34cd898cc51bde/template_versions
+# POST to endpoint
+curl -X POST -H "X-Auth-Token:$OS_TOKEN" -d @templates/single-server-template.json https://$OS_HEAT_HOST_URL:8004/v1/$OS_PROJECT_ID/stacks
 
-curl -H "X-Auth-Token:$OS_TOKEN" "https://vpc2-console.cloud.alterncloud.com:8774/v2.1/$OS_PROJECT_ID/images"
-
-# openstack --os-auth-url $OS_AUTH_URL --os-token $OS_TOKEN
+# debug
+echo "OS_TOKEN=$OS_TOKEN"
+echo "OS_HOST_URL=$OS_HOST_URL"
+echo "OS_PROJECT_ID=$OS_PROJECT_ID"
