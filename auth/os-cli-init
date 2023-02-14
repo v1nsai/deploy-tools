@@ -1,3 +1,4 @@
+# Sets and unsets a few vars that are different for the python-openstackclient cli
 [ -f .env ] && export DOTENV=".env"
 [ -f auth/.env ] && export DOTENV="auth/.env"
 source "$DOTENV"
