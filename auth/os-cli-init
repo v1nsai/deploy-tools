@@ -1,0 +1,7 @@
+[ -f .env ] && export DOTENV=".env"
+[ -f auth/.env ] && export DOTENV="auth/.env"
+source "$DOTENV"
+
+export OS_TOKEN=
+export OS_IDENTITY_API_VERSION=3
+export OS_DEFAULT_DOMAIN=default
