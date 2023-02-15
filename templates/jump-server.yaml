@@ -1,9 +1,7 @@
 heat_template_version: rocky
 
 description: >
-  HOT template to deploy two servers into an existing neutron tenant network and
-  assign floating IP addresses to each server so they are routable from the
-  public network.
+  Simple single node jump server template
 
 parameters:
   key_name:
@@ -24,7 +22,6 @@ parameters:
     default: External
   public_subnet_id:
     type: string
-    description: you know
     default: Internet_d85720c0 # 4e7309a5-50d3-46f1-bf37-2f2af80e3130
   private_net_id:
     type: string
@@ -36,36 +33,57 @@ parameters:
     default: e5adf695-3517-40d8-bc86-c1a69408e038 # Internal's only subnet
   security_groups: 
     type: comma_delimited_list 
-    default: 
-      - "SSH ingress"
-      - "default"
+    default: [ "default", "ssh-ingress" ]
+  ssh_port:
+    type: number
+    default: 1355
 
 resources:
   jump-server-1:
     type: OS::Nova::Server
     properties:
-      name: Server1
+      name: jump-server-1
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-        - port: { get_resource: server1_port }
+        - port: { get_resource: jump-server-1-port }
+      user_data: { get_resource: jump-server-init }
 
-  server1_port:
+  jump-server-1-port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: private_net_id }
       fixed_ips:
         - subnet_id: { get_param: private_subnet_id }
       security_groups:
-        repeat:
-          for_each:
-            <%security_group%>: { get_param: security_groups }
-          template:
-            - <%security_group%>
+        - default
+        - ssh-ingress
+        # TODO: get list from params and iterate through it correctly
+        # repeat:
+        #   for_each:
+        #     <%security_group%>: { get_param: security_groups }
+        #   template:
+        #     - <%security_group%>
 
-  server1_floating_ip:
+  jump-server-1-floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network_id: { get_param: public_net_id }
-      port_id: { get_resource: server1_port }
+      port_id: { get_resource: jump-server-1-port }
+
+  jump-server-init:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        #cloud-config
+        users:
+          - name: drew
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            groups: sudo
+            shell: /bin/bash
+        runcmd:
+          - sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          - sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          - sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          - restart ssh
