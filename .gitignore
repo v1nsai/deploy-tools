@@ -2,3 +2,5 @@
 env.sh
 clouds.yaml
 openrc.sh
+.DS_STORE
+.\$.*
