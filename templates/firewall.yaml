@@ -11,8 +11,8 @@ parameters:
   image:
     type: string
     description: Name of image to use for servers
-    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Fedora
-    # default: 19375d8b-475f-4ccc-a32f-a08facead3af # IPFire Linux
+    # default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Ubuntu 22.04
+    default: d2978bb6-6326-40e5-b9e4-ebc956599c09 # IPFire Linux
   flavor:
     type: string
     description: Flavor to use for servers
@@ -46,19 +46,22 @@ parameters:
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDPNG6afWDqOCptAg2ERApA42HX7VG7Nw1hLjuCYpb8Ij36A0F/OUxDpA1O/+EKibLL+MgpwMzC3J5a+8ifkRH3Cr/OwOeiq/lcHgiC3rJcLr8kyNLwQmpYhSZkQMR0m2Y850Okix5dmNlK8KcE5RwG3q04DY0W09Rx/LWlUm1Z0ipkJ4NECDWTRKEoelJ72YREB1j9awJFBKLn2Ip8lylK7lrZu1Q64mOib551HYOr2xCLdTUoUI9pReesBVYKdVinsyyjuZ5HAxb8SOEdGA+8AGLhfoBdcQ7zNHfGmOrCtTsZqL1y/HQM4EimhBBUdT7tnJzWitTlx4bA7qo+cZ5bX5Zy+VR1rFpUit2xzU+1jImExnK3ltDAPec6qMDrK9wOFwJna5WKTKtEEStRNiv0yNDElrvSMu2srriORH9HwINOnSOuWDiYldlTJnLW8P4h0EBf8hw2ZKy4YOopDEuStthli6QlVKYji1qNMh2kKiuxAmWv6nzG9KrZJl/nohehtaXYYsXNk5jl3AOYnrC6xgLDcyHd1II78G+lujvUl0EJPmnYQA7rJVqem2I516ixTBaVR5htXvPclLXl+kmmOwtltNCRqPXaWB/9e3LFyZuO7A/r4UEC16v9t0OnEHvjRJ6dLQey+hnJN398egXAQmXjSXVJgNejsxCz7uUzSw== doctor_ew@Tiffanys-Air
 
 resources:
-  jump-server-1:
+  firewall:
     type: OS::Nova::Server
     properties:
-      name: jump-server-1
+      name: firewall
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-        - port: { get_resource: jump-server-1-port }
+        # - port: { get_resource: firewall-port }
+        # - floating_ip: { get_resource: firewall-floating_ip }
+        - network: Internal
+        - network: External
       user_data_format: RAW
       user_data: { get_resource: jump-server-init }
 
-  jump-server-1-port:
+  firewall-port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: private_net_id }
@@ -74,11 +77,11 @@ resources:
         #   template:
         #     - <%security_group%>
 
-  jump-server-1-floating_ip:
+  firewall-floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network_id: { get_param: public_net_id }
-      port_id: { get_resource: jump-server-1-port }
+      port_id: { get_resource: firewall-port }
 
   jump-server-init:
     type: OS::Heat::CloudConfig
@@ -101,7 +104,7 @@ resources:
 outputs:
   instance_ip:
     description: IP address of the deployed compute instance
-    value: { get_attr: [jump-server-1-floating_ip, floating_ip_address] }
+    value: { get_attr: [firewall-floating_ip, floating_ip_address] }
   instance_private_ip:
     description: Private IP address of the deployed compute instance
-    value: { get_attr: [jump-server-1, networks, Internal, 0] }
+    value: { get_attr: [firewall, networks, Internal, 0] }
