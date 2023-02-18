@@ -18,22 +18,24 @@ parameters:
     type: string
     description: Flavor to use for servers
     default: alt.st1.small
-  public_net_id:
+  external_network_id:
     type: string
     description: ID of public network for which floating IP addresses will be allocated
     default: External
-  public_subnet_id:
-    type: string
-    description: you know
-    default: Internet_d85720c0 # 4e7309a5-50d3-46f1-bf37-2f2af80e3130
-  private_net_id:
+  internal_network_id:
     type: string
     description: ID of private network into which servers get deployed
     default: Internal
-  private_subnet_id:
+  internal_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
     default: e5adf695-3517-40d8-bc86-c1a69408e038 # Internal's only subnet
+  floating_network_id:
+    type: string
+    default: Floating
+  floating_subnet_id:
+    type: string
+    default: 4f00cbb7-1ea4-4555-abe0-f03d0867c9ce
   security_groups: 
     type: comma_delimited_list 
     default: 
@@ -52,32 +54,32 @@ resources:
       #   - ssh-ingress
       #   - default
       networks:
-        - port: { get_resource: server1_internal_port }
-        - port: { get_resource: server1_external_port }
+        # - port: { get_resource: server1_port }
+        - port: { get_resource: server1_port_external }
         # - network: Internal
         # - network: External
 
-  server1_internal_port:
+  server1_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: private_net_id }
+      network_id: { get_param: internal_network_id }
       fixed_ips:
-        - subnet_id: { get_param: private_subnet_id }
+        - subnet_id: { get_param: internal_subnet_id }
       security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
         - "default"
-
-  server1_external_port:
-    type: OS::Neutron::Port
-    properties:
-      network: { get_param: public_net_id }
-      fixed_ips:
-      - subnet_id: { get_param: public_subnet_id }
-      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
-        - "default"
-        - "ssh-ingress"
 
   server1_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: { get_param: public_net_id }
-      port_id: { get_resource: server1_external_port }
+      floating_network: { get_param: external_network_id }
+      port_id: { get_resource: server1_port_external }
+
+  server1_port_external:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: floating_network_id }
+      fixed_ips:
+        - subnet_id: { get_param: floating_subnet_id }
+      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
+        - "default"
+        - "ssh-ingress"

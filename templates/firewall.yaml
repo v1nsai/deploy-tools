@@ -17,21 +17,24 @@ parameters:
     type: string
     description: Flavor to use for servers
     default: alt.st1.small
-  public_net_id:
+  external_network_id:
     type: string
     description: ID of public network for which floating IP addresses will be allocated
     default: External
-  public_subnet_id:
+  external_subnet_id:
     type: string
     default: Internet_d85720c0 # 4e7309a5-50d3-46f1-bf37-2f2af80e3130
-  private_net_id:
+  internal_network_id:
     type: string
     description: ID of private network into which servers get deployed
     default: Internal
-  private_subnet_id:
+  internal_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
     default: e5adf695-3517-40d8-bc86-c1a69408e038 # Internal's only subnet
+  floating_network_id:
+    type: string
+    default:
   security_groups: 
     type: comma_delimited_list 
     default: [ "default", "ssh-ingress" ]
@@ -59,14 +62,14 @@ resources:
         - network: Internal
         - network: External
       user_data_format: RAW
-      user_data: { get_resource: jump-server-init }
+      user_data: { get_resource: firewall-init }
 
   firewall-port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: private_net_id }
+      network_id: { get_param: external_network_id }
       fixed_ips:
-        - subnet_id: { get_param: private_subnet_id }
+        - subnet_id: { get_param: internal_subnet_id }
       security_groups:
         - default
         - ssh-ingress
@@ -80,10 +83,10 @@ resources:
   firewall-floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network_id: { get_param: public_net_id }
+      floating_network_id: { get_param: external_network_id }
       port_id: { get_resource: firewall-port }
 
-  jump-server-init:
+  firewall-init:
     type: OS::Heat::CloudConfig
     properties:
       cloud_config:
