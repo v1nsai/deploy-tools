@@ -1,0 +1,41 @@
+heat_template_version: rocky
+
+description: >
+  Creates the DMZ network and routing
+
+parameters:
+  external_network_id:
+    type: string
+    description: ID of public network for which floating IP addresses will be allocated
+    default: External
+  # external_dns_servers:
+  #   type: comma_delimited_list
+  #   default: TODO loop this correctly
+
+resources:
+    dmz_network:
+    name: dmz_network
+    type: OS::Neutron::Net
+
+  dmz_subnet1:
+    name: dmz_subnet1
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: dmz_network }
+      cidr: "10.8.1.0/24"
+      dns_nameservers: [ "1.1.1.1", "8.8.4.4" ]
+      ip_version: 4
+
+  dmz_router:
+    name: dmz_router
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: { get_param: external_network_id }
+
+  dmz_interface:
+    name: dmz_router_interface
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: dmz_router }
+      subnet: { get_resource: dmz_subnet }
