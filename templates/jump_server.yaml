@@ -1,0 +1,111 @@
+heat_template_version: rocky
+
+description: >
+  HOT template to deploy two servers into an existing neutron tenant network and
+  assign floating IP addresses to each server so they are routable from the
+  public network.
+
+parameters:
+  key_name:
+    type: string
+    description: Name of keypair to assign to servers
+    default: dr_ew
+  image:
+    type: string
+    description: Name of image to use for servers
+    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Ubuntu 22.04
+  flavor:
+    type: string
+    description: Flavor to use for servers
+    default: alt.st1.small
+  external_network_id:
+    type: string
+    description: ID of public network for which floating IP addresses will be allocated
+    default: External
+  # dmz_network_id:
+  #   type: string
+  #   default: DMZ
+  # dmz_subnet_id:
+  #   type: string
+  #   default: subnet1 #4f00cbb7-1ea4-4555-abe0-f03d0867c9ce
+  internal_network_id:
+    type: string
+    default: Internal
+  internal_subnet_id:
+    type: string
+    default: "Default Subnet #202"
+  security_groups: 
+    type: comma_delimited_list 
+    default: 
+      - "ssh-ingress"
+      - "default"
+
+resources:
+  jump_server:
+    type: OS::Nova::Server
+    properties:
+      name: jump_server
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: jump_server_port }
+      
+  jump_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: dmz_network }
+      fixed_ips:
+        - subnet_id: { get_resource: dmz_subnet }
+      security_groups:
+        - "default"
+        - "ssh-ingress"
+
+  jump_server_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network_id }
+      port_id: { get_resource: jump_server_port }
+
+  dmz_network:
+    type: OS::Neutron::Net
+
+  dmz_subnet:
+    name: dmz-subnet1
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: dmz_network }
+      cidr: "10.8.1.0/24"
+      dns_nameservers: [ "1.1.1.1", "8.8.4.4" ]
+      ip_version: 4
+
+  dmz_router:
+    name: dmz-router
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: { get_param: external_network_id }
+
+  dmz_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: dmz_router }
+      subnet: { get_resource: dmz_subnet }
+
+  jump_server_init:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        #cloud-config
+        users:
+          - name: drew
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            groups: sudo
+            shell: /bin/bash
+            ssh-authorized-keys:
+              - { get_param: key_name }
+        runcmd:
+          - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          - sudo systemctl restart ssh
