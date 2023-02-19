@@ -13,29 +13,29 @@ parameters:
   #   default: TODO loop this correctly
 
 resources:
-    dmz_network:
-    name: dmz_network
+  dmz_network:
     type: OS::Neutron::Net
+    properties:
+      name: dmz_network
 
   dmz_subnet1:
-    name: dmz_subnet1
     type: OS::Neutron::Subnet
     properties:
+      name: dmz_subnet1
       network_id: { get_resource: dmz_network }
       cidr: "10.8.1.0/24"
       dns_nameservers: [ "1.1.1.1", "8.8.4.4" ]
       ip_version: 4
 
   dmz_router:
-    name: dmz_router
     type: OS::Neutron::Router
     properties:
+      name: dmz_router
       external_gateway_info:
         network: { get_param: external_network_id }
 
   dmz_interface:
-    name: dmz_router_interface
     type: OS::Neutron::RouterInterface
     properties:
       router_id: { get_resource: dmz_router }
-      subnet: { get_resource: dmz_subnet }
+      subnet: { get_resource: dmz_subnet1 }
