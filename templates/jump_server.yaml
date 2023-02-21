@@ -52,25 +52,38 @@ resources:
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-        - port: { get_resource: jump_server_port }
+        - port: { get_resource: jump_server_dmz_port }
+        # - port: { get_resource: jump_server_internal_port }
+        # - network: Internal
       user_data_format: RAW
       user_data: { get_resource: jump_server_init }
       
-  jump_server_port:
+  jump_server_dmz_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: dmz_network_id }
       fixed_ips:
         - subnet_id: { get_param : dmz_subnet_id }
       security_groups:
-        - "default"
-        - "ssh-ingress"
-
+        - default
+        - ssh-ingress
+  
   jump_server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: { get_param: external_network_id }
-      port_id: { get_resource: jump_server_port }
+      port_id: { get_resource: jump_server_dmz_port }
+
+  # jump_server_internal_port:
+  #   type: OS::Neutron::Port
+  #   properties:
+  #     network_id: { get_param: internal_network_id }
+  #     fixed_ips:
+  #       - subnet_id: { get_param : internal_subnet_id }
+  #     security_groups:
+  #       - default
+  #       - ssh-ingress
+        # - ipfire-web-ui
 
   jump_server_init:
     type: OS::Heat::CloudConfig
@@ -82,6 +95,8 @@ resources:
             sudo: ['ALL=(ALL) NOPASSWD:ALL']
             groups: sudo
             shell: /bin/bash
+            # passwd: asdfasdf
+            # ssh_pwauth: True
             ssh-authorized-keys:
               - { get_param: ssh_pubkey }
         runcmd:
@@ -94,6 +109,9 @@ outputs:
   jump_server_external_ip:
     description: IP address of the deployed compute instance
     value: { get_attr: [jump_server_floating_ip, floating_ip_address] }
-  firewall_dmz_ip:
-    description: Private IP address of the deployed compute instance
+  jump_server_dmz_ip:
+    description: Internal IP address on the dmz_network
     value: { get_attr: [jump_server, networks, dmz_network, 0] }
+  jump_server_internal_ip:
+    description: Internal IP address on an internal network only accessible through the firewall
+    value: { get_attr: [jump_server, networks, Internal, 0] }
