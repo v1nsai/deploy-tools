@@ -24,17 +24,20 @@ parameters:
   external_subnet_id:
     type: string
     default: Internet_d85720c0 # 4e7309a5-50d3-46f1-bf37-2f2af80e3130
-  internal_network_id:
+  private_network_id:
     type: string
     description: ID of private network into which servers get deployed
-    default: Internal
-  internal_subnet_id:
+    default: private_network
+  private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: e5adf695-3517-40d8-bc86-c1a69408e038 # Internal's only subnet
-  floating_network_id:
+    default: private_subnet1
+  dmz_network_id:
     type: string
-    default:
+    default: dmz_network
+  dmz_subnet_id:
+    type: string
+    default: dmz_subnet1
   security_groups: 
     type: comma_delimited_list 
     default: [ "default", "ssh-ingress" ]
@@ -57,57 +60,43 @@ resources:
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-        # - port: { get_resource: firewall-port }
-        # - floating_ip: { get_resource: firewall-floating_ip }
-        - network: Internal
-        - network: External
-      user_data_format: RAW
-      user_data: { get_resource: firewall-init }
+        - port: { get_resource: firewall_port_private }
+        - port: { get_resource: firewall_port_dmz }
 
-  firewall-port:
+  firewall_port_private:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: external_network_id }
+      network_id: { get_param: private_network_id }
       fixed_ips:
-        - subnet_id: { get_param: internal_subnet_id }
+        - subnet_id: { get_param: private_subnet_id }
       security_groups:
         - default
         - ssh-ingress
-        # TODO: get list from params and iterate through it correctly
-        # repeat:
-        #   for_each:
-        #     <%security_group%>: { get_param: security_groups }
-        #   template:
-        #     - <%security_group%>
 
-  firewall-floating_ip:
+  firewall_port_dmz:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: dmz_network_id }
+      fixed_ips:
+        - subnet_id: { get_param: dmz_subnet_id }
+      security_groups:
+        - default
+        - ssh-ingress
+        - ipfire-web-ui
+
+  firewall_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network_id: { get_param: external_network_id }
-      port_id: { get_resource: firewall-port }
-
-  firewall-init:
-    type: OS::Heat::CloudConfig
-    properties:
-      cloud_config:
-        #cloud-config
-        users:
-          - name: drew
-            sudo: ['ALL=(ALL) NOPASSWD:ALL']
-            groups: sudo
-            shell: /bin/bash
-            ssh-authorized-keys:
-              - { get_param: ssh_pubkey }
-        runcmd:
-          - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
-          - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-          - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
-          - sudo systemctl restart ssh
+      port_id: { get_resource: firewall_port_dmz }
 
 outputs:
-  instance_ip:
+  firewall_external_ip:
     description: IP address of the deployed compute instance
-    value: { get_attr: [firewall-floating_ip, floating_ip_address] }
-  instance_private_ip:
+    value: { get_attr: [firewall_floating_ip, floating_ip_address] }
+  firewall_private_ip:
     description: Private IP address of the deployed compute instance
-    value: { get_attr: [firewall, networks, Internal, 0] }
+    value: { get_attr: [firewall, networks, private_network, 0] }
+  firewall_dmz_ip:
+    description: Private IP address of the deployed compute instance
+    value: { get_attr: [firewall, networks, dmz_network, 0] }

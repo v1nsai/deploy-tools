@@ -28,12 +28,12 @@ parameters:
   dmz_subnet_id:
     type: string
     default: dmz_subnet1 #4f00cbb7-1ea4-4555-abe0-f03d0867c9ce
-  internal_network_id:
+  private_network_id:
     type: string
-    default: Internal
-  internal_subnet_id:
+    default: 71db6c04-5696-4704-b0a0-ebf9467a2e09 #private_network
+  private_subnet_id:
     type: string
-    default: "Default Subnet #202"
+    default: private_subnet1
   security_groups: 
     type: comma_delimited_list 
     default: 
@@ -52,9 +52,8 @@ resources:
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
+        - port: { get_resource: jump_server_private_port }
         - port: { get_resource: jump_server_dmz_port }
-        - port: { get_resource: jump_server_internal_port }
-        # - network: Internal
       user_data_format: RAW
       user_data: { get_resource: jump_server_init }
       
@@ -67,23 +66,23 @@ resources:
       security_groups:
         - default
         - ssh-ingress
+
+  jump_server_private_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_network_id }
+      fixed_ips:
+        - subnet_id: { get_param : private_subnet_id }
+      security_groups:
+        - default
+        - ssh-ingress
+        - ipfire-web-ui
   
   jump_server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: { get_param: external_network_id }
       port_id: { get_resource: jump_server_dmz_port }
-
-  jump_server_internal_port:
-    type: OS::Neutron::Port
-    properties:
-      network_id: { get_param: internal_network_id }
-      fixed_ips:
-        - subnet_id: { get_param : internal_subnet_id }
-      security_groups:
-        - default
-        - ssh-ingress
-        # - ipfire-web-ui
 
   jump_server_init:
     type: OS::Heat::CloudConfig
@@ -107,11 +106,11 @@ resources:
 
 outputs:
   jump_server_external_ip:
-    description: IP address of the deployed compute instance
+    description: public IP address of the deployed compute instance
     value: { get_attr: [jump_server_floating_ip, floating_ip_address] }
   jump_server_dmz_ip:
-    description: Internal IP address on the dmz_network
+    description: private IP address on the dmz_network
     value: { get_attr: [jump_server, networks, dmz_network, 0] }
-  jump_server_internal_ip:
-    description: Internal IP address on an internal network only accessible through the firewall
-    value: { get_attr: [jump_server, networks, Internal, 0] }
+  jump_server_private_ip:
+    description: private IP address on an private_network network only accessible through the firewall
+    value: { get_attr: [jump_server, networks, private_network, 0] }
