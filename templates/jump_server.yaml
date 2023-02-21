@@ -53,7 +53,7 @@ resources:
       key_name: { get_param: key_name }
       networks:
         - port: { get_resource: jump_server_dmz_port }
-        # - port: { get_resource: jump_server_internal_port }
+        - port: { get_resource: jump_server_internal_port }
         # - network: Internal
       user_data_format: RAW
       user_data: { get_resource: jump_server_init }
@@ -74,15 +74,15 @@ resources:
       floating_network: { get_param: external_network_id }
       port_id: { get_resource: jump_server_dmz_port }
 
-  # jump_server_internal_port:
-  #   type: OS::Neutron::Port
-  #   properties:
-  #     network_id: { get_param: internal_network_id }
-  #     fixed_ips:
-  #       - subnet_id: { get_param : internal_subnet_id }
-  #     security_groups:
-  #       - default
-  #       - ssh-ingress
+  jump_server_internal_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: internal_network_id }
+      fixed_ips:
+        - subnet_id: { get_param : internal_subnet_id }
+      security_groups:
+        - default
+        - ssh-ingress
         # - ipfire-web-ui
 
   jump_server_init:
