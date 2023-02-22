@@ -28,8 +28,8 @@ resources:
     type: OS::Neutron::Router
     properties:
       name: private_router
-      external_gateway_info:
-        network: { get_param: external_network_id }
+      # external_gateway_info:
+      #   network: { get_param: external_network_id }
 
   private_interface:
     type: OS::Neutron::RouterInterface

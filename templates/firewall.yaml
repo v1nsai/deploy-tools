@@ -72,6 +72,7 @@ resources:
       security_groups:
         - default
         - ssh-ingress
+        - ipfire-web-ui
 
   firewall_port_dmz:
     type: OS::Neutron::Port
@@ -82,7 +83,6 @@ resources:
       security_groups:
         - default
         - ssh-ingress
-        - ipfire-web-ui
 
   firewall_floating_ip:
     type: OS::Neutron::FloatingIP
