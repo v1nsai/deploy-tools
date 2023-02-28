@@ -25,41 +25,40 @@ parameters:
   internal_network_id:
     type: string
     description: ID of private network into which servers get deployed
-    default: Internal
+    default: private_network
   internal_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: e5adf695-3517-40d8-bc86-c1a69408e038 # Internal's only subnet
+    default: private_subnet1 # Internal's only subnet
   floating_network_id:
     type: string
-    default: Floating
+    default: dmz_network
   floating_subnet_id:
     type: string
-    default: 4f00cbb7-1ea4-4555-abe0-f03d0867c9ce
+    default: dmz_subnet1
   security_groups: 
     type: comma_delimited_list 
     default: 
       - "ssh-ingress"
       - "default"
+  ssh_pubkey:
+    type: string
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDPNG6afWDqOCptAg2ERApA42HX7VG7Nw1hLjuCYpb8Ij36A0F/OUxDpA1O/+EKibLL+MgpwMzC3J5a+8ifkRH3Cr/OwOeiq/lcHgiC3rJcLr8kyNLwQmpYhSZkQMR0m2Y850Okix5dmNlK8KcE5RwG3q04DY0W09Rx/LWlUm1Z0ipkJ4NECDWTRKEoelJ72YREB1j9awJFBKLn2Ip8lylK7lrZu1Q64mOib551HYOr2xCLdTUoUI9pReesBVYKdVinsyyjuZ5HAxb8SOEdGA+8AGLhfoBdcQ7zNHfGmOrCtTsZqL1y/HQM4EimhBBUdT7tnJzWitTlx4bA7qo+cZ5bX5Zy+VR1rFpUit2xzU+1jImExnK3ltDAPec6qMDrK9wOFwJna5WKTKtEEStRNiv0yNDElrvSMu2srriORH9HwINOnSOuWDiYldlTJnLW8P4h0EBf8hw2ZKy4YOopDEuStthli6QlVKYji1qNMh2kKiuxAmWv6nzG9KrZJl/nohehtaXYYsXNk5jl3AOYnrC6xgLDcyHd1II78G+lujvUl0EJPmnYQA7rJVqem2I516ixTBaVR5htXvPclLXl+kmmOwtltNCRqPXaWB/9e3LFyZuO7A/r4UEC16v9t0OnEHvjRJ6dLQey+hnJN398egXAQmXjSXVJgNejsxCz7uUzSw== doctor_ew@Tiffanys-Air
 
 resources:
-  server1:
+  server:
     type: OS::Nova::Server
     properties:
-      name: Server1
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
-      # security_groups:
-      #   - ssh-ingress
-      #   - default
       networks:
-        # - port: { get_resource: server1_port }
-        - port: { get_resource: server1_port_external }
-        # - network: Internal
-        # - network: External
+      - port: { get_resource: server_internal_port }
+      - port: { get_resource: server_external_port }
+      user_data_format: RAW
+      user_data: { get_resource: server_init }
 
-  server1_port:
+  server_internal_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: internal_network_id }
@@ -67,14 +66,15 @@ resources:
         - subnet_id: { get_param: internal_subnet_id }
       security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
         - "default"
+        - "ssh-ingress"
 
-  server1_floating_ip:
+  server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: { get_param: external_network_id }
-      port_id: { get_resource: server1_port_external }
+      port_id: { get_resource: server_external_port }
 
-  server1_port_external:
+  server_external_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: floating_network_id }
@@ -83,3 +83,35 @@ resources:
       security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
         - "default"
         - "ssh-ingress"
+
+  server_init:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        #cloud-config
+        users:
+          - name: drew
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            groups: sudo
+            shell: /bin/bash
+            # passwd: asdfasdf
+            # ssh_pwauth: True
+            ssh-authorized-keys:
+             - { get_param: ssh_pubkey }
+        # write_files:
+        runcmd:
+          - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          - sudo systemctl restart ssh
+
+outputs:
+  server_external_ip:
+    description: public IP address of the deployed compute instance
+    value: { get_attr: [server_floating_ip, floating_ip_address] }
+  server_dmz_ip:
+    description: private IP address on the dmz_network
+    value: { get_attr: [server, networks, dmz_network, 0] }
+  server_private_ip:
+    description: private IP address on an private_network network only accessible through the firewall
+    value: { get_attr: [server, networks, private_network, 0] }
