@@ -9,7 +9,7 @@ parameters:
   key_name:
     type: string
     description: Name of keypair to assign to servers
-    default: dr_ew
+    default: jump-server
   image:
     type: string
     description: Name of image to use for servers
@@ -97,6 +97,10 @@ resources:
             # ssh_pwauth: True
             ssh-authorized-keys:
               - { get_param: ssh_pubkey }
+        write_files:
+          - content: { get_file: template_resources/key.pem }
+            path: /home/drew/.ssh/key.pem
+            permissions: 
         runcmd:
           - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
           - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
