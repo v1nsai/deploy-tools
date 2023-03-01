@@ -1,39 +1,39 @@
 heat_template_version: rocky
 
 description: >
-  HOT template to deploy two servers into an existing neutron tenant network and
-  assign floating IP addresses to each server so they are routable from the
-  public network.
+  Default cloud deployment image to build from
 
 parameters:
   key_name:
     type: string
     description: Name of keypair to assign to servers
-    default: jump-server
+    default: dr_ew
   image:
     type: string
     description: Name of image to use for servers
-    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Ubuntu 22.04
+    default: Ubuntu 22.04 (Jammy)
   flavor:
     type: string
     description: Flavor to use for servers
     default: alt.st1.small
-  external_network_id:
+  public_network_id:
     type: string
     description: ID of public network for which floating IP addresses will be allocated
     default: External
-  dmz_network_id:
-    type: string
-    default: dmz_network
-  dmz_subnet_id:
-    type: string
-    default: dmz_subnet1 #4f00cbb7-1ea4-4555-abe0-f03d0867c9ce
   private_network_id:
     type: string
+    description: ID of private network into which servers get deployed
     default: private_network
   private_subnet_id:
     type: string
-    default: private_subnet1
+    description: ID of private sub network into which servers get deployed
+    default: private_subnet1 # private's only subnet
+  floating_network_id:
+    type: string
+    default: dmz_network
+  floating_subnet_id:
+    type: string
+    default: dmz_subnet1
   security_groups: 
     type: comma_delimited_list 
     default: 
@@ -44,46 +44,45 @@ parameters:
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDPNG6afWDqOCptAg2ERApA42HX7VG7Nw1hLjuCYpb8Ij36A0F/OUxDpA1O/+EKibLL+MgpwMzC3J5a+8ifkRH3Cr/OwOeiq/lcHgiC3rJcLr8kyNLwQmpYhSZkQMR0m2Y850Okix5dmNlK8KcE5RwG3q04DY0W09Rx/LWlUm1Z0ipkJ4NECDWTRKEoelJ72YREB1j9awJFBKLn2Ip8lylK7lrZu1Q64mOib551HYOr2xCLdTUoUI9pReesBVYKdVinsyyjuZ5HAxb8SOEdGA+8AGLhfoBdcQ7zNHfGmOrCtTsZqL1y/HQM4EimhBBUdT7tnJzWitTlx4bA7qo+cZ5bX5Zy+VR1rFpUit2xzU+1jImExnK3ltDAPec6qMDrK9wOFwJna5WKTKtEEStRNiv0yNDElrvSMu2srriORH9HwINOnSOuWDiYldlTJnLW8P4h0EBf8hw2ZKy4YOopDEuStthli6QlVKYji1qNMh2kKiuxAmWv6nzG9KrZJl/nohehtaXYYsXNk5jl3AOYnrC6xgLDcyHd1II78G+lujvUl0EJPmnYQA7rJVqem2I516ixTBaVR5htXvPclLXl+kmmOwtltNCRqPXaWB/9e3LFyZuO7A/r4UEC16v9t0OnEHvjRJ6dLQey+hnJN398egXAQmXjSXVJgNejsxCz7uUzSw== doctor_ew@Tiffanys-Air
 
 resources:
-  jump_server:
+  server:
     type: OS::Nova::Server
     properties:
-      name: jump_server
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-        - port: { get_resource: jump_server_private_port }
-        - port: { get_resource: jump_server_dmz_port }
+      - port: { get_resource: server_private_port }
+      - port: { get_resource: server_public_port }
       user_data_format: RAW
-      user_data: { get_resource: jump_server_init }
-      
-  jump_server_dmz_port:
-    type: OS::Neutron::Port
-    properties:
-      network_id: { get_param: dmz_network_id }
-      fixed_ips:
-        - subnet_id: { get_param : dmz_subnet_id }
-      security_groups:
-        - default
-        - ssh-ingress
+      user_data: { get_resource: server_init }
 
-  jump_server_private_port:
+  server_private_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: private_network_id }
       fixed_ips:
-        - subnet_id: { get_param : private_subnet_id }
-      security_groups:
-        - default
-        - ssh-ingress
-  
-  jump_server_floating_ip:
+        - subnet_id: { get_param: private_subnet_id }
+      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
+        - "default"
+        - "ssh-ingress"
+
+  server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: { get_param: external_network_id }
-      port_id: { get_resource: jump_server_dmz_port }
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: server_public_port }
 
-  jump_server_init:
+  server_public_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: floating_network_id }
+      fixed_ips:
+        - subnet_id: { get_param: floating_subnet_id }
+      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
+        - "default"
+        - "ssh-ingress"
+
+  server_init:
     type: OS::Heat::CloudConfig
     properties:
       cloud_config:
@@ -96,11 +95,8 @@ resources:
             # passwd: asdfasdf
             # ssh_pwauth: True
             ssh-authorized-keys:
-              - { get_param: ssh_pubkey }
-        write_files:
-          - content: { get_file: template_resources/key.pem }
-            path: /home/drew/.ssh/key.pem
-            permissions: 
+             - { get_param: ssh_pubkey }
+        # write_files:
         runcmd:
           - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
           - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
@@ -108,12 +104,12 @@ resources:
           - sudo systemctl restart ssh
 
 outputs:
-  jump_server_external_ip:
+  server_public_ip:
     description: public IP address of the deployed compute instance
-    value: { get_attr: [jump_server_floating_ip, floating_ip_address] }
-  jump_server_dmz_ip:
+    value: { get_attr: [server_floating_ip, floating_ip_address] }
+  server_dmz_ip:
     description: private IP address on the dmz_network
-    value: { get_attr: [jump_server, networks, dmz_network, 0] }
-  jump_server_private_ip:
+    value: { get_attr: [server, networks, dmz_network, 0] }
+  server_private_ip:
     description: private IP address on an private_network network only accessible through the firewall
-    value: { get_attr: [jump_server, networks, private_network, 0] }
+    value: { get_attr: [server, networks, private_network, 0] }

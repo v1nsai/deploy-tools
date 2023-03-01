@@ -4,3 +4,4 @@ clouds.yaml
 openrc.sh
 .\$*
 .DS_Store
+pubkeys/*

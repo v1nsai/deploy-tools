@@ -1,9 +1,7 @@
 heat_template_version: rocky
 
 description: >
-  HOT template to deploy two servers into an existing neutron tenant network and
-  assign floating IP addresses to each server so they are routable from the
-  public network.
+  Deploys an All-In-One Devstack instance in the DMZ network
 
 parameters:
   key_name:
@@ -13,29 +11,27 @@ parameters:
   image:
     type: string
     description: Name of image to use for servers
-    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Ubuntu 22.04
+    default: Ubuntu 22.04 (Jammy)
   flavor:
     type: string
     description: Flavor to use for servers
-    default: alt.st1.small
-  public_network_id:
+    default: alt.st1.large
+  external_network_id:
     type: string
     description: ID of public network for which floating IP addresses will be allocated
     default: External
+  dmz_network_id:
+    type: string
+    default: dmz_network
+  dmz_subnet_id:
+    type: string
+    default: dmz_subnet1
   private_network_id:
     type: string
-    description: ID of private network into which servers get deployed
     default: private_network
   private_subnet_id:
     type: string
-    description: ID of private sub network into which servers get deployed
-    default: private_subnet1 # private's only subnet
-  floating_network_id:
-    type: string
-    default: dmz_network
-  floating_subnet_id:
-    type: string
-    default: dmz_subnet1
+    default: private_subnet1
   security_groups: 
     type: comma_delimited_list 
     default: 
@@ -46,45 +42,46 @@ parameters:
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDPNG6afWDqOCptAg2ERApA42HX7VG7Nw1hLjuCYpb8Ij36A0F/OUxDpA1O/+EKibLL+MgpwMzC3J5a+8ifkRH3Cr/OwOeiq/lcHgiC3rJcLr8kyNLwQmpYhSZkQMR0m2Y850Okix5dmNlK8KcE5RwG3q04DY0W09Rx/LWlUm1Z0ipkJ4NECDWTRKEoelJ72YREB1j9awJFBKLn2Ip8lylK7lrZu1Q64mOib551HYOr2xCLdTUoUI9pReesBVYKdVinsyyjuZ5HAxb8SOEdGA+8AGLhfoBdcQ7zNHfGmOrCtTsZqL1y/HQM4EimhBBUdT7tnJzWitTlx4bA7qo+cZ5bX5Zy+VR1rFpUit2xzU+1jImExnK3ltDAPec6qMDrK9wOFwJna5WKTKtEEStRNiv0yNDElrvSMu2srriORH9HwINOnSOuWDiYldlTJnLW8P4h0EBf8hw2ZKy4YOopDEuStthli6QlVKYji1qNMh2kKiuxAmWv6nzG9KrZJl/nohehtaXYYsXNk5jl3AOYnrC6xgLDcyHd1II78G+lujvUl0EJPmnYQA7rJVqem2I516ixTBaVR5htXvPclLXl+kmmOwtltNCRqPXaWB/9e3LFyZuO7A/r4UEC16v9t0OnEHvjRJ6dLQey+hnJN398egXAQmXjSXVJgNejsxCz7uUzSw== doctor_ew@Tiffanys-Air
 
 resources:
-  server:
+  devstack:
     type: OS::Nova::Server
     properties:
+      name: devstack
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-      - port: { get_resource: server_private_port }
-      - port: { get_resource: server_public_port }
+        - port: { get_resource: devstack_private_port }
+        - port: { get_resource: devstack_dmz_port }
       user_data_format: RAW
-      user_data: { get_resource: server_init }
+      user_data: { get_resource: devstack_init }
+      
+  devstack_dmz_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: dmz_network_id }
+      fixed_ips:
+        - subnet_id: { get_param : dmz_subnet_id }
+      security_groups:
+        - default
+        - ssh-ingress
 
-  server_private_port:
+  devstack_private_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_param: private_network_id }
       fixed_ips:
-        - subnet_id: { get_param: private_subnet_id }
-      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
-        - "default"
-        - "ssh-ingress"
-
-  server_floating_ip:
+        - subnet_id: { get_param : private_subnet_id }
+      security_groups:
+        - default
+        - ssh-ingress
+  
+  devstack_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: { get_param: public_network_id }
-      port_id: { get_resource: server_public_port }
+      floating_network: { get_param: external_network_id }
+      port_id: { get_resource: devstack_dmz_port }
 
-  server_public_port:
-    type: OS::Neutron::Port
-    properties:
-      network_id: { get_param: floating_network_id }
-      fixed_ips:
-        - subnet_id: { get_param: floating_subnet_id }
-      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
-        - "default"
-        - "ssh-ingress"
-
-  server_init:
+  devstack_init:
     type: OS::Heat::CloudConfig
     properties:
       cloud_config:
@@ -98,20 +95,44 @@ resources:
             # ssh_pwauth: True
             ssh-authorized-keys:
              - { get_param: ssh_pubkey }
-        # write_files:
+          - name: stack
+            lock_passwd: False
+            sudo: ["ALL=(ALL) NOPASSWD:ALL\nDefaults:stack !requiretty"]
+            shell: /bin/bash
+            ssh-authorized-keys:
+              - { get_param: ssh_pubkey }
+        write_files:
+          # TODO add code to update default horizon listening ports
+          - content: |
+                #!/bin/sh
+                # DEBIAN_FRONTEND=noninteractive sudo apt-get -qqy update || sudo yum update -qy
+                # DEBIAN_FRONTEND=noninteractive sudo apt-get install -qqy git || sudo yum install -qy git
+                sudo chown stack:stack /home/stack
+                cd /home/stack
+                git clone https://opendev.org/openstack/devstack
+                cd devstack
+                echo '[[local|localrc]]' > local.conf
+                echo ADMIN_PASSWORD=password >> local.conf
+                echo DATABASE_PASSWORD=password >> local.conf
+                echo RABBIT_PASSWORD=password >> local.conf
+                echo SERVICE_PASSWORD=password >> local.conf
+                ./stack.sh
+            path: /home/stack/start.sh
+            permissions: 0755
         runcmd:
           - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
           - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
           - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
           - sudo systemctl restart ssh
+          - sudo su -l stack ./start.sh
 
 outputs:
-  server_public_ip:
+  devstack_external_ip:
     description: public IP address of the deployed compute instance
-    value: { get_attr: [server_floating_ip, floating_ip_address] }
-  server_dmz_ip:
+    value: { get_attr: [devstack_floating_ip, floating_ip_address] }
+  devstack_dmz_ip:
     description: private IP address on the dmz_network
-    value: { get_attr: [server, networks, dmz_network, 0] }
-  server_private_ip:
+    value: { get_attr: [devstack, networks, dmz_network, 0] }
+  devstack_private_ip:
     description: private IP address on an private_network network only accessible through the firewall
-    value: { get_attr: [server, networks, private_network, 0] }
+    value: { get_attr: [devstack, networks, private_network, 0] }

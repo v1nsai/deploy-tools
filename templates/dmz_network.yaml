@@ -12,7 +12,7 @@ parameters:
     type: string
     description: ID of public network subnet to use 
     default: Internet_d85720c0
-  # external_dns_servers:
+  # external_dns_servers: TODO offer DNS services?
   #   type: comma_delimited_list
   #   default: TODO loop this correctly
 
@@ -49,7 +49,7 @@ resources:
   #   properties:
   #     vip_subnet: { get_param: dmz_subnet1 }
 
-### Load balancing (currently unavailable in alterncloud)
+### TODO Load balancing (currently unavailable in alterncloud?)
 
 #   # dmz_loadbalancer1_port:
 #   #   type: OS::Neutron::Port

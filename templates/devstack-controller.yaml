@@ -1,0 +1,103 @@
+heat_template_version: rocky
+
+description: >
+  Deploys a Devstack controller instance on the private network
+
+parameters:
+  key_name:
+    type: string
+    description: Name of keypair to assign to servers
+    default: devstack-controller
+  image:
+    type: string
+    description: Name of image to use for servers
+    default: Ubuntu 22.04 (Jammy)
+  flavor:
+    type: string
+    description: Flavor to use for servers
+    default: alt.st1.small
+  private_network_id:
+    type: string
+    description: ID of private network into which servers get deployed
+    default: private_network
+  private_subnet_id:
+    type: string
+    description: ID of private sub network into which servers get deployed
+    default: private_subnet1
+  security_groups: 
+    type: comma_delimited_list 
+    default: 
+      - "ssh-ingress"
+      - "default"
+  ssh_pubkey:
+    type: string
+    default: { get_file: ../pubkeys/controller.pub }
+
+resources:
+  server:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      key_name: { get_param: key_name }
+      networks:
+      - port: { get_resource: server_private_port }
+      user_data_format: RAW
+      user_data: { get_resource: server_init }
+
+  server_private_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_network_id }
+      fixed_ips:
+        - subnet_id: { get_param: private_subnet_id }
+      security_groups:
+        - "default"
+        - "ssh-ingress"
+
+  server_init:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        #cloud-config
+        users:
+          - name: drew
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            groups: sudo
+            shell: /bin/bash
+            ssh-authorized-keys:
+             - { get_param: ssh_pubkey }
+          - name: stack
+            lock_passwd: False
+            sudo: ["ALL=(ALL) NOPASSWD:ALL\nDefaults:stack !requiretty"]
+            shell: /bin/bash
+            ssh-authorized-keys:
+              - { get_param: ssh_pubkey }
+        write_files:
+          - content: { get_file: template_resources/etc_network_interfaces.txt }
+            path: /etc/network/interfaces
+            permission: 0755
+          - content: { get_file: template_resources/devstack_local.conf }
+            path: /home/stack/devstack/local.conf
+            permission: 0755
+          - content: '''
+            #!/bin/bash
+            for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.13.$i; done
+            path: /home/stack/devstack/local.sh
+            permission: 0755 '''
+        runcmd:
+          - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          - sudo systemctl restart ssh
+          - cd /home/stack/
+          - git clone https://opendev.org/openstack/devstack
+          - cd devstack
+          - ./stack.sh
+        bootcmd:
+          - /home/stack/devstack/stack.sh
+
+outputs:
+  server_private_ip:
+    description: private IP address on an private_network network only accessible through the firewall
+    value: { get_attr: [server, networks, private_network, 0] }
