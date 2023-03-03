@@ -6,19 +6,15 @@ description: >
 parameters:
   key_name:
     type: string
-    description: Name of keypair to assign to servers
     default: jump-server
   image:
     type: string
-    description: Name of image to use for servers
     default: Ubuntu 22.04 (Jammy)
   flavor:
     type: string
-    description: Flavor to use for servers
     default: alt.st1.small
   external_network_id:
     type: string
-    description: ID of public network for which floating IP addresses will be allocated
     default: External
   dmz_network_id:
     type: string
@@ -39,13 +35,13 @@ parameters:
       - "default"
   ssh_pubkey:
     type: string
-    default: { get_file: ../pubkeys/jump-server.pub }
+    # default: { get_file: ../pubkeys/jump-server.pub }
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqaVA8bI1dzmTnTz39JCbihcYi8K7r43bIID5XwpxkMLaR0Ce/TT6aaRC8qEzoeBdjqiH+LG97+EIsaUOlXDs/GdHbDkW3ZtLGoJByfyz/sAQP5ySTC1kqik369Gjm19LzSlhWf9roem5RSNRPo49mrP2nwt9ffw8rp9iLLwdm6ZUJxRy9OG+UBayY3gq9ixYKf1wZSY320WKf077xX6JgroUheA399Jm7KRewhpNvpoawRXl/CggFK8jL6Wb4F5jZWMfnIziUEhFMxl6aueeQzk+Daa0Wg2Y9oBjgYUM/RW/rItowo5gD89wJwDygWw1F/Y0SGrLnlCbWJSHy8lm1+2J9Bs0oHSL/xZXKW4iVhB30jcCsbdKskX8X2JeLgX+fQChdl6cOKP+ZedKNzeHBq9i0a7R+YtI+1LUaA75lSIxqlba37Z6pocmUtnyal8nJd9kG/v6/BIkltDTa33kLXImBkfnGP+HEmQb41dUwb4Wei8QxI75Bg9+H3m1nY1lWcZSnhk0z5r6YuPONsqiQBDhoZvqzE1YctUNleUgVCRK4GWVTNJueuyRpVvP2eqPyZjzOZrdRZK1k2AJzjjHlfj86RY7kVeRbON3HfFOZf0PFOtABaOrlKeOmDoXSl5YE7UaUQAwTFCZmUXNkFnysa7VHTNWs3Lka+44dhJCHtw==
 
 resources:
   jump_server:
     type: OS::Nova::Server
     properties:
-      name: jump_server
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }

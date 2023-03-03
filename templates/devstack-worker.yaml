@@ -1,13 +1,13 @@
 heat_template_version: rocky
 
 description: >
-  Deploys a Devstack controller instance on the private network
+  Deploys a Devstack worker instance on the private network
 
 parameters:
   key_name:
     type: string
     description: Name of keypair to assign to servers
-    default: devstack-controller
+    default: devstack-worker
   image:
     type: string
     description: Name of image to use for servers
@@ -31,8 +31,7 @@ parameters:
       - "default"
   ssh_pubkey:
     type: string
-    # default: { get_file: ../pubkeys/controller.pub } this starts and stops working intermittently
-    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDENOQD1rBSkoWOboawEExl6FtoqBEs2Oux0Sd0SQ/cglKUtDiTLCfsxbxdAx72JQDH7EKq/4iOze+larFjN0Wrs95Dl41G+9Jh2+gnPQTHyuQXumPIk98QWUl4w6Y3jiP2iFClKl2LkCh6XA4nh4jvwTMvlRJT1DoswfWYmyH+jUmq329062ti7qvKBQNEON5KwFpwM37TTS/pP6/cpoVXiLKYq+s8rHxVoXjp7EA0un/4SDmycE77SPkHtaL1L2RAYvURaCMl/19hOPCKBtHsIt/OsHQKoxSyhH+3sKI3G4ld9yRYKRWWo4TZCSl35DTM0Wii8LDL0JKnlP64nhoZgK2JoWd8cI3GAVpZSnTfF96LmAjZGiI2+7ZTDkKbkIBeMNaRwDbO5KXrn/02TWGYq7E1QwH7nUwAIz7zp4v8fqohwqr/esLdSuXgmLt9db1xj/AT/UoKZwZ/COHW7IIr1bCYZcvy3nD0PZecK9hZ1aUc46sug4RO7OtVIOQ13kqtYnfRuq7IJl5UbtTibPuhy5/5vMg//3YlEKL1Iy1aQKkGLKUrbYGhbx7bX8Ruqb0nYB9qGhLXmr917MNPKurdoBlom12XcVNk2UbzLxJV2STEKZeo7DWc/ku5Xe6iFaLOaNnif17O4SN321ZkoJ5tfdBMq4ME/OuXNUYQArtr2Q==
+    default: { get_file: ../pubkeys/worker.pub }
 
 resources:
   server:
@@ -75,22 +74,25 @@ resources:
             ssh-authorized-keys:
               - { get_param: ssh_pubkey }
         write_files:
-          # - content: { get_file: template_resources/etc_network_interfaces.txt }
-          #   path: /etc/network/interfaces
-            # permission: 0755
-          - content: { get_file: template_resources/devstack_controller_local.conf }
-            path: /home/stack/local.conf
+          - content: { get_file: template_resources/etc_network_interfaces.txt }
+            path: /etc/network/interfaces
+            permission: 0755
+          - content: { get_file: template_resources/devstack_worker_local.conf }
+            path: /home/stack/devstack/local.conf
+            permission: 0755
+          - content: '''
+            #!/bin/bash
+            for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.13.$i; done'''
+            path: /home/stack/devstack/local.sh
             permission: 0755
         runcmd:
-          - sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
-          - sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-          - sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
-          - systemctl restart ssh
+          - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          - sudo systemctl restart ssh
           - cd /home/stack/
           - git clone https://opendev.org/openstack/devstack
-          - mv local.conf devstack/local.conf
           - cd devstack
-          - for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.13.$i; done
           - ./stack.sh
         bootcmd:
           - /home/stack/devstack/stack.sh
