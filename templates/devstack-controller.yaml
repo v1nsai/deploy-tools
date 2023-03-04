@@ -4,6 +4,9 @@ description: >
   Deploys a Devstack controller instance on the private network
 
 parameters:
+  server_name:
+    type: string
+    default: devstack-controller
   key_name:
     type: string
     description: Name of keypair to assign to servers
@@ -12,10 +15,19 @@ parameters:
     type: string
     description: Name of image to use for servers
     default: Ubuntu 22.04 (Jammy)
+  external_network_id:
+    type: string
+    default: External
   flavor:
     type: string
     description: Flavor to use for servers
     default: alt.st1.small
+  dmz_network_id:
+    type: string
+    default: dmz_network
+  dmz_subnet_id:
+    type: string
+    default: dmz_subnet1
   private_network_id:
     type: string
     description: ID of private network into which servers get deployed
@@ -38,11 +50,13 @@ resources:
   server:
     type: OS::Nova::Server
     properties:
+      name: { get_param: server_name }
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
       - port: { get_resource: server_private_port }
+      - port: { get_resource: server_dmz_port }
       user_data_format: RAW
       user_data: { get_resource: server_init }
 
@@ -55,6 +69,21 @@ resources:
       security_groups:
         - "default"
         - "ssh-ingress"
+
+  server_dmz_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: dmz_network_id }
+      fixed_ips:
+        - subnet_id: { get_param : dmz_subnet_id }
+      security_groups: # TODO stop hardcoding these and do it correctly
+        - default
+
+  server_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network_id }
+      port_id: { get_resource: server_dmz_port }
 
   server_init:
     type: OS::Heat::CloudConfig
@@ -70,32 +99,42 @@ resources:
              - { get_param: ssh_pubkey }
           - name: stack
             lock_passwd: False
-            sudo: ["ALL=(ALL) NOPASSWD:ALL\nDefaults:stack !requiretty"]
+            sudo: ['ALL=(ALL) NOPASSWD:ALL'] # ["ALL=(ALL) NOPASSWD:ALL\nDefaults:stack !requiretty"]
             shell: /bin/bash
             ssh-authorized-keys:
               - { get_param: ssh_pubkey }
         write_files:
-          # - content: { get_file: template_resources/etc_network_interfaces.txt }
-          #   path: /etc/network/interfaces
-            # permission: 0755
+          - content: { get_file: template_resources/etc_network_interfaces.txt }
+            path: /etc/network/interfaces
+            permission: 0755
           - content: { get_file: template_resources/devstack_controller_local.conf }
             path: /home/stack/local.conf
             permission: 0755
+          - content: { get_file: template_resources/devstack-controller-init.sh }
+            path: /home/stack/devstack-controller-init.sh
+            permission: 0755
         runcmd:
-          - sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
-          - sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-          - sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
-          - systemctl restart ssh
-          - cd /home/stack/
-          - git clone https://opendev.org/openstack/devstack
-          - mv local.conf devstack/local.conf
-          - cd devstack
-          - for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.13.$i; done
-          - ./stack.sh
+          - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          - sudo systemctl restart ssh
+          - #for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.13.$i; done
+          - git clone https://opendev.org/openstack/devstack /home/stack/devstack
+          - sudo chown stack:stack -R /home/stack/devstack
+          - mv /home/stack/local.conf /home/stack/devstack/local.conf
+          - cd /home/stack/devstack/
+          - sudo su stack ./stack.sh
         bootcmd:
-          - /home/stack/devstack/stack.sh
+          - cd /home/stack/devstack
+          - ./stack.sh
 
 outputs:
+  server_external_ip:
+    description: public IP address of the deployed compute instance
+    value: { get_attr: [server_floating_ip, floating_ip_address] }
+  server_dmz_ip:
+    description: private IP address on the dmz_network
+    value: { get_attr: [server, networks, dmz_network, 0] }
   server_private_ip:
     description: private IP address on an private_network network only accessible through the firewall
     value: { get_attr: [server, networks, private_network, 0] }

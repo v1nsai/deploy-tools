@@ -4,6 +4,9 @@ description: >
   Public facing SSH server with connection to internal network
 
 parameters:
+  server_name:
+    type: string
+    default: jump-server
   key_name:
     type: string
     default: jump-server
@@ -42,6 +45,7 @@ resources:
   jump_server:
     type: OS::Nova::Server
     properties:
+      name: { get_parameter: server_name }
       image: { get_param: image }
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
