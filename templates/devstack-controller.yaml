@@ -1,7 +1,7 @@
 heat_template_version: rocky
 
 description: >
-  Deploys a Devstack controller instance on the private network
+  Deploys a devstack controller to the DMZ and private networks
 
 parameters:
   server_name:
@@ -9,19 +9,16 @@ parameters:
     default: devstack-controller
   key_name:
     type: string
-    description: Name of keypair to assign to servers
     default: devstack-controller
   image:
     type: string
-    description: Name of image to use for servers
     default: Ubuntu 22.04 (Jammy)
+  flavor:
+    type: string
+    default: alt.st1.small
   external_network_id:
     type: string
     default: External
-  flavor:
-    type: string
-    description: Flavor to use for servers
-    default: alt.st1.small
   dmz_network_id:
     type: string
     default: dmz_network
@@ -30,11 +27,9 @@ parameters:
     default: dmz_subnet1
   private_network_id:
     type: string
-    description: ID of private network into which servers get deployed
     default: private_network
   private_subnet_id:
     type: string
-    description: ID of private sub network into which servers get deployed
     default: private_subnet1
   security_groups: 
     type: comma_delimited_list 
@@ -43,7 +38,7 @@ parameters:
       - "default"
   ssh_pubkey:
     type: string
-    # default: { get_file: ../pubkeys/controller.pub } this starts and stops working intermittently
+    # default: { get_file: ../pubkeys/devstack-controller.pub }
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDENOQD1rBSkoWOboawEExl6FtoqBEs2Oux0Sd0SQ/cglKUtDiTLCfsxbxdAx72JQDH7EKq/4iOze+larFjN0Wrs95Dl41G+9Jh2+gnPQTHyuQXumPIk98QWUl4w6Y3jiP2iFClKl2LkCh6XA4nh4jvwTMvlRJT1DoswfWYmyH+jUmq329062ti7qvKBQNEON5KwFpwM37TTS/pP6/cpoVXiLKYq+s8rHxVoXjp7EA0un/4SDmycE77SPkHtaL1L2RAYvURaCMl/19hOPCKBtHsIt/OsHQKoxSyhH+3sKI3G4ld9yRYKRWWo4TZCSl35DTM0Wii8LDL0JKnlP64nhoZgK2JoWd8cI3GAVpZSnTfF96LmAjZGiI2+7ZTDkKbkIBeMNaRwDbO5KXrn/02TWGYq7E1QwH7nUwAIz7zp4v8fqohwqr/esLdSuXgmLt9db1xj/AT/UoKZwZ/COHW7IIr1bCYZcvy3nD0PZecK9hZ1aUc46sug4RO7OtVIOQ13kqtYnfRuq7IJl5UbtTibPuhy5/5vMg//3YlEKL1Iy1aQKkGLKUrbYGhbx7bX8Ruqb0nYB9qGhLXmr917MNPKurdoBlom12XcVNk2UbzLxJV2STEKZeo7DWc/ku5Xe6iFaLOaNnif17O4SN321ZkoJ5tfdBMq4ME/OuXNUYQArtr2Q==
 
 resources:
@@ -55,21 +50,11 @@ resources:
       flavor: { get_param: flavor }
       key_name: { get_param: key_name }
       networks:
-      - port: { get_resource: server_private_port }
-      - port: { get_resource: server_dmz_port }
+        - port: { get_resource: server_private_port }
+        - port: { get_resource: server_dmz_port }
       user_data_format: RAW
       user_data: { get_resource: server_init }
-
-  server_private_port:
-    type: OS::Neutron::Port
-    properties:
-      network_id: { get_param: private_network_id }
-      fixed_ips:
-        - subnet_id: { get_param: private_subnet_id }
-      security_groups:
-        - "default"
-        - "ssh-ingress"
-
+      
   server_dmz_port:
     type: OS::Neutron::Port
     properties:
@@ -78,7 +63,18 @@ resources:
         - subnet_id: { get_param : dmz_subnet_id }
       security_groups: # TODO stop hardcoding these and do it correctly
         - default
+        - ssh-ingress
 
+  server_private_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_network_id }
+      fixed_ips:
+        - subnet_id: { get_param : private_subnet_id }
+      security_groups:
+        - default
+        - ssh-ingress
+  
   server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
@@ -96,37 +92,12 @@ resources:
             groups: sudo
             shell: /bin/bash
             ssh-authorized-keys:
-             - { get_param: ssh_pubkey }
-          - name: stack
-            lock_passwd: False
-            sudo: ['ALL=(ALL) NOPASSWD:ALL'] # ["ALL=(ALL) NOPASSWD:ALL\nDefaults:stack !requiretty"]
-            shell: /bin/bash
-            ssh-authorized-keys:
               - { get_param: ssh_pubkey }
-        write_files:
-          - content: { get_file: template_resources/etc_network_interfaces.txt }
-            path: /etc/network/interfaces
-            permission: 0755
-          - content: { get_file: template_resources/devstack_controller_local.conf }
-            path: /home/stack/local.conf
-            permission: 0755
-          - content: { get_file: template_resources/devstack-controller-init.sh }
-            path: /home/stack/devstack-controller-init.sh
-            permission: 0755
         runcmd:
           - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
           - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
           - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
           - sudo systemctl restart ssh
-          - #for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.13.$i; done
-          - git clone https://opendev.org/openstack/devstack /home/stack/devstack
-          - sudo chown stack:stack -R /home/stack/devstack
-          - mv /home/stack/local.conf /home/stack/devstack/local.conf
-          - cd /home/stack/devstack/
-          - sudo su stack ./stack.sh
-        bootcmd:
-          - cd /home/stack/devstack
-          - ./stack.sh
 
 outputs:
   server_external_ip:
