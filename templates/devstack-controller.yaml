@@ -94,7 +94,10 @@ resources:
             ssh-authorized-keys:
               - { get_param: ssh_pubkey }
           - name: stack
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
             shell: /bin/bash
+            ssh-authorized-keys:
+              - { get_param: ssh_pubkey }
         write_files:
           - content: { get_file: template_resources/etc_network_interfaces.txt }
             path: /etc/network/interfaces
@@ -111,7 +114,8 @@ resources:
           - git clone https://opendev.org/openstack/devstack /home/stack/devstack
           - cp /home/stack/local.conf /home/stack/devstack/local.conf
           - chown stack:stack -R /home/stack
-          # - sudo su stack -c /home/stack/devstack/stack.sh
+          - cd /home/stack
+          - sudo su stack -c /home/stack/devstack/stack.sh
 
 outputs:
   server_external_ip:
