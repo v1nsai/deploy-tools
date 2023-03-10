@@ -93,11 +93,25 @@ resources:
             shell: /bin/bash
             ssh-authorized-keys:
               - { get_param: ssh_pubkey }
+          - name: stack
+            shell: /bin/bash
+        write_files:
+          - content: { get_file: template_resources/etc_network_interfaces.txt }
+            path: /etc/network/interfaces
+            permission: 0755
+          - content: { get_file: template_resources/devstack_controller_local.conf }
+            path: /home/stack/local.conf
+            owner: stack:stack
+            permission: 0755
         runcmd:
           - sudo sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
           - sudo sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
           - sudo sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
           - sudo systemctl restart ssh
+          - git clone https://opendev.org/openstack/devstack /home/stack/devstack
+          - cp /home/stack/local.conf /home/stack/devstack/local.conf
+          - chown stack:stack -R /home/stack
+          # - sudo su stack -c /home/stack/devstack/stack.sh
 
 outputs:
   server_external_ip:
