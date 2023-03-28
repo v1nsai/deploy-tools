@@ -5,3 +5,6 @@ openrc.sh
 .\$*
 .DS_Store
 pubkeys/*
+strapi/
+terraform/.terraform*
+*.tfstate*
