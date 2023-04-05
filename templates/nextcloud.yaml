@@ -15,7 +15,7 @@ parameters:
   flavor:
     type: string
     description: Flavor to use for servers
-    default: alt.st1.small
+    default: alt.s2.2xlarge
   public_network_id:
     type: string
     description: ID of public network for which floating IP addresses will be allocated
@@ -100,7 +100,7 @@ resources:
             permissions: '0774'
             path: /etc/setup-ssh.sh
         runcmd:
-          - bash -c /etc/setup-ssh.sh
+          # - bash -c /etc/setup-ssh.sh
 
 outputs:
   server_public_ip:
