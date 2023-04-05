@@ -107,14 +107,13 @@ resources:
             owner: root:root
             permissions: '0774'
             path: /etc/setup-wordpress.sh
+          - content: { get_file: ../auth/mysql.env }
+            owner: root:root
+            permissions: '0774'
+            path: /etc/mysql.env
         runcmd:
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-wordpress.sh
-          # - sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
-          # - sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-          # - sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
-          # - systemctl restart ssh
-
 
 outputs:
   server_public_ip:

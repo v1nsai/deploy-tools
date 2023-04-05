@@ -1,4 +1,4 @@
-.env
+*.env
 env.sh
 clouds.yaml
 openrc.sh
@@ -8,3 +8,4 @@ pubkeys/*
 strapi/
 terraform/.terraform*
 *.tfstate*
+ssh_config
