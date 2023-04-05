@@ -7,11 +7,11 @@ parameters:
   key_name:
     type: string
     description: Name of keypair to assign to servers
-    default: dr_ew
+    default: nextcloud
   image:
     type: string
     description: Name of image to use for servers
-    default: Ubuntu 22.04 (Jammy)
+    default: nextcloud
   flavor:
     type: string
     description: Flavor to use for servers
@@ -41,7 +41,7 @@ parameters:
       - "default"
   ssh_pubkey:
     type: string
-    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDPNG6afWDqOCptAg2ERApA42HX7VG7Nw1hLjuCYpb8Ij36A0F/OUxDpA1O/+EKibLL+MgpwMzC3J5a+8ifkRH3Cr/OwOeiq/lcHgiC3rJcLr8kyNLwQmpYhSZkQMR0m2Y850Okix5dmNlK8KcE5RwG3q04DY0W09Rx/LWlUm1Z0ipkJ4NECDWTRKEoelJ72YREB1j9awJFBKLn2Ip8lylK7lrZu1Q64mOib551HYOr2xCLdTUoUI9pReesBVYKdVinsyyjuZ5HAxb8SOEdGA+8AGLhfoBdcQ7zNHfGmOrCtTsZqL1y/HQM4EimhBBUdT7tnJzWitTlx4bA7qo+cZ5bX5Zy+VR1rFpUit2xzU+1jImExnK3ltDAPec6qMDrK9wOFwJna5WKTKtEEStRNiv0yNDElrvSMu2srriORH9HwINOnSOuWDiYldlTJnLW8P4h0EBf8hw2ZKy4YOopDEuStthli6QlVKYji1qNMh2kKiuxAmWv6nzG9KrZJl/nohehtaXYYsXNk5jl3AOYnrC6xgLDcyHd1II78G+lujvUl0EJPmnYQA7rJVqem2I516ixTBaVR5htXvPclLXl+kmmOwtltNCRqPXaWB/9e3LFyZuO7A/r4UEC16v9t0OnEHvjRJ6dLQey+hnJN398egXAQmXjSXVJgNejsxCz7uUzSw== doctor_ew@Tiffanys-Air
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuRaucksa4n9qO/xGYl3xDZzzV98vFOuXBeJxpOWNzL2NUPJNFWXchsoM7MGGlkNaxKueuFgweyYSBNxq6103tVXhA6NgIxBlM2eibFCUZKdlIY27LYWJnh22TaQXLEmXIOdFfAyWeUOIInsgvqF7AGjnX4JIQjYIoHS+h/maGVDsQqc83kR3PclTicrckwf143uZNJ/AC+jZhsZ4Xbfq/TKgx6IWjY3YEQCN8SC0q4ACNMdstR7aKcdN+S7D03gvsFDDKcUDka0i1fFK+bXEFB5GD1dz4T97o+7wV+W74frE7Loup4/2C5T1T7n+s9JYmIYOmwpcP7lyLz0bzf1XH Generated-by-Nova
 
 resources:
   server:
