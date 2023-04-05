@@ -1,11 +1,7 @@
-*.env
-env.sh
-clouds.yaml
-openrc.sh
 .\$*
 .DS_Store
-pubkeys/*
+pubkeys/
 strapi/
-terraform/.terraform*
-*.tfstate*
+terraform/
 ssh_config
+auth/

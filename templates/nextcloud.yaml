@@ -15,7 +15,7 @@ parameters:
   flavor:
     type: string
     description: Flavor to use for servers
-    default: alt.s2.2xlarge
+    default: alt.s2.3xlarge
   public_network_id:
     type: string
     description: ID of public network for which floating IP addresses will be allocated
