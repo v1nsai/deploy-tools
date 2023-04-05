@@ -98,11 +98,22 @@ resources:
             # chpasswd: { expire: False }
             ssh-authorized-keys:
               - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFiGac2S5x4ebgapffpQqhhHFyS7G7QuOTH7szruWsEJ//xTAfOcVdyPjyv/mDG7q6Rj4Z1+XdJoM8QtVjNMEHxUcTCe+YrGQsJJJzxp30uSTEKCBBSjq5mz5E7oRTus1nojJb02cPiP+0iHbTvBoscY/3qKL2H/xjdE1TBRXr3KZIEiuY4RzSgtFe/9H8txANU/UkxXU8wq85jxFXybvn3Ln/puGAcoPGAm6VBTdcMlbH4wXGB6QHMyTnbI+f+m7Sd1K3RQVvZyvipNbtyPORsfDofW+lJj4rNxsZDPRDpDtWYGXsTMVwrORS44CKc7ozjOj3gc7W60qBb8dkJVaS6Bv+jeGTAwp7nKHehSmpCdXd+wKGDHVo39E190kyLLVTQ1F94RzxBINiPHg3zfGcNSt3434BrjL6VtSZurb2RfA40DA4VEqvFZep7AvqDx8KTIw/rcsGA0eFP1yS241Gc5jXVtnJaUtmhbEKH8Bos+mcBPc9Z2/x2pIfzisKPkM=
+        write_files:
+          - content: { get_file: ../scripts/setup-ssh.sh }
+            owner: root:root
+            permissions: '0774'
+            path: /etc/setup-ssh.sh
+          - content: { get_file: ../scripts/setup-wordpress.sh }
+            owner: root:root
+            permissions: '0774'
+            path: /etc/setup-wordpress.sh
         runcmd:
-          - sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
-          - sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-          - sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
-          - systemctl restart ssh
+          - bash -c /etc/setup-ssh.sh
+          - bash -c /etc/setup-wordpress.sh
+          # - sed -i'' -e "s/[\#]*Port\s.*/Port 1355/" /etc/ssh/sshd_config
+          # - sed -i'' -e 's/[\#]*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+          # - sed -i'' -e '$aAllowUsers drew' /etc/ssh/sshd_config
+          # - systemctl restart ssh
 
 
 outputs:
