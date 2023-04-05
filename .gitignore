@@ -1,7 +1,4 @@
 .\$*
 .DS_Store
-pubkeys/
-strapi/
-terraform/
 ssh_config
 auth/
