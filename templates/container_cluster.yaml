@@ -1,13 +1,13 @@
 heat_template_version: pike
 
 description: >
-  This template demostrates how to create Magnum COE cluster.
+  Simple container cluster
 
 parameters:
   cluster_name:
     type: string
     description: (optional) Name for cluster.
-    default: nextcloud-cluster
+    default: container-cluster
   node_count:
     type: number
     default: 3
@@ -23,10 +23,10 @@ parameters:
   cluster_template_name:
     type: string
     description: (optional) Name for cluster.
-    default: nextcloud-cluster
+    default: container-cluster
   keypair:
     type: string
-    default: nextcloud
+    default: container
     constraints:
       - custom_constraint: nova.keypair
   flavor:
