@@ -97,17 +97,20 @@ resources:
             owner: root:root
             permissions: '0774'
             path: /etc/setup-ssh.sh
-          -content: { get_file: ../scripts/setup-kubectl.sh }
+          - content: { get_file: ../scripts/setup-kubectl.sh }
             owner: root:root
             permissions: '0774'
             path: /etc/setup-kubectl.sh
-          -content: { get_file: ../scripts/wordpress-kubeconfig }
-            owner: root:root
-            permissions: '0774'
+          - content: { get_file: ../config/wordpress-kubeconfig }
             path: /home/drew/.kube/config
+          - content: { get_file: ../auth/techig-site-cluster_ca.pem }
+            path: /home/drew/.kube/techig-site-cluster_ca.pem
+          - content: { get_file: ../auth/techig-site-cluster.pem }
+            path: /home/drew/.kube/techig-site-cluster.pem
         runcmd:
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-kubectl.sh
+          - chown drew:drew -R /home/drew
 
 outputs:
   server_public_ip:
