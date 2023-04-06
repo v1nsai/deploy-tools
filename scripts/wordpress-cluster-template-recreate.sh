@@ -20,7 +20,6 @@ openstack coe cluster template create $1 \
     --docker-volume-size 20 \
     --master-lb-enabled \
     --network-driver calico
-    # --docker-volume-size 300
 
 openstack coe cluster create $1 \
     --cluster-template $1 \
@@ -29,8 +28,8 @@ openstack coe cluster create $1 \
     --floating-ip-disabled
 
 # this works but ignores disabling floating ip
-openstack coe cluster create kubernetes-v1.23.3-rancher1 \
-    --cluster-template kubernetes-v1.23.3-rancher1 \
-    --master-count 1 \
-    --node-count 1 \
-    --floating-ip-disabled
+# openstack coe cluster create kubernetes-v1.23.3-rancher1 \
+#     --cluster-template kubernetes-v1.23.3-rancher1 \
+#     --master-count 1 \
+#     --node-count 1 \
+#     --floating-ip-disabled
