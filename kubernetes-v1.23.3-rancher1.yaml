@@ -1,0 +1,39 @@
+insecure_registry: '-'
+labels:
+  cloud_provider_enabled: 'True'
+  csi_snapshotter_tag: v4.0.0
+  hyperkube_prefix: docker.io/rancher/
+  ingress_controller: octavia
+  kube_dashboard_enabled: 'False'
+  kube_tag: v1.23.3-rancher1
+  master_lb_floating_ip_enabled: 'True'
+updated_at: '2023-03-05T20:04:11+00:00'
+floating_ip_enabled: true
+fixed_subnet: '-'
+master_flavor_id: alt.gp2.2xlarge
+uuid: b3ddb2fa-a1c2-4e2b-8ee7-6f5ac4fca002
+no_proxy: '-'
+https_proxy: '-'
+tls_disabled: false
+keypair_id: '-'
+public: true
+http_proxy: '-'
+docker_volume_size: 20
+server_type: vm
+external_network_id: b1d12129-bbfc-4482-a5d2-c20458459ddc
+cluster_distro: fedora-coreos
+image_id: Fedora CoreOS (37.20230205.3.0-stable)
+volume_driver: cinder
+registry_enabled: false
+docker_storage_driver: overlay
+apiserver_port: '-'
+name: kubernetes-v1.23.3-rancher1
+created_at: '2023-01-13T20:11:34+00:00'
+network_driver: calico
+fixed_network: '-'
+coe: kubernetes
+flavor_id: alt.st1.medium
+master_lb_enabled: true
+dns_nameserver: 8.8.8.8
+hidden: false
+tags: '-'
