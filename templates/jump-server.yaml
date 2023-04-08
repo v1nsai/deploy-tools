@@ -21,11 +21,11 @@ parameters:
   private_network_id:
     type: string
     description: ID of private network into which servers get deployed
-    default: private_network
+    default: wordpress-cluster
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: private_subnet1 # private's only subnet
+    default: 9fb1a929-feb0-471d-801f-f91eb9036c67
   floating_network_id:
     type: string
     default: dmz_network
@@ -97,19 +97,20 @@ resources:
             owner: root:root
             permissions: '0774'
             path: /etc/setup-ssh.sh
-          - content: { get_file: ../scripts/setup-kubectl.sh }
+          - content: { get_file: ../scripts/setup-openstackclient.sh }
             owner: root:root
             permissions: '0774'
-            path: /etc/setup-kubectl.sh
-          - content: { get_file: ../config/wordpress-kubeconfig }
-            path: /home/drew/.kube/config
-          - content: { get_file: ../auth/techig-site-cluster_ca.pem }
-            path: /home/drew/.kube/techig-site-cluster_ca.pem
-          - content: { get_file: ../auth/techig-site-cluster.pem }
-            path: /home/drew/.kube/techig-site-cluster.pem
+            path: /etc/setup-openstackclient.sh
+          - content: { get_file: ../auth/alterncloud.env }
+            owner: root:root
+            permissions: '0774'
+            path: /home/drew/auth/alterncloud.env
         runcmd:
+          - apt update
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-kubectl.sh
+          - bash -c /etc/setup-openstackclient.sh
+          - snap install kubectl --classic
           - chown drew:drew -R /home/drew
 
 outputs:
