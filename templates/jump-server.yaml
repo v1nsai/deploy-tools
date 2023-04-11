@@ -21,11 +21,11 @@ parameters:
   private_network_id:
     type: string
     description: ID of private network into which servers get deployed
-    default: wordpress-cluster
+    default: wordpress
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: 9fb1a929-feb0-471d-801f-f91eb9036c67
+    default: wordpress-amm25ri4fu3d-network-o3qadb4xmtwr-private_subnet-ozu22vh5k2bx
   floating_network_id:
     type: string
     default: dmz_network
@@ -107,10 +107,12 @@ resources:
             path: /home/drew/auth/alterncloud.env
         runcmd:
           - apt update
+          - apt install -y bash-completion
           - bash -c /etc/setup-ssh.sh
-          - bash -c /etc/setup-kubectl.sh
           - bash -c /etc/setup-openstackclient.sh
           - snap install kubectl --classic
+          - snap install helm --classic
+          - sed -i'' -e 's/[#$]+nrconf{restart} = .*/\$nrconf{restart} = "a"/' /etc/needrestart/needrestart.conf
           - chown drew:drew -R /home/drew
 
 outputs:
