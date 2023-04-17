@@ -1,4 +1,3 @@
-# https://github.com/kubernetes/cloud-provider-openstack/blob/master/examples/cinder-csi-plugin/nginx.yaml
 # This YAML file contains nginx & csi cinder driver objects,
 # which are necessary to run nginx with csi cinder driver.
 
