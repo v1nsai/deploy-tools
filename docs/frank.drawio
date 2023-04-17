@@ -1,13 +1,34 @@
-<mxfile host="Electron" modified="2023-04-11T16:59:41.527Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="OSwJ1A1WfTEYBgw3VFlc" version="21.1.2" type="device">
+<mxfile host="Electron" modified="2023-04-14T13:37:28.285Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="Yzy0mZZTKWHMVTN3an5K" version="21.1.2" type="device">
   <diagram name="Page-1" id="n5Qb5iA8dRXw3r0Tk5m8">
     <mxGraphModel dx="909" dy="569" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="QhObRH5eqzUrKcYtZkLM-7" target="QhObRH5eqzUrKcYtZkLM-40">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="397" y="650" />
+              <mxPoint x="295" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="QhObRH5eqzUrKcYtZkLM-7" target="QhObRH5eqzUrKcYtZkLM-42">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="397" y="650" />
+              <mxPoint x="495" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-46" value="Virtual Desktops" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="QhObRH5eqzUrKcYtZkLM-45">
+          <mxGeometry x="-0.1736" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="QhObRH5eqzUrKcYtZkLM-30" value="&lt;font color=&quot;#4d9900&quot;&gt;&lt;b&gt;Private Network&lt;/b&gt;&lt;/font&gt;" style="shape=mxgraph.ibm.box;prType=subnet;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#4D9900;strokeWidth=3;dashed=0;container=1;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="225" y="610" width="345" height="340" as="geometry" />
         </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-31" value="Nextcloud Document Server" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static-00.iconduck.com/assets.00/nextcloud-icon-256x256-5hml6h06.png;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-30">
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-31" value="Nextcloud Hub" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static-00.iconduck.com/assets.00/nextcloud-icon-256x256-5hml6h06.png;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-30">
           <mxGeometry x="35" y="230" width="50" height="50" as="geometry" />
         </mxCell>
         <mxCell id="QhObRH5eqzUrKcYtZkLM-32" value="&lt;font color=&quot;#ffffff&quot;&gt;Firewall/Proxy Server&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-30">
@@ -31,12 +52,6 @@
         <mxCell id="QhObRH5eqzUrKcYtZkLM-7" value="RustDesk Relay Server" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-29">
           <mxGeometry x="137.5" y="30" width="50" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-5" value="RustDesk Client&#xa;" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-27">
-          <mxGeometry x="147.5" y="120" width="50" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-4" value="&lt;font color=&quot;#ffffff&quot;&gt;User Device&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/users/device.svg;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-27">
-          <mxGeometry x="142.5" y="10" width="60" height="60" as="geometry" />
-        </mxCell>
         <mxCell id="QhObRH5eqzUrKcYtZkLM-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="QhObRH5eqzUrKcYtZkLM-27" source="QhObRH5eqzUrKcYtZkLM-5" target="QhObRH5eqzUrKcYtZkLM-7">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -45,11 +60,14 @@
             <mxPoint y="-13" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="QhObRH5eqzUrKcYtZkLM-27" source="QhObRH5eqzUrKcYtZkLM-4" target="QhObRH5eqzUrKcYtZkLM-5">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-47" value="" style="group" vertex="1" connectable="0" parent="QhObRH5eqzUrKcYtZkLM-27">
+          <mxGeometry x="122.5" y="10" width="100" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="QhObRH5eqzUrKcYtZkLM-7" target="QhObRH5eqzUrKcYtZkLM-41">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-4" value="&lt;font color=&quot;#ffffff&quot;&gt;User Device&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/users/device.svg;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-47">
+          <mxGeometry width="100" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="QhObRH5eqzUrKcYtZkLM-5" value="RustDesk Client&#xa;" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="QhObRH5eqzUrKcYtZkLM-47">
+          <mxGeometry x="25" y="10" width="50" height="50" as="geometry" />
         </mxCell>
         <mxCell id="QhObRH5eqzUrKcYtZkLM-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.006;entryY=0.926;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="QhObRH5eqzUrKcYtZkLM-34" target="QhObRH5eqzUrKcYtZkLM-27">
           <mxGeometry relative="1" as="geometry" />
@@ -62,27 +80,6 @@
         </mxCell>
         <mxCell id="QhObRH5eqzUrKcYtZkLM-37" value="Using a firewall proxy will potentially be slower with a single point of failure, but adds another layer of security and uses only 1 floating IP address for n users" style="fontStyle=0;verticalAlign=top;align=center;spacingTop=-2;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#4376BB;strokeWidth=1;dashed=0;container=1;collapsible=0;expand=0;recursiveResize=0;" vertex="1" parent="1">
           <mxGeometry x="600" y="895" width="180" height="105" as="geometry" />
-        </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="QhObRH5eqzUrKcYtZkLM-7" target="QhObRH5eqzUrKcYtZkLM-40">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="397" y="650" />
-              <mxPoint x="295" y="650" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="QhObRH5eqzUrKcYtZkLM-7" target="QhObRH5eqzUrKcYtZkLM-42">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="397" y="650" />
-              <mxPoint x="495" y="650" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="QhObRH5eqzUrKcYtZkLM-46" value="Virtual Desktops" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="QhObRH5eqzUrKcYtZkLM-45">
-          <mxGeometry x="-0.1736" y="-2" relative="1" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

@@ -1,9 +1,19 @@
 #!/bin/bash
 
-echo "Deleting cluster and cluster template..."
-openstack coe cluster delete wordpress
+set -e
+
+echo "Deleting cluster and jump server..."
+openstack stack delete -y jump-server | true;
+openstack coe cluster delete wordpress | true
+echo "Deleting cluster template..."
+while openstack coe cluster template delete wordpress | grep 'HTTP 400'
+do 
+    echo "Waiting for cluster created from template to delete..."
+    openstack coe cluster delete wordpress | true
+    sleep 5
+done
 echo "Creating cluster template..."
-while ! openstack coe cluster template create wordpress \
+openstack coe cluster template create wordpress \
     --coe kubernetes \
     -f json \
     --image 'Fedora CoreOS (37.20230205.3.0-stable)' \
@@ -12,16 +22,9 @@ while ! openstack coe cluster template create wordpress \
     --flavor alt.gp2.large \
     --master-flavor alt.gp2.large \
     --volume-driver cinder \
-    --docker-storage-driver overlay \
-    --docker-volume-size 20 \
-    --labels="kube_dashboard_enabled=true,csi_snapshotter_tag=v4.0.0,kube_tag=v1.23.3-rancher1,cloud_provider_enabled=true,hyperkube_prefix=docker.io/rancher/,ingress_controller=octavia,master_lb_floating_ip_enabled=false" \
-    --network-driver calico
-    #     --master-lb-disabled \
-    do 
-        echo "Waiting for cluster to delete..."
-        openstack coe cluster template delete wordpress 
-        sleep 5
-    done
+    --labels="kube_dashboard_enabled=true,csi_snapshotter_tag=v4.0.0,kube_tag=v1.23.3-rancher1,cloud_provider_enabled=true,hyperkube_prefix=docker.io/rancher/,ingress_controller=octavia,master_lb_floating_ip_enabled=false" 
+    # --docker-volume-size 20 \
+    # --network-driver flannel
 
 echo "Creating cluster..."
 openstack coe cluster create wordpress \
@@ -31,12 +34,19 @@ openstack coe cluster create wordpress \
     --floating-ip-disabled \
     --keypair techig-site
 
+echo "Starting jump-server creation"
+wordpress_subnet_id=
+while [ ! ${#wordpress_subnet_id} -eq 36 ] #&& ! echo -n $wordpress_subnet_id | grep 'null'
+do
+    echo "Waiting for 'wordpress' network to be created"
+    wordpress_subnet_id=$(openstack network list --name wordpress -f json | jq --raw-output '.[0].Subnets[0]')
+    sleep 5
+done
+filter='.parameters.private_subnet_id.default = '
+filter+=\"$wordpress_subnet_id\"
+yq e -i "$filter" templates/jump-server.yaml
+echo $wordpress_subnet_id
+scripts/recreate-stack.sh templates/jump-server.yaml jump-server
 
-# openstack loadbalancer create --name wordpress-site --vip-subnet-id wordpress_subnet1
-# openstack loadbalancer show wordpress-site
-# openstack loadbalancer listener create --name listener1 --protocol HTTP --protocol-port 80 wordpress-site
-# openstack loadbalancer pool create --name pool1 --lb-algorithm ROUND_ROBIN --listener listener1 --protocol HTTP
-# openstack loadbalancer member create --subnet-id private-subnet --protocol-port 80 pool1
-# openstack loadbalancer member create --subnet-id private-subnet --protocol-port 80 pool1
-
-# Resource DELETE failed: Conflict: resources.network.resources.private_subnet: Unable to complete operation on subnet 1fab9fdc-1b8e-4b81-99d6-25bc0ba222b0: One or more ports have an IP allocation from this subnet. Neutron server returns request_ids: ['req-77f26d59-61c8-4c1c-9f2e-903925df757c']
+    #     --master-lb-enabled \
+    # --docker-storage-driver overlay \
