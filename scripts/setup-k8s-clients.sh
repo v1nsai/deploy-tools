@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Install k8s clients
+echo "Installing k8s clients..."
 snap install kubectl --classic
 snap install helm --classic
 

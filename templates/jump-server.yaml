@@ -39,7 +39,7 @@ parameters:
   ssh_pubkey:
     type: string
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqaVA8bI1dzmTnTz39JCbihcYi8K7r43bIID5XwpxkMLaR0Ce/TT6aaRC8qEzoeBdjqiH+LG97+EIsaUOlXDs/GdHbDkW3ZtLGoJByfyz/sAQP5ySTC1kqik369Gjm19LzSlhWf9roem5RSNRPo49mrP2nwt9ffw8rp9iLLwdm6ZUJxRy9OG+UBayY3gq9ixYKf1wZSY320WKf077xX6JgroUheA399Jm7KRewhpNvpoawRXl/CggFK8jL6Wb4F5jZWMfnIziUEhFMxl6aueeQzk+Daa0Wg2Y9oBjgYUM/RW/rItowo5gD89wJwDygWw1F/Y0SGrLnlCbWJSHy8lm1+2J9Bs0oHSL/xZXKW4iVhB30jcCsbdKskX8X2JeLgX+fQChdl6cOKP+ZedKNzeHBq9i0a7R+YtI+1LUaA75lSIxqlba37Z6pocmUtnyal8nJd9kG/v6/BIkltDTa33kLXImBkfnGP+HEmQb41dUwb4Wei8QxI75Bg9+H3m1nY1lWcZSnhk0z5r6YuPONsqiQBDhoZvqzE1YctUNleUgVCRK4GWVTNJueuyRpVvP2eqPyZjzOZrdRZK1k2AJzjjHlfj86RY7kVeRbON3HfFOZf0PFOtABaOrlKeOmDoXSl5YE7UaUQAwTFCZmUXNkFnysa7VHTNWs3Lka+44dhJCHtw==
-    
+
 resources:
   server:
     type: OS::Nova::Server
@@ -116,6 +116,7 @@ resources:
           - bash -c /etc/setup-openstackclient.sh
           - bash -c /etc/setup-k8s-clients.sh
           - sed -i'' -e 's/[#$]+nrconf{restart} = .*/\$nrconf{restart} = "a"/' /etc/needrestart/needrestart.conf
+          - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
 
 outputs:
