@@ -22,17 +22,19 @@ openstack coe cluster template create wordpress \
     --flavor alt.gp2.large \
     --master-flavor alt.gp2.large \
     --volume-driver cinder \
-    --labels="kube_dashboard_enabled=true,csi_snapshotter_tag=v4.0.0,kube_tag=v1.23.3-rancher1,cloud_provider_enabled=true,hyperkube_prefix=docker.io/rancher/,ingress_controller=octavia,master_lb_floating_ip_enabled=false" 
+    --floating-ip-enabled \
+    --labels="kube_dashboard_enabled=true,cinder_csi_enabled=true,kube_tag=v1.23.3-rancher1,cloud_provider_enabled=true,hyperkube_prefix=docker.io/rancher/,ingress_controller=octavia,master_lb_floating_ip_enabled=true"
     # --docker-volume-size 20 \
-    # --network-driver flannel
+    # --master-lb-enabled \
+    # --network-driver flannel \
 
 echo "Creating cluster..."
 openstack coe cluster create wordpress \
     --cluster-template wordpress \
     --master-count 1 \
     --node-count 1 \
-    --floating-ip-disabled \
     --keypair techig-site
+        # --floating-ip-disabled \
 
 echo "Starting jump-server creation"
 wordpress_subnet_id=
@@ -48,5 +50,4 @@ yq e -i "$filter" templates/jump-server.yaml
 echo $wordpress_subnet_id
 scripts/recreate-stack.sh templates/jump-server.yaml jump-server
 
-    #     --master-lb-enabled \
     # --docker-storage-driver overlay \
