@@ -23,9 +23,15 @@ openstack coe cluster template create wordpress \
     --master-flavor alt.gp2.large \
     --volume-driver cinder \
     --floating-ip-enabled \
-    --labels="kube_dashboard_enabled=true,cinder_csi_enabled=true,kube_tag=v1.23.3-rancher1,cloud_provider_enabled=true,hyperkube_prefix=docker.io/rancher/,ingress_controller=octavia,master_lb_floating_ip_enabled=true"
+    --labels="kube_dashboard_enabled=true,\
+        cinder_csi_enabled=true,\
+        kube_tag=v1.23.3-rancher1,\
+        cloud_provider_enabled=true,\
+        hyperkube_prefix=docker.io/rancher/,\
+        ingress_controller=octavia,\
+        master_lb_floating_ip_enabled=false" 
+    # --master-lb-enabled
     # --docker-volume-size 20 \
-    # --master-lb-enabled \
     # --network-driver flannel \
 
 echo "Creating cluster..."

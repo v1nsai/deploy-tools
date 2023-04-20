@@ -24,7 +24,7 @@ parameters:
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: "d6ca5a11-2f20-4044-8e11-c1b5497409f5"
+    default: "59f79298-7748-4275-9e2b-28d313abae02"
   floating_network_id:
     type: string
     default: dmz_network
@@ -39,7 +39,6 @@ parameters:
   ssh_pubkey:
     type: string
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqaVA8bI1dzmTnTz39JCbihcYi8K7r43bIID5XwpxkMLaR0Ce/TT6aaRC8qEzoeBdjqiH+LG97+EIsaUOlXDs/GdHbDkW3ZtLGoJByfyz/sAQP5ySTC1kqik369Gjm19LzSlhWf9roem5RSNRPo49mrP2nwt9ffw8rp9iLLwdm6ZUJxRy9OG+UBayY3gq9ixYKf1wZSY320WKf077xX6JgroUheA399Jm7KRewhpNvpoawRXl/CggFK8jL6Wb4F5jZWMfnIziUEhFMxl6aueeQzk+Daa0Wg2Y9oBjgYUM/RW/rItowo5gD89wJwDygWw1F/Y0SGrLnlCbWJSHy8lm1+2J9Bs0oHSL/xZXKW4iVhB30jcCsbdKskX8X2JeLgX+fQChdl6cOKP+ZedKNzeHBq9i0a7R+YtI+1LUaA75lSIxqlba37Z6pocmUtnyal8nJd9kG/v6/BIkltDTa33kLXImBkfnGP+HEmQb41dUwb4Wei8QxI75Bg9+H3m1nY1lWcZSnhk0z5r6YuPONsqiQBDhoZvqzE1YctUNleUgVCRK4GWVTNJueuyRpVvP2eqPyZjzOZrdRZK1k2AJzjjHlfj86RY7kVeRbON3HfFOZf0PFOtABaOrlKeOmDoXSl5YE7UaUQAwTFCZmUXNkFnysa7VHTNWs3Lka+44dhJCHtw==
-
 resources:
   server:
     type: OS::Nova::Server
@@ -52,34 +51,30 @@ resources:
         - port: {get_resource: server_public_port}
       user_data_format: RAW
       user_data: {get_resource: server_init}
-
   server_private_port:
     type: OS::Neutron::Port
     properties:
       network_id: {get_param: private_network_id}
       fixed_ips:
         - subnet_id: {get_param: private_subnet_id}
-      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
+      security_groups:
         - "default"
         - "ssh-ingress"
-
   server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: {get_param: public_network_id}
       port_id: {get_resource: server_public_port}
-
   server_public_port:
     type: OS::Neutron::Port
     properties:
       network_id: {get_param: floating_network_id}
       fixed_ips:
         - subnet_id: {get_param: floating_subnet_id}
-      security_groups: #{ get_param: security_groups } #[{ get_resource: server_security_group }]
+      security_groups:
         - "default"
         - "ssh-ingress"
         - "wireguard"
-
   server_init:
     type: OS::Heat::CloudConfig
     properties:
@@ -115,10 +110,8 @@ resources:
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-openstackclient.sh
           - bash -c /etc/setup-k8s-clients.sh
-          - sed -i'' -e 's/[#$]+nrconf{restart} = .*/\$nrconf{restart} = "a"/' /etc/needrestart/needrestart.conf
           - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
-
 outputs:
   server_public_ip:
     description: public IP address of the deployed compute instance
