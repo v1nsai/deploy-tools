@@ -29,8 +29,8 @@ openstack coe cluster template create wordpress \
         cloud_provider_enabled=true,\
         hyperkube_prefix=docker.io/rancher/,\
         ingress_controller=octavia,\
-        master_lb_floating_ip_enabled=false" 
-    # --master-lb-enabled
+        master_lb_floating_ip_enabled=true" \
+    --master-lb-enabled
     # --docker-volume-size 20 \
     # --network-driver flannel \
 

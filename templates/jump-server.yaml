@@ -24,7 +24,7 @@ parameters:
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: "59f79298-7748-4275-9e2b-28d313abae02"
+    default: "185f762f-d863-4c62-a7fe-c292d23a0e94"
   floating_network_id:
     type: string
     default: dmz_network
@@ -48,7 +48,7 @@ resources:
       key_name: {get_param: key_name}
       networks:
         - port: {get_resource: server_private_port}
-        - port: {get_resource: server_public_port}
+        # - port: {get_resource: server_public_port}
       user_data_format: RAW
       user_data: {get_resource: server_init}
   server_private_port:
@@ -60,21 +60,22 @@ resources:
       security_groups:
         - "default"
         - "ssh-ingress"
+        - "openvpn"
   server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: {get_param: public_network_id}
-      port_id: {get_resource: server_public_port}
-  server_public_port:
-    type: OS::Neutron::Port
-    properties:
-      network_id: {get_param: floating_network_id}
-      fixed_ips:
-        - subnet_id: {get_param: floating_subnet_id}
-      security_groups:
-        - "default"
-        - "ssh-ingress"
-        - "wireguard"
+      port_id: {get_resource: server_private_port}
+  # server_public_port:
+  #   type: OS::Neutron::Port
+  #   properties:
+  #     network_id: {get_param: floating_network_id}
+  #     fixed_ips:
+  #       - subnet_id: {get_param: floating_subnet_id}
+  #     security_groups:
+  #       - "default"
+  #       - "ssh-ingress"
+  #       - "wireguard"
   server_init:
     type: OS::Heat::CloudConfig
     properties:
@@ -112,13 +113,14 @@ resources:
           - bash -c /etc/setup-k8s-clients.sh
           - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
+
 outputs:
   server_public_ip:
     description: public IP address of the deployed compute instance
     value: {get_attr: [server_floating_ip, floating_ip_address]}
-  server_dmz_ip:
-    description: private IP address on the dmz_network
-    value: {get_attr: [server, networks, dmz_network, 0]}
+  # server_dmz_ip:
+  #   description: private IP address on the dmz_network
+  #   value: {get_attr: [server, networks, dmz_network, 0]}
   server_private_ip:
     description: private IP address on an private_network network only accessible through the firewall
     value: {get_attr: [server, networks, private_network, 0]}
