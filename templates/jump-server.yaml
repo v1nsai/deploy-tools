@@ -24,7 +24,7 @@ parameters:
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: "185f762f-d863-4c62-a7fe-c292d23a0e94"
+    default: "c84199a1-bd52-4624-a4f1-e7df44679779"
   floating_network_id:
     type: string
     default: dmz_network
@@ -48,7 +48,7 @@ resources:
       key_name: {get_param: key_name}
       networks:
         - port: {get_resource: server_private_port}
-        # - port: {get_resource: server_public_port}
+          # - port: {get_resource: server_public_port}
       user_data_format: RAW
       user_data: {get_resource: server_init}
   server_private_port:
@@ -105,15 +105,19 @@ resources:
             owner: drew:drew
             permissions: '700'
             path: /etc/setup-k8s-clients.sh
+          - content: {get_file: ../scripts/setup-openvpn.sh}
+            permissions: '700'
+            path: /etc/setup-openvpn.sh
         runcmd:
           - apt update
           - apt install -y bash-completion
+          - cp /etc/skel/.bashrc /home/drew/.profile
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-openstackclient.sh
           - bash -c /etc/setup-k8s-clients.sh
-          - echo drew:jonk9ym. | chpasswd
+          # - bash -c /etc/setup-openvpn.sh
+          # - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
-
 outputs:
   server_public_ip:
     description: public IP address of the deployed compute instance

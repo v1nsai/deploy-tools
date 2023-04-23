@@ -28,11 +28,10 @@ openstack coe cluster template create wordpress \
         kube_tag=v1.23.3-rancher1,\
         cloud_provider_enabled=true,\
         hyperkube_prefix=docker.io/rancher/,\
-        ingress_controller=octavia,\
-        master_lb_floating_ip_enabled=true" \
-    --master-lb-enabled
+        master_lb_floating_ip_enabled=false"
     # --docker-volume-size 20 \
     # --network-driver flannel \
+    # --labels="ingress_controller=octavia"\
 
 echo "Creating cluster..."
 openstack coe cluster create wordpress \

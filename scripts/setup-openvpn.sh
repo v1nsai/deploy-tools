@@ -45,7 +45,7 @@ cp /home/drew/easy-rsa/pki/issued/client1.crt /home/drew/client-configs/keys/
 
 echo "Configuring OpenVPN..."
 # server.conf
-cp /usr/share/doc/openvpn/examples/sample-config-files/server.conf /etc/openvpn/server/
+cp /usr/share/doc/openvpn/examples/sample-config-files/server.conf /etc/openvpn/server.conf
 sed -i'' -e 's/\(tls-auth ta.key.*\)/;\1\ntls-crypt ta.key/' /etc/openvpn/server.conf
 sed -i'' -e 's/\(cipher AES-256-CBC\)/;\1\ncipher AES-256-GCM\nauth SHA256/' /etc/openvpn/server.conf
 sed -i'' -e 's/\(dh dh2048.pem\)/;\1\ndh none/' /etc/openvpn/server.conf
@@ -62,7 +62,7 @@ sed -i'' -e 's/explicit-exit-notify .*/explicit-exit-notify 0/' /etc/openvpn/ser
 sed -i'' -e 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
 sysctl -p
 
-# ufw TODO
+# ufw TODO there's a way to do this
 # rules=$(cat <<EOF
 # # START OPENVPN RULES
 # # NAT table rules
@@ -75,6 +75,7 @@ sysctl -p
 # EOF)
 # sed -i'' -e 's/\#\s*ufw-before-forward.*?#/"'"$rules"'"/' /etc/ufw/before.rules
 
+mv /home/drew/
 sed -i'' -e 's/DEFAULT_FORWARD_POLICY="DROP"/DEFAULT_FORWARD_POLICY="ACCEPT"/' /etc/default/ufw
 
 ufw allow 443
