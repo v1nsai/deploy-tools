@@ -10,6 +10,7 @@ source /home/drew/auth/alterncloud.env
 mkdir /home/drew/.kube
 # openstack coe cluster config wordpress --dir /home/drew/.kube/ --use-certificate
 
+# Deployments
 # TODO remove this
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 # helm install techig bitnami/wordpress

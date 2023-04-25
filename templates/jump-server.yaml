@@ -24,7 +24,7 @@ parameters:
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: "c84199a1-bd52-4624-a4f1-e7df44679779"
+    default: 5ba00bd7-ce22-4be1-80a0-e84e0b1503b4
   floating_network_id:
     type: string
     default: dmz_network
@@ -108,13 +108,22 @@ resources:
           - content: {get_file: ../scripts/setup-openvpn.sh}
             permissions: '700'
             path: /etc/setup-openvpn.sh
+          - content: {get_file: ../config/trustalldomains.config.php}
+            path: /home/drew/trustalldomains.config.php
+          - content: {get_file: ../scripts/setup-socksproxy.sh}
+            permissions: 700
+            path: /etc/setup-socksproxy.sh
+          - content: {get_file: ../config/danted.conf}
+            path: /home/drew/danted.conf
         runcmd:
           - apt update
           - apt install -y bash-completion
-          - cp /etc/skel/.bashrc /home/drew/.profile
+          - cp /etc/skel/.bashrc /home/drew/.profile && echo 'PATH="$PATH:~/.local/bin"'
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-openstackclient.sh
           - bash -c /etc/setup-k8s-clients.sh
+          - 
+          # - bash -c /etc/setup-socksproxy.sh
           # - bash -c /etc/setup-openvpn.sh
           # - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
