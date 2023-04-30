@@ -46,7 +46,7 @@ parameters:
     description: Image ID or image name to use for the COE nodes/masters
     constraints:
       - custom_constraint: glance.image
-    default: Fedora CoreOS (37.20230205.3.0-stable)
+    default: f6ed7a8b-f808-4cfe-ab9d-0a492e14f2ff
   external_network:
     type: string
     description: The external neutron network to attach the Cluster
