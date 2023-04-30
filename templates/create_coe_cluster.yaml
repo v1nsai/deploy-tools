@@ -76,6 +76,18 @@ parameters:
     type: boolean
     description: clusters should have a floating ip for master nodes or not
     default: False
+  cluster_template_labels:
+    type: json
+    default:
+      {
+          "kube_dashboard_enabled": "true",
+          "cinder_csi_enabled": "true",
+          "kube_tag": "v1.23.3-rancher1",
+          "cloud_provider_enabled": "true",
+          "hyperkube_prefix": "docker.io/rancher/",
+          "csi_snapshotter_tag": "v4.0.0",
+          "ingress_controller": "octavia"
+      }
 
 resources:
   coe_cluster:
@@ -98,13 +110,16 @@ resources:
       image: { get_param: image }
       external_network: { get_param: external_network }
     #   fixed_network: { get_param: fixed_network }
-      docker_volume_size: 50
+      # docker_volume_size: 50
+      volume_driver: cinder
       docker_storage_driver: overlay
       coe: { get_param: coe }
       server_type: { get_param: server_type }
       registry_enabled: { get_param: registry_enabled }
       master_lb_enabled: { get_param: master_lb_enabled }
       floating_ip_enabled: { get_param: floating_ip_enabled }
+      labels: { get_param: cluster_template_labels }
+
 
 outputs:
   coe_api_address:
