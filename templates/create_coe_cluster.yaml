@@ -86,7 +86,8 @@ parameters:
           "cloud_provider_enabled": "true",
           "hyperkube_prefix": "docker.io/rancher/",
           "csi_snapshotter_tag": "v4.0.0",
-          "ingress_controller": "octavia"
+          "ingress_controller": "octavia",
+          "kubelet_options": "--node-labels magnum.openstack.org/role=ingress"
       }
 
 resources:

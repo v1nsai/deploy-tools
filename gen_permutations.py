@@ -19,8 +19,7 @@ def get_weak_letters_for_stop(stop, char, errors):
     return weak_letters
 
 def perms_for_character(index, badchars, combos, stop, generated_for_index):
-    # start_len = len(combos)
-    # combos = perms_for_character(state, weak_letters, index, chars, combos)
+    '''Recursively generate all permutations for a single replaceable char'''
     if not generated_for_index.setdefault(index, False):
         for badchars in weak_letters[index]:
             for badchar in badchars:
