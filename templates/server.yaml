@@ -35,7 +35,7 @@ parameters:
     type: string
     default: dmz_subnet1
   security_groups: 
-    type: comma_delimited_list 
+    type: comma_delimited_list
     default: 
       - "ssh-ingress"
       - "default"

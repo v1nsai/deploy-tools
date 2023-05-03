@@ -8,7 +8,7 @@ parameters:
   image:
     type: string
     description: Name of image to use for servers
-    default: Ubuntu 22.04 (Jammy)
+    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Ubuntu 22.04 (Jammy)
   flavor:
     type: string
     description: Flavor to use for servers
@@ -20,11 +20,11 @@ parameters:
   private_network_id:
     type: string
     description: ID of private network into which servers get deployed
-    default: wordpress
+    default: test
   private_subnet_id:
     type: string
     description: ID of private sub network into which servers get deployed
-    default: 5ba00bd7-ce22-4be1-80a0-e84e0b1503b4
+    default: a0b1c53c-d3ee-4fe8-b4b0-e6044d2516ed
   floating_network_id:
     type: string
     default: dmz_network
@@ -101,20 +101,6 @@ resources:
             owner: root:root
             permissions: '600'
             path: /home/drew/auth/alterncloud.env
-          - content: {get_file: ../scripts/setup-k8s-clients.sh}
-            owner: drew:drew
-            permissions: '700'
-            path: /etc/setup-k8s-clients.sh
-          - content: {get_file: ../scripts/setup-openvpn.sh}
-            permissions: '700'
-            path: /etc/setup-openvpn.sh
-          - content: {get_file: ../config/trustalldomains.config.php}
-            path: /home/drew/trustalldomains.config.php
-          - content: {get_file: ../scripts/setup-socksproxy.sh}
-            permissions: 700
-            path: /etc/setup-socksproxy.sh
-          - content: {get_file: ../config/danted.conf}
-            path: /home/drew/danted.conf
         runcmd:
           - apt update
           - apt install -y bash-completion
@@ -122,10 +108,7 @@ resources:
           - bash -c /etc/setup-ssh.sh
           - bash -c /etc/setup-openstackclient.sh
           - bash -c /etc/setup-k8s-clients.sh
-          - 
-          # - bash -c /etc/setup-socksproxy.sh
-          # - bash -c /etc/setup-openvpn.sh
-          # - echo drew:jonk9ym. | chpasswd
+          - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
 outputs:
   server_public_ip:
