@@ -8,4 +8,4 @@ kubectl create secret generic wordpress-auth \
     --from-file=auth/techig-wordpress-cloud.conf \
     --from-literal=wordpress-password='jonk9ym.;lkj;lkj'
 
-helm install -f helm/wordpress-values.yaml techig-wordpress oci://registry-1.docker.io/bitnamicharts/wordpress
+helm install -f helm/wordpress-values.yaml -f https://github.com/bitnami/charts/blob/main/bitnami/wordpress/templates/deployment.yaml techig-wordpress oci://registry-1.docker.io/bitnamicharts/wordpress

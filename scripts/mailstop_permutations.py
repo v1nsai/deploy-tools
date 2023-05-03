@@ -1,6 +1,8 @@
 import pandas as pd
 import re
 
+'''Generate all possible Mail Stop permutations given a list of substitutions per character'''
+
 mail_stops = pd.read_excel('/Users/doctor_ew/Downloads/Mail Stops for Permutations.xlsx', sheet_name=0)
 character_permutations = pd.read_excel('/Users/doctor_ew/Downloads/Mail Stops for Permutations.xlsx', sheet_name=1)
 known_permutations = pd.DataFrame(columns=['Mail Stop', 'Known Permutations'])
