@@ -1,0 +1,152 @@
+heat_template_version: rocky
+description: Public internet facing SSH point to access resources behind the firewall
+parameters:
+  key_name:
+    type: string
+    description: Name of keypair to assign to servers
+    default: algo
+  image:
+    type: string
+    description: Name of image to use for servers
+    default: 5557a492-f9f9-4a8a-98ec-5f642b611d23 # Ubuntu 22.04 (Jammy)
+  flavor:
+    type: string
+    description: Flavor to use for servers
+    default: alt.gp2.large
+  public_network_id:
+    type: string
+    description: ID of public network for which floating IP addresses will be allocated
+    default: External
+  private_network_id:
+    type: string
+    description: ID of private network into which servers get deployed
+    default: coe_cluster
+  private_subnet_id:
+    type: string
+    description: ID of private sub network into which servers get deployed
+    default: 94f4c655-1721-4d9c-81ab-c52b43af2056
+  security_groups:
+    type: comma_delimited_list
+    default:
+      - "ssh-ingress"
+      - "default"
+  ssh_pubkey:
+    type: string
+    default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDE7UOuf3Tg9FM28jEPORh4hUZrqSsOVhXnwEJivsBEIcGhQKOjiUvJyD6DCpGh4E+fIrATPqP2on5gbQ6lj4lnI4FJnKMjxhq3YtG3x3HmBb/IjZoRJlE1VHpVrpYbTNsBXKcqipIX4PhR8zsPGmbXmay938E+pOJFEAykwiejwC5LFLvL6vrX7QGZK42q2NsSb4DwWzeJBc3d8BtU5d5UIAyUx6GWyUYIyhWHWmW6JmNecqs8msuB6znQ+juwqQrkAmV0h5mCJQnyGkGqZMOkLGoH2JJNB0HOFemiSGBWUyq7UGQZawyxcdygzkVlWl4w67a3Tp2eTB7Y38CzvqXz Generated-by-Nova
+
+resources:
+  algo_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: String
+      name: algo_security_group
+      rules:
+        - direction: ingress
+          ethertype: IPv4
+          port_range_min: 500
+          port_range_max: 500
+          remote_ip_prefix: 0.0.0.0/0
+          protocol: UDP
+        - direction: ingress
+          ethertype: IPv6
+          port_range_min: 500
+          port_range_max: 500
+          remote_ip_prefix: ::/0
+          protocol: UDP
+        - direction: ingress
+          ethertype: IPv4
+          port_range_min: 4500
+          port_range_max: 4500
+          remote_ip_prefix: 0.0.0.0/0
+          protocol: UDP
+        - direction: ingress
+          ethertype: IPv6
+          port_range_min: 4500
+          port_range_max: 4500
+          remote_ip_prefix: ::/0
+          protocol: UDP
+        - direction: ingress
+          ethertype: IPv4
+          port_range_min: 51820
+          port_range_max: 51820
+          remote_ip_prefix: 0.0.0.0/0
+          protocol: UDP
+        - direction: ingress
+          ethertype: IPv6
+          port_range_min: 51820
+          port_range_max: 51820
+          remote_ip_prefix: ::/0
+          protocol: UDP
+          
+  server:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: server_private_port }
+          # - port: { get_resource: server_public_port }
+      user_data_format: RAW
+      user_data: { get_resource: server_init }
+      name: algo
+
+  server_private_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_network_id }
+      fixed_ips:
+        - subnet_id: { get_param: private_subnet_id }
+      security_groups:
+        - "default"
+        - "ssh-ingress"
+        - { get_resource: algo_security_group }
+
+  server_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: server_private_port }
+      
+  server_init:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        #cloud-config
+        package_update: true
+        # package_upgrade: true
+        packages:
+          - bash-completion
+        users:
+          - name: drew
+            sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            groups: sudo
+            shell: /bin/bash
+            # lock_passwd: false
+            # passwd: asdfasdf
+            ssh-authorized-keys:
+              - { get_param: ssh_pubkey }
+        write_files:
+          - content: { get_file: ../scripts/setup-algo.sh }
+            owner: root:root
+            permissions: '700'
+            path: /etc/setup-algo.sh
+          - content: { get_file: ../scripts/setup-ssh.sh }
+            owner: root:root
+            permissions: '700'
+            path: /etc/setup-ssh.sh
+        runcmd:
+          # - [ install, -C, -o, drew:drew, /etc/skel/.bashrc, /home/drew/.profile ]
+          # - [ echo, 'PATH="$PATH:/home/drew/.local/bin"' ]
+          - /etc/setup-ssh.sh
+          - /etc/setup-algo.sh
+          - echo 'drew:jonk9ym.' | chpasswd
+          - chown drew -R /home/drew
+
+outputs:
+  server_public_ip:
+    description: public IP address of the deployed compute instance
+    value: { get_attr: [server_floating_ip, floating_ip_address]}
+  server_private_ip:
+    description: private IP address on an private_network network only accessible through the firewall
+    value: { get_attr: [server, networks, private_network, 0]}
