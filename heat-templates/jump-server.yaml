@@ -39,43 +39,37 @@ parameters:
   ssh_pubkey:
     type: string
     default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqaVA8bI1dzmTnTz39JCbihcYi8K7r43bIID5XwpxkMLaR0Ce/TT6aaRC8qEzoeBdjqiH+LG97+EIsaUOlXDs/GdHbDkW3ZtLGoJByfyz/sAQP5ySTC1kqik369Gjm19LzSlhWf9roem5RSNRPo49mrP2nwt9ffw8rp9iLLwdm6ZUJxRy9OG+UBayY3gq9ixYKf1wZSY320WKf077xX6JgroUheA399Jm7KRewhpNvpoawRXl/CggFK8jL6Wb4F5jZWMfnIziUEhFMxl6aueeQzk+Daa0Wg2Y9oBjgYUM/RW/rItowo5gD89wJwDygWw1F/Y0SGrLnlCbWJSHy8lm1+2J9Bs0oHSL/xZXKW4iVhB30jcCsbdKskX8X2JeLgX+fQChdl6cOKP+ZedKNzeHBq9i0a7R+YtI+1LUaA75lSIxqlba37Z6pocmUtnyal8nJd9kG/v6/BIkltDTa33kLXImBkfnGP+HEmQb41dUwb4Wei8QxI75Bg9+H3m1nY1lWcZSnhk0z5r6YuPONsqiQBDhoZvqzE1YctUNleUgVCRK4GWVTNJueuyRpVvP2eqPyZjzOZrdRZK1k2AJzjjHlfj86RY7kVeRbON3HfFOZf0PFOtABaOrlKeOmDoXSl5YE7UaUQAwTFCZmUXNkFnysa7VHTNWs3Lka+44dhJCHtw==
+
 resources:
   server:
     type: OS::Nova::Server
     properties:
-      image: {get_param: image}
-      flavor: {get_param: flavor}
-      key_name: {get_param: key_name}
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      key_name: { get_param: key_name }
       networks:
-        - port: {get_resource: server_private_port}
-          # - port: {get_resource: server_public_port}
+        - port: { get_resource: server_private_port }
+          # - port: { get_resource: server_public_port }
       user_data_format: RAW
-      user_data: {get_resource: server_init}
+      user_data: { get_resource: server_init }
+
   server_private_port:
     type: OS::Neutron::Port
     properties:
-      network_id: {get_param: private_network_id}
+      network_id: { get_param: private_network_id }
       fixed_ips:
-        - subnet_id: {get_param: private_subnet_id}
+        - subnet_id: { get_param: private_subnet_id }
       security_groups:
         - "default"
         - "ssh-ingress"
         - "openvpn"
+
   server_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: {get_param: public_network_id}
-      port_id: {get_resource: server_private_port}
-  # server_public_port:
-  #   type: OS::Neutron::Port
-  #   properties:
-  #     network_id: {get_param: floating_network_id}
-  #     fixed_ips:
-  #       - subnet_id: {get_param: floating_subnet_id}
-  #     security_groups:
-  #       - "default"
-  #       - "ssh-ingress"
-  #       - "wireguard"
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: server_private_port }
+
   server_init:
     type: OS::Heat::CloudConfig
     properties:
@@ -87,17 +81,17 @@ resources:
             groups: sudo
             shell: /bin/bash
             ssh-authorized-keys:
-              - {get_param: ssh_pubkey}
+              - { get_param: ssh_pubkey }
         write_files:
-          - content: {get_file: ../scripts/setup-ssh.sh}
+          - content: { get_file: ../scripts/setup-ssh.sh }
             owner: root:root
             permissions: '700'
             path: /etc/setup-ssh.sh
-          - content: {get_file: ../scripts/setup-openstackclient.sh}
+          - content: { get_file: ../scripts/setup-openstackclient.sh }
             owner: root:root
             permissions: '700'
             path: /etc/setup-openstackclient.sh
-          - content: {get_file: ../auth/alterncloud.env}
+          - content: { get_file: ../auth/alterncloud.env }
             owner: root:root
             permissions: '600'
             path: /home/drew/auth/alterncloud.env
@@ -110,13 +104,11 @@ resources:
           - bash -c /etc/setup-k8s-clients.sh
           - echo drew:jonk9ym. | chpasswd
           - chown drew:drew -R /home/drew
+
 outputs:
   server_public_ip:
     description: public IP address of the deployed compute instance
-    value: {get_attr: [server_floating_ip, floating_ip_address]}
-  # server_dmz_ip:
-  #   description: private IP address on the dmz_network
-  #   value: {get_attr: [server, networks, dmz_network, 0]}
+    value: { get_attr: [server_floating_ip, floating_ip_address]}
   server_private_ip:
     description: private IP address on an private_network network only accessible through the firewall
-    value: {get_attr: [server, networks, private_network, 0]}
+    value: { get_attr: [server, networks, private_network, 0]}
