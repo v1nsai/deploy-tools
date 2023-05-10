@@ -1105,10 +1105,10 @@ mariadb:
   ##      https://github.com/bitnami/containers/blob/main/bitnami/mariadb/README.md#creating-a-database-user-on-first-run
   ##
   auth:
-    rootPassword: ""
+    rootPassword: "dummypassword"
     database: bitnami_wordpress
     username: bn_wordpress
-    password: ""
+    password: "dummypassword"
   ## MariaDB Primary configuration
   ##
   primary:

@@ -1,11 +1,14 @@
 #!/bin/bash
 
 set -e
+source auth/wordpress.env
 
+# Create application credential and use it to create a kubernetes secret
 openstack application credential create techig-wordpress
 # TODO grab ID and secret after creating them
 kubectl create secret generic wordpress-auth \
-    --from-file=auth/techig-wordpress-cloud.conf \
-    --from-literal=wordpress-password='jonk9ym.;lkj;lkj'
+    --from-file=wordpress/cloud.conf \
+    --from-literal=wordpress-password="$WORDPRESS_PASSWORD"
 
-helm install -f helm/wordpress-values.yaml -f https://github.com/bitnami/charts/blob/main/bitnami/wordpress/templates/deployment.yaml techig-wordpress oci://registry-1.docker.io/bitnamicharts/wordpress
+helm install -f wordpress/values.yaml techig-wordpress oci://registry-1.docker.io/bitnamicharts/wordpress \
+    --set "mariadb.auth.rootPassword=$MARIADB_PASSWORD,mariadb.auth.password=$MARIADB_PASSWORD"
