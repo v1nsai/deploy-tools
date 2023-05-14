@@ -1,191 +1,196 @@
-<mxfile host="65bd71144e">
-    <diagram name="Page-1" id="n5Qb5iA8dRXw3r0Tk5m8">
-        <mxGraphModel dx="1351" dy="514" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
-            <root>
-                <mxCell id="0"/>
-                <mxCell id="1" parent="0"/>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-1" value="&lt;font style=&quot;&quot; color=&quot;#ffffff&quot;&gt;Public Internet&lt;/font&gt;" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#B20000;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#FF0000;" parent="1" vertex="1">
-                    <mxGeometry x="-1037" y="-71" width="936" height="637" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-44" value="VPN" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#4376BB;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;" parent="1" vertex="1">
-                    <mxGeometry x="-1020" y="45" width="436" height="510" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-45" value="Nextcloud DMZ Network" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#001DBC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" parent="1" vertex="1">
-                    <mxGeometry x="-1003" y="203" width="403" height="335" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-46" value="" style="shape=mxgraph.ibm.box;prType=cloud;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#3700CC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#3700CC;" parent="1" vertex="1">
-                    <mxGeometry x="-887" y="293" width="153" height="121" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-9" value="VPN" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#4376BB;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;" parent="1" vertex="1">
-                    <mxGeometry x="-542" y="45" width="428" height="511" as="geometry"/>
-                </mxCell>
-                <mxCell id="30" value="" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#001DBC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" vertex="1" parent="1">
-                    <mxGeometry x="-523" y="383" width="396.5" height="160" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-94" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-38" target="Zk3EBVXWUtb9SHXZOmo2-63" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="24" value="Nextcloud k8s Network" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;" vertex="1" connectable="0" parent="Zk3EBVXWUtb9SHXZOmo2-94">
-                    <mxGeometry x="-0.5832" y="3" relative="1" as="geometry">
-                        <mxPoint x="15" y="148" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-18" value="" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#001DBC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" parent="1" vertex="1">
-                    <mxGeometry x="-523" y="235" width="397" height="125" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.446;entryY=0.167;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-22" target="Zk3EBVXWUtb9SHXZOmo2-10" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-22" value="&lt;font color=&quot;#ffffff&quot;&gt;Floating IP&lt;br&gt;(VPN ingress only)&lt;br&gt;&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/InternetServices2.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-185" y="35" width="25" height="25" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-8" value="User RustDesk &#10;Client&#10;" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
-                    <mxGeometry x="-374.5" y="56" width="50" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-37" target="Zk3EBVXWUtb9SHXZOmo2-55" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="70" value="VPN Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="Zk3EBVXWUtb9SHXZOmo2-101">
-                    <mxGeometry x="-0.1257" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-37" target="Zk3EBVXWUtb9SHXZOmo2-22" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="69" value="VPN Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="Zk3EBVXWUtb9SHXZOmo2-102">
-                    <mxGeometry x="-0.1953" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-37" value="&lt;font color=&quot;#ffffff&quot;&gt;User Device&lt;br&gt;(client support for iOS, Android, Windows, Linux, OSX)&lt;br&gt;&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/users/device.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-590" y="-60" width="60" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-38" value="User Nextcloud Client" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static-00.iconduck.com/assets.00/nextcloud-icon-512x512-quluhp24.png;" parent="1" vertex="1">
-                    <mxGeometry x="-840" y="77" width="50" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="71" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-55" target="Zk3EBVXWUtb9SHXZOmo2-47">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-55" value="&lt;font color=&quot;#ffffff&quot;&gt;Floating IP &lt;br&gt;(VPN ingress only)&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/InternetServices2.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-737.75" y="35" width="25" height="25" as="geometry"/>
-                </mxCell>
-                <mxCell id="39" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-3" target="Zk3EBVXWUtb9SHXZOmo2-8">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="42" value="RustDesk DMZ Network" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="39">
-                    <mxGeometry x="-0.2355" y="3" relative="1" as="geometry">
-                        <mxPoint x="-24" y="60" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="54" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-3" target="35">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="-491" y="293"/>
-                            <mxPoint x="-491" y="460"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="55" value="RustDesk Network" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="54">
-                    <mxGeometry x="0.3881" y="1" relative="1" as="geometry">
-                        <mxPoint x="44" y="-5" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="65" value="User&lt;br&gt;Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="54">
-                    <mxGeometry x="-0.3384" relative="1" as="geometry">
-                        <mxPoint x="-1" y="21" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-3" value="RustDesk Relay Server" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
-                    <mxGeometry x="-423" y="268.5" width="48.5" height="48.5" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-47" value="&lt;font color=&quot;#ffffff&quot;&gt;VPN Server&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-712.75" y="218" width="45" height="45" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-63" target="Zk3EBVXWUtb9SHXZOmo2-83" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="64" value="Outgoing Connections" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="Zk3EBVXWUtb9SHXZOmo2-97">
-                    <mxGeometry x="0.4115" relative="1" as="geometry">
-                        <mxPoint x="2" y="-11" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="44" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-63" target="21">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-63" value="Nextcloud Hub" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static-00.iconduck.com/assets.00/nextcloud-icon-512x512-quluhp24.png;" parent="1" vertex="1">
-                    <mxGeometry x="-840" y="330" width="50" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="22" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-83" target="Zk3EBVXWUtb9SHXZOmo2-47">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="-687" y="491"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-83" value="&lt;font color=&quot;#ffffff&quot;&gt;Proxy/firewall&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-837.5" y="468" width="45" height="45" as="geometry"/>
-                </mxCell>
-                <mxCell id="21" value="&lt;font color=&quot;#ffffff&quot;&gt;Persistent&lt;br&gt;File Storage&lt;br&gt;&lt;/font&gt;" style="aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=#ffffff;fontSize=12;spacingTop=3;image;image=img/lib/ibm/data/data_services.svg;" vertex="1" parent="1">
-                    <mxGeometry x="-977" y="330" width="50" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-10" value="&lt;font color=&quot;#ffffff&quot;&gt;VPN Server&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-193" y="271" width="45" height="45" as="geometry"/>
-                </mxCell>
-                <mxCell id="13" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-27" target="Zk3EBVXWUtb9SHXZOmo2-10">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="Zk3EBVXWUtb9SHXZOmo2-27" value="&lt;font color=&quot;#ffffff&quot;&gt;Proxy/firewall&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
-                    <mxGeometry x="-302" y="271" width="45" height="45" as="geometry"/>
-                </mxCell>
-                <mxCell id="61" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="34" target="Zk3EBVXWUtb9SHXZOmo2-27">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="34" value="RustDesk&#10;Virtual Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="1">
-                    <mxGeometry x="-303.75" y="438" width="48.5" height="48.5" as="geometry"/>
-                </mxCell>
-                <mxCell id="58" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="35" target="Zk3EBVXWUtb9SHXZOmo2-27">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="-450" y="412"/>
-                            <mxPoint x="-279" y="413"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="35" value="User's Virtual &#10;Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="1">
-                    <mxGeometry x="-474" y="438" width="48.5" height="48.5" as="geometry"/>
-                </mxCell>
-                <mxCell id="62" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1" source="36" target="Zk3EBVXWUtb9SHXZOmo2-27">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="-188" y="414"/>
-                            <mxPoint x="-279" y="413"/>
-                            <mxPoint x="-280" y="365"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="36" value="RustDesk&#10;Virtual Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="1">
-                    <mxGeometry x="-212" y="438.75" width="48.5" height="48.5" as="geometry"/>
-                </mxCell>
-                <mxCell id="60" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" edge="1" parent="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="-364.75" y="438" as="sourcePoint"/>
-                        <mxPoint x="-279.5" y="316" as="targetPoint"/>
-                        <Array as="points">
-                            <mxPoint x="-365" y="413"/>
-                            <mxPoint x="-279" y="413"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="63" value="Outgoing Connections" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" vertex="1" connectable="0" parent="60">
-                    <mxGeometry x="0.48" relative="1" as="geometry">
-                        <mxPoint y="28" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="48" value="RustDesk&#10;Virtual Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" vertex="1" parent="1">
-                    <mxGeometry x="-389" y="438" width="48.5" height="48.5" as="geometry"/>
-                </mxCell>
-            </root>
-        </mxGraphModel>
-    </diagram>
+<mxfile host="Electron" modified="2023-05-11T23:14:11.996Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" version="21.2.8" etag="kgSKy1up8hKp6y9zcN7q" type="device">
+  <diagram name="Page-1" id="n5Qb5iA8dRXw3r0Tk5m8">
+    <mxGraphModel dx="2423" dy="1062" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-1" value="&lt;font style=&quot;&quot; color=&quot;#ffffff&quot;&gt;Public Internet&lt;/font&gt;" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#B20000;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#FF0000;" parent="1" vertex="1">
+          <mxGeometry x="-1037" y="-71" width="936" height="637" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-44" value="VPN" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#4376BB;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;" parent="1" vertex="1">
+          <mxGeometry x="-1020" y="45" width="436" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-45" value="Nextcloud DMZ Network" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#001DBC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="-1003" y="203" width="403" height="335" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-46" value="" style="shape=mxgraph.ibm.box;prType=cloud;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#3700CC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#3700CC;" parent="1" vertex="1">
+          <mxGeometry x="-887" y="293" width="153" height="121" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-9" value="VPN" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#4376BB;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;" parent="1" vertex="1">
+          <mxGeometry x="-542" y="45" width="428" height="511" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#001DBC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="-523" y="383" width="396.5" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-94" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-38" target="Zk3EBVXWUtb9SHXZOmo2-63" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="Nextcloud k8s Network" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;" parent="Zk3EBVXWUtb9SHXZOmo2-94" vertex="1" connectable="0">
+          <mxGeometry x="-0.5832" y="3" relative="1" as="geometry">
+            <mxPoint x="15" y="148" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-xjpAz8GASwxe2ccpQj-71" value="User Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Zk3EBVXWUtb9SHXZOmo2-94">
+          <mxGeometry x="0.205" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-18" value="" style="shape=mxgraph.ibm.box;prType=public;fontStyle=0;verticalAlign=top;align=left;spacingLeft=32;spacingTop=4;fillColor=none;rounded=0;whiteSpace=wrap;html=1;strokeColor=#001DBC;strokeWidth=3;dashed=0;container=0;spacing=-4;collapsible=0;expand=0;recursiveResize=0;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="-523" y="235" width="397" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.446;entryY=0.167;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-22" target="Zk3EBVXWUtb9SHXZOmo2-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-22" value="&lt;font color=&quot;#ffffff&quot;&gt;Floating IP&lt;br&gt;(VPN ingress only)&lt;br&gt;&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/InternetServices2.svg;" parent="1" vertex="1">
+          <mxGeometry x="-185" y="35" width="25" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="3-xjpAz8GASwxe2ccpQj-73" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-8" target="Zk3EBVXWUtb9SHXZOmo2-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="3-xjpAz8GASwxe2ccpQj-74" value="User Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="3-xjpAz8GASwxe2ccpQj-73">
+          <mxGeometry x="0.2767" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-8" value="User RustDesk &#xa;Client&#xa;" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
+          <mxGeometry x="-374.5" y="56" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-37" target="Zk3EBVXWUtb9SHXZOmo2-55" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70" value="VPN Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" parent="Zk3EBVXWUtb9SHXZOmo2-101" vertex="1" connectable="0">
+          <mxGeometry x="-0.1257" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-37" target="Zk3EBVXWUtb9SHXZOmo2-22" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="69" value="VPN Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" parent="Zk3EBVXWUtb9SHXZOmo2-102" vertex="1" connectable="0">
+          <mxGeometry x="-0.1953" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-37" value="&lt;font color=&quot;#ffffff&quot;&gt;User Device&lt;br&gt;(client support for iOS, Android, Windows, Linux, OSX)&lt;br&gt;&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/users/device.svg;" parent="1" vertex="1">
+          <mxGeometry x="-590" y="-60" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-38" value="User Nextcloud Client" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static-00.iconduck.com/assets.00/nextcloud-icon-512x512-quluhp24.png;" parent="1" vertex="1">
+          <mxGeometry x="-840" y="77" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="71" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-55" target="Zk3EBVXWUtb9SHXZOmo2-47" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-55" value="&lt;font color=&quot;#ffffff&quot;&gt;Floating IP &lt;br&gt;(VPN ingress only)&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/InternetServices2.svg;" parent="1" vertex="1">
+          <mxGeometry x="-737.75" y="35" width="25" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="54" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-3" target="35" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-491" y="293" />
+              <mxPoint x="-491" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="55" value="RustDesk Network" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" parent="54" vertex="1" connectable="0">
+          <mxGeometry x="0.3881" y="1" relative="1" as="geometry">
+            <mxPoint x="44" y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="65" value="User&lt;br&gt;Login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" parent="54" vertex="1" connectable="0">
+          <mxGeometry x="-0.3384" relative="1" as="geometry">
+            <mxPoint x="-1" y="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-3" value="RustDesk Relay Server" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
+          <mxGeometry x="-423" y="268.5" width="48.5" height="48.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-47" value="&lt;font color=&quot;#ffffff&quot;&gt;VPN Server&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
+          <mxGeometry x="-712.75" y="218" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-63" target="Zk3EBVXWUtb9SHXZOmo2-83" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="64" value="Outgoing Connections" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" parent="Zk3EBVXWUtb9SHXZOmo2-97" vertex="1" connectable="0">
+          <mxGeometry x="0.4115" relative="1" as="geometry">
+            <mxPoint x="2" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="44" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-63" target="21" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-63" value="Nextcloud Hub" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static-00.iconduck.com/assets.00/nextcloud-icon-512x512-quluhp24.png;" parent="1" vertex="1">
+          <mxGeometry x="-840" y="330" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="22" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontColor=#FFFFFF;rounded=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-83" target="Zk3EBVXWUtb9SHXZOmo2-47" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-687" y="491" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-83" value="&lt;font color=&quot;#ffffff&quot;&gt;Proxy/firewall&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
+          <mxGeometry x="-837.5" y="468" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="&lt;font color=&quot;#ffffff&quot;&gt;Persistent&lt;br&gt;File Storage&lt;br&gt;&lt;/font&gt;" style="aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=#ffffff;fontSize=12;spacingTop=3;image;image=img/lib/ibm/data/data_services.svg;" parent="1" vertex="1">
+          <mxGeometry x="-977" y="330" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-10" value="&lt;font color=&quot;#ffffff&quot;&gt;VPN Server&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
+          <mxGeometry x="-193" y="271" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="13" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" parent="1" source="Zk3EBVXWUtb9SHXZOmo2-27" target="Zk3EBVXWUtb9SHXZOmo2-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Zk3EBVXWUtb9SHXZOmo2-27" value="&lt;font color=&quot;#ffffff&quot;&gt;Proxy/firewall&lt;/font&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/vpc/Instance.svg;" parent="1" vertex="1">
+          <mxGeometry x="-302" y="271" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="61" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" source="34" target="Zk3EBVXWUtb9SHXZOmo2-27" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="RustDesk&#xa;Virtual Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
+          <mxGeometry x="-303.75" y="438" width="48.5" height="48.5" as="geometry" />
+        </mxCell>
+        <mxCell id="58" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" source="35" target="Zk3EBVXWUtb9SHXZOmo2-27" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-450" y="412" />
+              <mxPoint x="-279" y="413" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="35" value="User&#39;s Virtual &#xa;Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
+          <mxGeometry x="-474" y="438" width="48.5" height="48.5" as="geometry" />
+        </mxCell>
+        <mxCell id="62" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" source="36" target="Zk3EBVXWUtb9SHXZOmo2-27" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-188" y="414" />
+              <mxPoint x="-279" y="413" />
+              <mxPoint x="-280" y="365" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="36" value="RustDesk&#xa;Virtual Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
+          <mxGeometry x="-212" y="438.75" width="48.5" height="48.5" as="geometry" />
+        </mxCell>
+        <mxCell id="60" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontColor=#FFFFFF;rounded=0;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-364.75" y="438" as="sourcePoint" />
+            <mxPoint x="-279.5" y="316" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-365" y="413" />
+              <mxPoint x="-279" y="413" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="63" value="Outgoing Connections" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#FFFFFF;" parent="60" vertex="1" connectable="0">
+          <mxGeometry x="0.48" relative="1" as="geometry">
+            <mxPoint y="28" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="48" value="RustDesk&#xa;Virtual Desktop" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Rustdesk.svg/1200px-Rustdesk.svg.png;" parent="1" vertex="1">
+          <mxGeometry x="-389" y="438" width="48.5" height="48.5" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>
