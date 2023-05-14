@@ -1,9 +1,9 @@
 #!/bin/bash
 
 set -e
-kubectl delete sc cinder-default
+kubectl delete sc cinder-default || true
 # Create secret
-kubectl create secret -n kube-system generic cloud-config --from-file=auth/cloud.conf
+kubectl create secret -n kube-system generic cloud-config --from-file=auth/cloud.conf || true
 
 # Deploy controller manager roles with secret
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-openstack/master/manifests/controller-manager/cloud-controller-manager-roles.yaml
@@ -20,5 +20,5 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-ope
 # cd cloud-provider-openstack
 # git checkout tags/v1.23.4
 # rm manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
-# update cacerts lines here TODO
-kubectl -f manifests/cinder-csi-plugin/ apply
+# update cacerts lines here TODO automate this
+kubectl -f cinder-csi-plugin/manifests/ apply
