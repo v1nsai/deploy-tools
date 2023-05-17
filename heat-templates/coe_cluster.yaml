@@ -86,6 +86,7 @@ parameters:
       hyperkube_prefix: "docker.io/rancher/"
       csi_snapshotter_tag: "v4.0.0"
       master_lb_floating_ip_enabled: false
+      floating_ip_enabled: false
 
     # ingress_controller: "octavia"
     # kubelet_options: "--node-labels magnum.openstack.org/role=ingress"
