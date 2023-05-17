@@ -22,3 +22,4 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-ope
 # rm manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
 # update cacerts lines here TODO automate this
 kubectl -f cinder-csi-plugin/manifests/ apply
+kubectl -f cinder-csi-plugin/storageclass.yaml apply

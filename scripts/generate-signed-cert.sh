@@ -21,3 +21,12 @@ cat ca.crt ca.key > ca-bundle.pem
 
 # Bundle the server certificate and key into a single file
 cat server.crt server.key > server-bundle.pem
+
+# Bundle keys and certs
+cat ca.crt server.crt > cert-bundle.pem
+cat ca.key server.key > key-bundle.pem
+
+# Move to auth
+mv -f *.pem auth/
+mv -f *.crt auth/
+mv -f *.key auth/

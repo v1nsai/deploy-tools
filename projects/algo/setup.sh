@@ -7,6 +7,7 @@ source auth/alterncloud.env
 # git clone https://github.com/trailofbits/algo.git ../algo
 cp -f algo/config.cfg ../algo/config.cfg
 cp -f algo/requirements.txt ../algo/requirements.txt
+rm -rf algo/configs || true
 
 # Configure environment, openstacksdk needs to be manually downgraded which requires python < 3.11, 3.9 confirmed working
 python3 -m pip install --user --upgrade virtualenv
@@ -26,4 +27,5 @@ ansible-playbook ../algo/main.yml -e "provider=openstack
 
 # Cleanup
 deactivate
-mv -f ../algo/configs/ algo/
+rm -rf algo/configs/
+cp -rf ../algo/configs/ algo/
