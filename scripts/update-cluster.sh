@@ -4,7 +4,7 @@ set -e
 source auth/alterncloud.env
 
 openstack server delete $1 --wait || true
-scripts/recreate-stack.sh $2 $3
+openstack stack update --template $2 $3 --wait
 projects/algo/setup.sh
 
 rm -rf ~/.kube/config
