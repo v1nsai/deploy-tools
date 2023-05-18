@@ -11,9 +11,9 @@ kubectl create secret -n kube-system generic cloud-config --from-file=auth/cloud
 # Deploy controller manager roles with secret
 # kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-openstack/master/manifests/controller-manager/cloud-controller-manager-roles.yaml
 # kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-openstack/master/manifests/controller-manager/cloud-controller-manager-role-bindings.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-openstack/master/manifests/controller-manager/openstack-cloud-controller-manager-ds.yaml
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-openstack/master/manifests/controller-manager/openstack-cloud-controller-manager-ds.yaml
 
-exit
+# exit
 
 # Deploy Cinder
 # helm repo add cpo https://kubernetes.github.io/cloud-provider-openstack
