@@ -4,4 +4,5 @@ ssh_config
 auth/
 
 projects/algo/configs/*
+.kube*
 *.pem*
