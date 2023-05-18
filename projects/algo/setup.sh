@@ -5,7 +5,7 @@ source auth/alterncloud.env
 
 # Clone repo if necessary, remove generated configs and copy server configs
 # git clone https://github.com/trailofbits/algo.git ../algo
-cp -f projects/algo/config.cfg ../algo/config.cfg
+cp -f $2 ../algo/config.cfg
 cp -f projects/algo/requirements.txt ../algo/requirements.txt
 rm -rf projects/algo/configs || true
 
@@ -18,7 +18,7 @@ python3 -m virtualenv --python="$(command -v python3)" ../algo/env &&
 
 # Run the playbook
 ansible-playbook ../algo/main.yml -e "provider=openstack
-                                        server_name=wireguard
+                                        server_name=$1
                                         ondemand_cellular=false
                                         ondemand_wifi=false
                                         dns_adblocking=true

@@ -53,9 +53,9 @@ parameters:
     constraints:
       - custom_constraint: neutron.network
     default: External
-#   fixed_network:
-#     type: string
-#     default: wordpress
+  fixed_network:
+    type: string
+    default: wordpress
   coe:
     type: string
     description: The Container Orchestration Engine for cluster
@@ -111,7 +111,7 @@ resources:
       master_flavor: { get_param: master_flavor }
       image: { get_param: image }
       external_network: { get_param: external_network }
-    #   fixed_network: { get_param: fixed_network }
+      # fixed_network: { get_param: fixed_network }
       # docker_volume_size: 50
       volume_driver: cinder
       docker_storage_driver: overlay
