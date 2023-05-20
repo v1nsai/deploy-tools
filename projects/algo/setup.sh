@@ -4,7 +4,7 @@ set -e
 source auth/alterncloud.env
 
 # Clone repo if necessary, remove generated configs and copy server configs
-# git clone https://github.com/trailofbits/algo.git ../algo
+git clone https://github.com/trailofbits/algo.git ../algo || true
 cp -f $2 ../algo/config.cfg
 cp -f projects/algo/requirements.txt ../algo/requirements.txt
 rm -rf projects/algo/configs || true
