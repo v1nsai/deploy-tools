@@ -6,7 +6,7 @@ kubectl delete sc cinder-default || true
 # Create secret
 kubectl delete secret -n kube-system cloud-config || true
 # kubectl create -f manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
-kubectl create secret -n kube-system generic cloud-config --from-file=auth/cloud.conf
+kubectl create secret -n kube-system generic cloud-config --from-file=$(envsubst < projects/cinder-csi-plugin/)
 
 # Deploy controller manager roles with secret
 # kubectl apply -f https://raw.githubusercontent.com/kubernetes/cloud-provider-openstack/master/manifests/controller-manager/cloud-controller-manager-roles.yaml
