@@ -1,8 +1,15 @@
 .\$*
 .DS_Store
+
+# Protect auth info
 ssh_config
 auth/
-
-projects/algo/configs/*
-.kube*
 *.pem*
+.kube*
+
+# Terraform
+.terraform*
+terraform.tfstate*
+
+# Wireguard
+projects/wireguard/configs/
