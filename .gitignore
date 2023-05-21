@@ -9,7 +9,7 @@ auth/
 
 # Terraform
 .terraform*
-terraform.tfstate*
+*tfstate*
 
 # Wireguard
 projects/wireguard/configs/
