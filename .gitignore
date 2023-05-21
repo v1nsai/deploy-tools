@@ -10,8 +10,5 @@ auth/
 
 # Terraform
 .terraform*
-*tfstate*
-
-# Wireguard
-projects/wireguard/configs/
-projects/wireguard/algo
+*.tfstate
+*.tfstate*
