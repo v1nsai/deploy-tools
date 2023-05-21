@@ -13,3 +13,4 @@ auth/
 
 # Wireguard
 projects/wireguard/configs/
+projects/wireguard/algo
