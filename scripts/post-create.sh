@@ -13,13 +13,18 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 # terraform
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update && sudo apt install terraform
-terraform -install-autocomplete
+sudo apt update && sudo apt install -y terraform vim
 
 # helm
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -x
+curl -fsSL -o https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -x
 
+# openstack clients and python packages
+python -m pip install --user -r projects/wireguard/requirements.txt 
+python -m pip install --user ansible==6.1.0 python-openstackclient python-neutronclient python-octaviaclient python-heatclient python-magnumclient
+
+echo "source /workspaces/deploy-tools/auth/alterncloud.env" >> ~/.bashrc
 source ~/.bashrc
+terraform -install-autocomplete
 
 # kubectl
 # sudo apt-get update
