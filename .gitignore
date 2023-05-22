@@ -7,8 +7,10 @@ ssh_config
 auth/
 *.pem*
 .kube*
+*.subst
 
 # Terraform
 .terraform*
 terraform.tfstate
 *.tfstate*
+
