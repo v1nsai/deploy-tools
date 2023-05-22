@@ -13,4 +13,4 @@ auth/
 .terraform*
 terraform.tfstate
 *.tfstate*
-
+.gitignore
