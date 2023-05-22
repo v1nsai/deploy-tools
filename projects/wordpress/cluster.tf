@@ -42,8 +42,8 @@ resource "openstack_containerinfra_clustertemplate_v1" "wordpress-template" {
   flavor                = "alt.gp2.large"
   master_flavor         = "alt.gp2.large"
   dns_nameserver        = "1.1.1.1,1.0.0.1"
-  docker_storage_driver = "overlay"
-  docker_volume_size    = 10
+  docker_storage_driver = "devicemapper"
+  # docker_volume_size    = 10
   server_type           = "vm"
   volume_driver         = "cinder"
   master_lb_enabled     = false
