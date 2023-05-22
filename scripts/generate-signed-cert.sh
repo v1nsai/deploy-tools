@@ -26,7 +26,7 @@ cat server.crt server.key > server-bundle.pem
 cat ca.crt server.crt > cert-bundle.pem
 cat ca.key server.key > key-bundle.pem
 
-# Move to auth
-mv -f *.pem auth/
-mv -f *.crt auth/
-mv -f *.key auth/
+# Delete everything in auth/wordpress and move all the generated files there
+rm -rf auth/wordpress
+mkdir -p auth/wordpress
+mv ca-bundle.pem server-bundle.pem cert-bundle.pem key-bundle.pem auth/wordpress

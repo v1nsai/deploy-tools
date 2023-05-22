@@ -685,104 +685,11 @@ ingress:
   ##       ...
   ##       -----END CERTIFICATE-----
   ##
-  secrets:
-    - name: wp-tls-secret
-      key: |-
-        -----BEGIN RSA PRIVATE KEY-----
-        MIIEpAIBAAKCAQEA5d2/GyMH/ElvTRTNTfG6QSqbxsPwSw+xBmUCbOsYWYpuYgSO
-        1c1ufHu6vwH7qHqBykqUZuv6gaBZPiEaLbV4WNg7MsJJeMMQqBIZFBGow9sIixtI
-        wYKny9TFH/Fvm7ba22rJIWbvN3+7rs9RAtjR1YqAnlJsgcjIgqcBMvXklocYWo/r
-        h0Nl2+seASh0vauvG6X3b9C7rnlPeoLK1prQuwJq/LxKXeMbfByIex5LFTh1rzch
-        M0mB+mFGRI2nwu6PqZ3OerzJ7m3YO1Kggq0cM721Yc+7Jc+21rXziPoCLxwn3i8P
-        QLq9EartZQxf86+WdmJsozBtuFuOS0tiRfFwFQIDAQABAoIBAQDFi5ZrOeXo+Ss/
-        8TqnW7CXxIhvf4CI4YlfV3uII1qfyQooDoa6U3w6WxMYiBnAptfYA9QZx39X23gW
-        ntgipCwzHlFxw+rkb69m4XbP+oUxHJHxCpeyRhjyYX6vfwxNpA3eN512qUG4Tnv7
-        NYwHiFJ81DTI20kJGIbJUcEEDLJQcVSUlWtvTOcBzIgHAzkyUitTuFRpMFeoTHJS
-        6WgS9315bNzeLE2XNfbhNjIhJ7z38wNsmmXva9ZNXYv61/hYIxl8L4odqDxROOyY
-        L2W4mClFZEFcPr/A43aRjOr2/dZOFw1mCDaYAZBXVI9Ny9hRt50CuGI1KEERVGFI
-        rVxcf6tZAoGBAPQ+NOOC3T3H6FJgyPZKRpQ0k7BTUPzyteqzmbntn0oTKCwgUHqM
-        0Wsd496Jg4mXE5qAkJhjaZPQTpVyvmGe0mkpXiKSPftX9eVXOWiN+XaOWu4PrWBb
-        zDzDBKbEy54cufOLQDKugbEV8mZ78XxQYhp/cCP3GL+j1YSMfblG0dLfAoGBAPDu
-        YBqRWyx5jgu568UT3WcEw0etWFC5sKxeR2v+/ikHDoPc6nHZeIfDnze93t776Y1S
-        trRBueyBIAnlfbLh1UEvYh+blAru/K5oFbNxQvFMyDU7m3NKNmxIKnBNRc+7YWp0
-        FpNWH89Mr8LC6QbdrHNFw7oNV2wTR9sNH/rSUy+LAoGBANc2FP4/qlis1E36EDnM
-        euJObbBZyawI5TjYZmVJNylbNfOjyaYifMjo/odxHiFXqKNkE4TjW/0t+ICBKbX0
-        7yxQkizeNZVKDVa3A9PX/e90QjUwRTH50T3dDTUxhMVeRI+PrNK7p3V1hDC/l6pV
-        XgxBLHvUV89NOm/gJ0vhVjN7AoGAWxRSQljm1aZSG366cXM0BIjZZdRTCZlY/6BY
-        cawg2tOvGgw+mLF0jiZWn1To1vT2cpVtOjGKnqyltvgJj8EtxAmsl3RR/9weq7Pv
-        WDmd6+hx2yXgezH35vFVEcU0efZFOmAOVL5/IffEjeTvAMh2M9GQz1nRzapwRI/u
-        ofw2tEcCgYBtBZEszHXLLA/YeZtbvejCpTmqvzPOSeSHk7y5RAIsJNetxK/Fy5yr
-        072mwBlCskEAFP/U/te90qsp/IqoI+YihLjQAWp8nzOOBLNFmHAaz8SpJK1cDLmy
-        X6a58LfYM5tCQikJgBJQDbG3nwh9m2tQHB3Ju657ruouaL+lW4FTOg==
-        -----END RSA PRIVATE KEY-----
-        -----BEGIN RSA PRIVATE KEY-----
-        MIIEowIBAAKCAQEAuPKQpY+W59QCGT7OrzqB5pIsHKOMXICt85UnRne1Uiv/XYtp
-        yuP6TTARPC7x1DwDrUr7yLbWwNtSUgEaMnOC3uEOhCpbRQ58zG35hOjzKN3L9a/j
-        1AOBgHbR4mJKmYX9sxHyaE+pZKtAtJQKdnHUDeQhJM5Zv9KlUTp9vBWe8FLfu0UL
-        GLOsLmlozbcUj4qe6YkGiP0HC3x1mIn823fEGnW3vVSbpQM1i+csXebe/i+JCV8O
-        hk7/pqm1pS0XzrFVWRS4lRrDQsUIpv0crlJsenHh7AuBtiy8VuDkUC6FOe1oTmzZ
-        anHucwsnurfodQ0c5SYiHWHcXxgfWBeSQK021wIDAQABAoIBACv+HuQS3L12U613
-        oChUTXPwDygcyxVx0m7fasE7VlkeeBbjQ53sTqyvo1nifMmUIPfGn0+mFj03rkQt
-        WPLpQRcNB6vue1lY0dy6yCCSXMy6vXpKhXH4B4TsPo6P/Ni545gFy9h+Inf8uF57
-        3GVCPEO1oSClKPoU/BfvRttHdVAKrwEjvLAe1z7SVkpjh+PKxuZx16SVsvyZTBff
-        /RK1w1LqrZD6s0RwUJtlYGWpxtAvp+o68S/gbaP/Z7AoBBVdohL5TtnsaNbseXlR
-        np17nPIGx2mxUcTaHucHhkhsbjQ1a6oz/lIjcSOB0Ul78J9pUNSENBIxyjv/B1JT
-        x6CLI0ECgYEA3CQ6db0J6FiALngY5+41rUzJdsT0QgMp6EKcjtEiJM052rJGOC+9
-        f5fuxsWcsqytYVTRV7g5P2e7//RC3KImYBDoAsVdGBd86wZQpN1XELJHyubBKSuA
-        edtHOcCbeIAzw6oDvrTplmqn0QlkQU18z5+mT3oO0yvrjrUPoPOYVWECgYEA1xLE
-        h9yVEUUkm32TO5oDXXvTpOCR3b4THp3nLInis6MeuSJe7v39rw+CjqHkxuGeZiSa
-        I3imAh+LsWVQTir0XNgwGJGQRCIMJzBDw3QhCiNxBmkS6iKHBN2ZSI5hXQSMmaEd
-        ifLObX83mCD1bDX3dbih2woYMIA4lJ8aw0PwPzcCgYEAsA61RkZKLyzgTsmzuYFU
-        ImX/1WHMqyKWmG71gG6XLPGIrHPZHsRnfCzJROTz3h2lh+rqhYoLFr9ipl/2PTfd
-        EwVSWCz5t/PI7rmdM0zlfa/nJMmJf+CPnmUVQIXekO+O9pP47MMI8UgZMF+fc26C
-        PBZFTtiiFJbSi84YUrOeh+ECgYBygV95JguHYlSXJEhbFyhrgR2xTo7ai/QJ/O+z
-        WsYD9fjJgG8itr91kMBlx/PRnxWCNEKMWBOqVbk9/T7AH0Zyl/cjXXx9idMGmj+5
-        s/5TM4NdclvLpA5WnNSbOJLFv0JMGOdtJoSY735d1E5WCnVxi5dA0yMFz35QQlUx
-        WN50CQKBgBIcSK/VIJ1Ly4Rs9NM4n+MMrNiL7lCm/lacWlgSrHOLKZohcbvlj4w0
-        cA0glRJOLEy3VV4qUZ4NIDexZhr6BYUeIOhMvzP7qinQvEE8HoGpq+9kn/gOioAA
-        gbVGQUdvclwxsB90DMg5phLy6OdbdVXkpMJgN9knNXw2vGtO+jsJ
-        -----END RSA PRIVATE KEY-----
-      certificate: |-
-        -----BEGIN CERTIFICATE-----
-        MIIDRjCCAi4CCQCt4q5j32hoaTANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQGEwJV
-        UzELMAkGA1UECAwCQ0ExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xGTAXBgNVBAoM
-        EE15IENvbXBhbnksIEluYy4xFjAUBgNVBAMMDU15IENvbXBhbnkgQ0EwHhcNMjMw
-        NTE2MTQ0NzE0WhcNMzMwNTEzMTQ0NzE0WjBlMQswCQYDVQQGEwJVUzELMAkGA1UE
-        CAwCQ0ExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xGTAXBgNVBAoMEE15IENvbXBh
-        bnksIEluYy4xFjAUBgNVBAMMDU15IENvbXBhbnkgQ0EwggEiMA0GCSqGSIb3DQEB
-        AQUAA4IBDwAwggEKAoIBAQDl3b8bIwf8SW9NFM1N8bpBKpvGw/BLD7EGZQJs6xhZ
-        im5iBI7VzW58e7q/AfuoeoHKSpRm6/qBoFk+IRottXhY2Dsywkl4wxCoEhkUEajD
-        2wiLG0jBgqfL1MUf8W+bttrbaskhZu83f7uuz1EC2NHVioCeUmyByMiCpwEy9eSW
-        hxhaj+uHQ2Xb6x4BKHS9q68bpfdv0LuueU96gsrWmtC7Amr8vEpd4xt8HIh7HksV
-        OHWvNyEzSYH6YUZEjafC7o+pnc56vMnubdg7UqCCrRwzvbVhz7slz7bWtfOI+gIv
-        HCfeLw9Aur0Rqu1lDF/zr5Z2YmyjMG24W45LS2JF8XAVAgMBAAEwDQYJKoZIhvcN
-        AQELBQADggEBAMYUe5rarfXiMU3/gyt4X7FoJ+IGAUEDkpy1ttakL9sOKwQML6AR
-        zDYsz6ma+muKYH1foTDG5LIpyN4897fh/xKOgtTwZzJtcrONalv6HfzXUKrcjp5P
-        E2q5E/3fui9WEKzdHr5eXRxB7A8QSdRR+fFEeHwr0u30R3FSaY0qbJy4rvlzPWgo
-        5UVINKXGRggd9W6WA3mjGjMoZUt0hDtV6j4sXl2t1B0/IkgrH6q0OBQW7JM4abPX
-        S6Rg465aSNfYNsyljvBLlSg81Apuoibhq9a1pbV32yZjRkLIVTO6oXWNluJM4bIH
-        lD8u+yTu1KPm5rE39xfgwMD0vkG2teVWmCw=
-        -----END CERTIFICATE-----
-        -----BEGIN CERTIFICATE-----
-        MIIDRDCCAiwCCQCX5mfRSh6pfjANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQGEwJV
-        UzELMAkGA1UECAwCQ0ExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xGTAXBgNVBAoM
-        EE15IENvbXBhbnksIEluYy4xFjAUBgNVBAMMDU15IENvbXBhbnkgQ0EwHhcNMjMw
-        NTE2MTQ0NzE0WhcNMjQwNTE1MTQ0NzE0WjBjMQswCQYDVQQGEwJVUzELMAkGA1UE
-        CAwCQ0ExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xGTAXBgNVBAoMEE15IENvbXBh
-        bnksIEluYy4xFDASBgNVBAMMC2V4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEF
-        AAOCAQ8AMIIBCgKCAQEAuPKQpY+W59QCGT7OrzqB5pIsHKOMXICt85UnRne1Uiv/
-        XYtpyuP6TTARPC7x1DwDrUr7yLbWwNtSUgEaMnOC3uEOhCpbRQ58zG35hOjzKN3L
-        9a/j1AOBgHbR4mJKmYX9sxHyaE+pZKtAtJQKdnHUDeQhJM5Zv9KlUTp9vBWe8FLf
-        u0ULGLOsLmlozbcUj4qe6YkGiP0HC3x1mIn823fEGnW3vVSbpQM1i+csXebe/i+J
-        CV8Ohk7/pqm1pS0XzrFVWRS4lRrDQsUIpv0crlJsenHh7AuBtiy8VuDkUC6FOe1o
-        TmzZanHucwsnurfodQ0c5SYiHWHcXxgfWBeSQK021wIDAQABMA0GCSqGSIb3DQEB
-        CwUAA4IBAQCB4vkji2w0pXRjsKFT1maVFYrn78k6t4AwtzB7O0kZfeGMt1Uvubil
-        CGCIabP7E8AaAYA99fgo2YVVjQj1WJSsQpPLNrCNUdQD43tta6APMqybiMqxjnFO
-        WKwKaaasBXPEzf+Eef4na2Yiyy6KLDTpC2psaPkiuHHVvi7pYFfklkteQtsIDZr3
-        nVdhd13gsQbxQysSPeEZuU/4ruc3KTEJnE/uwErD685SF1S+tBn3GxY9pI7WL8Da
-        c/IpJn9+AggdWZ7YV+3u1ER+ryznF8lwlZ8uVrNg5bMjVCFhzZWalXOBNCB7+1vw
-        nCj9mngsXSbcnkY/Nqs41LPlRzvFxcKo
-        -----END CERTIFICATE-----
+  # secrets:
+  #   - name: wp-tls-secret
+  #     key: 
+
+  #     certificate: 
   ## @param ingress.extraRules Additional rules to be covered with this ingress record
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
   ## e.g:
