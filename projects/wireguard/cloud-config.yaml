@@ -36,7 +36,7 @@ runcmd:
   - cd /opt
   - chmod +x /opt/algo/install.sh
   - algo/install.sh
-
+  - chown -R drew:drew /opt/algo
 
 
 
