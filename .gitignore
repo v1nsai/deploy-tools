@@ -8,6 +8,7 @@ auth/
 *.pem*
 .kube*
 *.subst
+wireguard-configs/
 
 # Terraform
 .terraform*

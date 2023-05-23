@@ -14,7 +14,7 @@ users:
     ssh-authorized-keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQlba47olSkYMMh40lIMnU5TPAYStp4FrSPvruGmuM01OYSbamZdE7fEec3UnSKR6rQNpEthVqr61tlz2yXxnWbOmLBaxQwT8Q1h3wiEWR5WPeBUmDpuEmHJtZzUZKeUABDQHfywN01yZ8RZssCdPvziS9t9pgeHlfL4hnkAFNbhgfOniNhtEIBeLsmNDinAH2TvCXv3cYTzwXC9n2E3ruwEgmWTxieWNVFBoa8QKkhXiw+h08cYv9ZaP5yi8h2oXpJTKFUZ5LId1xuIhb95K7sBLr83vMLU7CGjlFTvet6MiEKXrPjY1hbvUf1+uFZZQSYOANR+9Gtviolxux7IAH
 write_files:
-  - content: |-
+  - content: |
       export METHOD=cloud
       export ONDEMAND_CELLULAR=false
       export ONDEMAND_WIFI=false
@@ -27,13 +27,13 @@ write_files:
       # export REPO_SLUG
       # export REPO_BRANCH
       # export EXTRA_VARS
-      # export ANSIBLE_EXTRA_ARGS
+      # export ANSIBLE_EXTRA_ARGS="-e server=''"
     path: /etc/environment
     append: true
 runcmd:
   - git clone https://github.com/trailofbits/algo.git /opt/algo
-  - cp -f /opt/config.cfg /opt/algo/config.cfg
   - cd /opt
+  - export ENDPOINT=$(curl ifconfig.me)
   - chmod +x /opt/algo/install.sh
   - algo/install.sh
   - chown -R drew:drew /opt/algo
