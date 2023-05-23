@@ -35,6 +35,19 @@ provider "openstack" {
   auth_url    = var.auth_url
 }
 
+resource "openstack_networking_network_v2" "wordpress" {
+  name           = "wordpress"
+  external       = "false"
+  admin_state_up = "true"
+}
+
+resource "openstack_networking_subnet_v2" "wordpress_subnet" {
+  name       = "wordpress_subnet"
+  network_id = "${openstack_networking_network_v2.wordpress.id}"
+  cidr       = "192.168.199.0/24"
+  ip_version = 4
+}
+
 resource "openstack_containerinfra_clustertemplate_v1" "wordpress-template" {
   name                  = "wordpress-template"
   image                 = "f6ed7a8b-f808-4cfe-ab9d-0a492e14f2ff"
@@ -43,13 +56,17 @@ resource "openstack_containerinfra_clustertemplate_v1" "wordpress-template" {
   master_flavor         = "alt.gp2.large"
   dns_nameserver        = "1.1.1.1,1.0.0.1"
   docker_storage_driver = "overlay"
-  docker_volume_size    = 10
   server_type           = "vm"
   volume_driver         = "cinder"
   master_lb_enabled     = false
   floating_ip_enabled   = true
   external_network_id   = "External"
-  #   https_proxy =
+  registry_enabled      = "false"
+  keypair_id            = "wordpress"
+  docker_volume_size    = "10"
+  # fixed_network = "${openstack_networking_network_v2.wordpress.id}"
+  # fixed_subnet  = "${openstack_networking_subnet_v2.wordpress_subnet.id}"
+  # https_proxy =
 
   labels = {
     kube_dashboard_enabled        = "true"
