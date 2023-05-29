@@ -5,6 +5,10 @@ terraform {
       source  = "terraform-provider-openstack/openstack"
       version = "~> 1.48.0"
     }
+    # ansible = {
+    #   version = "1.1.0"
+    #   source  = "ansible/ansible"
+    # }
   }
 }
 

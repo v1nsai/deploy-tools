@@ -1,5 +1,5 @@
-resource "openstack_compute_instance_v2" "wordpress" {
-  name            = "wordpress"
+resource "openstack_compute_instance_v2" "instance" {
+  name            = "instance"
   image_id        = "012cb821-5b05-48a5-b33e-89040561fbc4" # Debian 11
   flavor_name     = "alt.c2.medium"
   key_pair        = "wordpress"
@@ -9,20 +9,18 @@ resource "openstack_compute_instance_v2" "wordpress" {
   network {
     name = "wordpress"
   }
-  # depends_on = [ openstack_networking_network_v2.wordpress, openstack_networking_subnet_v2.wordpress_subnet ]
+  # depends_on = [ openstack_networking_floatingip_v2.myip, openstack_compute_floatingip_associate_v2.myip ]
 }
 
-## Floating IP when ready
-# resource "openstack_networking_floatingip_v2" "myip" {
-#   pool = "External"
-# }
+resource "openstack_networking_floatingip_v2" "myip" {
+  pool = "External"
+}
 
-# resource "openstack_compute_floatingip_associate_v2" "myip" {
-#   floating_ip = openstack_networking_floatingip_v2.myip.address
-#   instance_id = openstack_compute_instance_v2.wordpress.id
-#   fixed_ip    = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
-#   fixed_ip    = openstack_compute_instance_v2.instance.access_ip_v4
-# }
+resource "openstack_compute_floatingip_associate_v2" "myip" {
+  floating_ip = "${openstack_networking_floatingip_v2.myip.address}"
+  instance_id = "${openstack_compute_instance_v2.instance.id}"
+  fixed_ip    = "${openstack_compute_instance_v2.instance.access_ip_v4}"
+}
 
 ## Wordpress network and subnet if needed
 # resource "openstack_networking_network_v2" "wordpress" {

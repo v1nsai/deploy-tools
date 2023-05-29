@@ -8,10 +8,12 @@ auth/
 *.pem*
 .kube*
 *.subst
-wireguard-configs/
+projects/wireguard/configs
 
 # Terraform
 .terraform*
 terraform.tfstate
 *.tfstate*
 .gitignore
+
+projects/wordpress/bitnami
