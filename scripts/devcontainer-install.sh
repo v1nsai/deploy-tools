@@ -10,6 +10,12 @@ source auth/alterncloud.env
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
+# kustomize
+CURRENTDIR=$(pwd)
+cd ~/.local/bin/
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+cd $CURRENTDIR
+
 # terraform
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
@@ -27,6 +33,6 @@ sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/
 sudo chmod a+x /usr/local/bin/yq
 
 #cleanup
-echo "source /workspaces/deploy-tools/auth/alterncloud.env" >> ~/.bashrc
-source ~/.bashrc
+echo "source /workspaces/deploy-tools/auth/alterncloud.env" >> ~/.profile
+source ~/.profile
 terraform -install-autocomplete
