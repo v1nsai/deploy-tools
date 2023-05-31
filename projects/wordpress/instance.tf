@@ -11,29 +11,3 @@ resource "openstack_compute_instance_v2" "wordpress" {
   }
   # depends_on = [ openstack_networking_network_v2.wordpress, openstack_networking_subnet_v2.wordpress_subnet ]
 }
-
-## Floating IP when ready
-# resource "openstack_networking_floatingip_v2" "myip" {
-#   pool = "External"
-# }
-
-# resource "openstack_compute_floatingip_associate_v2" "myip" {
-#   floating_ip = openstack_networking_floatingip_v2.myip.address
-#   instance_id = openstack_compute_instance_v2.wordpress.id
-#   fixed_ip    = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
-#   fixed_ip    = openstack_compute_instance_v2.instance.access_ip_v4
-# }
-
-## Wordpress network and subnet if needed
-# resource "openstack_networking_network_v2" "wordpress" {
-#   name           = "wordpress"
-#   external       = "false"
-#   admin_state_up = "true"
-# }
-
-# resource "openstack_networking_subnet_v2" "wordpress_subnet" {
-#   name       = "wordpress_subnet"
-#   network_id = "${openstack_networking_network_v2.wordpress.id}"
-#   cidr       = "192.168.199.0/24"
-#   ip_version = 4
-# }

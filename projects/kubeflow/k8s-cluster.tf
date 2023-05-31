@@ -60,10 +60,10 @@ resource "openstack_containerinfra_clustertemplate_v1" "kubeflow-template" {
   registry_enabled      = "false"
   keypair_id            = "kubeflow"
   docker_volume_size    = "10"
-  # fixed_network = "${openstack_networking_network_v2.kubeflow.id}"
-  # fixed_subnet  = "${openstack_networking_subnet_v2.kubeflow_subnet.id}"
+  fixed_network         = "kubeflow"
+  fixed_subnet          = "kubeflow_subnet"
   # https_proxy =
-  # master_lb_floating_ip_enabled = true
+  # master_lb_floatingip_enabled = true
 
   labels = {
     kube_dashboard_enabled        = "true"

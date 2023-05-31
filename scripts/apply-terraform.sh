@@ -6,19 +6,27 @@ export TF_LOG=DEBUG
 export TF_LOG_PATH=terraform.log
 rm -rf terraform.log
 
-CLOUDCONFIG=$(echo projects/$1/cloud-config.yaml)
-UPDATESCRIPT=$(echo projects/$1/update-cloud-config.sh)
+PREDEPLOY=$(echo projects/$1/predeploy.sh)
+POSTDEPLOY=$(echo projects/$1/postdeploy.sh)
 
-# Handle cloud-config file if found
-if [ -e $UPDATESCRIPT ]; then
+# Handle predeploy if found
+if [ -e $PREDEPLOY ]; then
   # export CLOUDCONFIG=$(base64 -w 0 projects/$1/cloud-config.yaml)
-  echo "Update cloud-config.yaml in terraform file"
-  projects/$1/update-cloud-config.sh # if update script found, run before adding to the terraform config file
-  sed -i 's/base64decode([^)]*)/base64decode("'"$(base64 -w 0 $CLOUDCONFIG)"'")/g' projects/$1/cloud-init.tf
+  echo "Running predeploy..."
+  projects/$1/predeploy.sh
 else
-  echo "No cloud-config.yaml file found in projects/$1"
+  echo "No predeploy script found in projects/$1"
 fi
 
 # Apply terraform
 terraform -chdir=projects/$1 init -upgrade
 terraform -chdir=projects/$1 apply -var-file ../../auth/auth.tfvars -auto-approve
+
+# Handle postdeploy if found
+if [ -e $POSTDEPLOY ]; then
+  # export CLOUDCONFIG=$(base64 -w 0 projects/$1/cloud-config.yaml)
+  echo "Running postdeploy..."
+  projects/$1/postdeploy.sh
+else
+  echo "No postdeploy script found in projects/$1"
+fi

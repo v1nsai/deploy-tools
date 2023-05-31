@@ -9,8 +9,8 @@ apt update
 apt install -y nginx mariadb-server php-fpm php-mysql php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip
 
 # Configure mariadb
-mysql_secure_installation
-mariadb -u wp-user -p
+# mysql_secure_installation
+# mariadb -u wp-user -p
 
 # Configure nginx
 mkdir /var/www/$DOMAIN

@@ -8,15 +8,6 @@ data "template_cloudinit_config" "cloud-config" {
     content_type = "text/cloud-config"
     content      = data.template_file.cloud-config.rendered
   }
-
-  part {
-    filename     = "config.cfg"
-    content      = data.local_file.cloud-config.content
-  }
-}
-
-data "local_file" "cloud-config" {
-  filename = "cloud-config.yaml"
 }
 
 data "template_file" "cloud-config" {
