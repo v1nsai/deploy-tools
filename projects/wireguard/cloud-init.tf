@@ -1,6 +1,6 @@
 data "template_cloudinit_config" "cloud-config" {
-  gzip          = true
-  base64_encode = true
+  gzip          = false
+  base64_encode = false
 
   # Main cloud-config configuration file.
   part {

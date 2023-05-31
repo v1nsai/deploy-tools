@@ -31,21 +31,21 @@ provider "openstack" {
   auth_url    = var.auth_url
 }
 
-resource "openstack_networking_network_v2" "wordpress" {
-  name           = "wordpress"
-  external       = "false"
-  admin_state_up = "true"
-}
+# resource "openstack_networking_network_v2" "kubeflow" {
+#   name           = "kubeflow"
+#   external       = "false"
+#   admin_state_up = "true"
+# }
 
-resource "openstack_networking_subnet_v2" "wordpress_subnet" {
-  name       = "wordpress_subnet"
-  network_id = "${openstack_networking_network_v2.wordpress.id}"
-  cidr       = "192.168.199.0/24"
-  ip_version = 4
-}
+# resource "openstack_networking_subnet_v2" "kubeflow_subnet" {
+#   name       = "kubeflow_subnet"
+#   network_id = "${openstack_networking_network_v2.kubeflow.id}"
+#   cidr       = "192.168.199.0/24"
+#   ip_version = 4
+# }
 
-resource "openstack_containerinfra_clustertemplate_v1" "wordpress-template" {
-  name                  = "wordpress-template"
+resource "openstack_containerinfra_clustertemplate_v1" "kubeflow-template" {
+  name                  = "kubeflow-template"
   image                 = "f6ed7a8b-f808-4cfe-ab9d-0a492e14f2ff"
   coe                   = "kubernetes"
   flavor                = "alt.gp2.large"
@@ -58,11 +58,12 @@ resource "openstack_containerinfra_clustertemplate_v1" "wordpress-template" {
   floating_ip_enabled   = true
   external_network_id   = "External"
   registry_enabled      = "false"
-  keypair_id            = "wordpress"
+  keypair_id            = "kubeflow"
   docker_volume_size    = "10"
-  # fixed_network = "${openstack_networking_network_v2.wordpress.id}"
-  # fixed_subnet  = "${openstack_networking_subnet_v2.wordpress_subnet.id}"
+  # fixed_network = "${openstack_networking_network_v2.kubeflow.id}"
+  # fixed_subnet  = "${openstack_networking_subnet_v2.kubeflow_subnet.id}"
   # https_proxy =
+  # master_lb_floating_ip_enabled = true
 
   labels = {
     kube_dashboard_enabled        = "true"
@@ -78,11 +79,11 @@ resource "openstack_containerinfra_clustertemplate_v1" "wordpress-template" {
   }
 }
 
-resource "openstack_containerinfra_cluster_v1" "wordpress" {
-  name                = "wordpress"
-  cluster_template_id = openstack_containerinfra_clustertemplate_v1.wordpress-template.id
+resource "openstack_containerinfra_cluster_v1" "kubeflow" {
+  name                = "kubeflow"
+  cluster_template_id = openstack_containerinfra_clustertemplate_v1.kubeflow-template.id
   master_count        = 1
   node_count          = 1
-  keypair             = "wordpress"
+  keypair             = "kubeflow"
   create_timeout      = 60
 }
