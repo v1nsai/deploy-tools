@@ -5,15 +5,23 @@ set -e
 DOMAIN="default"
 
 # Install packages
-apt update
+apt update || true
 apt install -y nginx mariadb-server php-fpm php-mysql php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip
 
 # Configure mariadb
-# mysql_secure_installation
-# mariadb -u wp-user -p
+debconf-set-selections <<< "mysql-server mysql-server/root_password password ${PASS_MYSQL_ROOT}" # new password for the MySQL root user
+debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${PASS_MYSQL_ROOT}" # repeat password for the MySQL root user
+
+mysql --user=root --password=${PASS_MYSQL_ROOT} << EOFMYSQLSECURE
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
+FLUSH PRIVILEGES;
+EOFMYSQLSECURE
+mysql -u root -p -e "CREATE USER 'wp_user'@'localhost' IDENTIFIED BY '${PASS_MYSQL_WP_USER}';"
 
 # Configure nginx
-mkdir /var/www/$DOMAIN
+mkdir /var/www/$DOMAIN 
 chown -R wordpress:wordpress /var/www/$DOMAIN
 touch /etc/nginx/sites-available/$DOMAIN
 echo "# generated 2023-05-29, Mozilla Guideline v5.7, nginx 1.17.7, OpenSSL 1.1.1k, intermediate configuration
@@ -45,6 +53,7 @@ server {
         log_not_found off;
     }
 }
+
 
 server {
     listen 443 ssl http2;

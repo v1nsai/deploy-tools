@@ -15,5 +15,4 @@ wg-configs/
 terraform.tfstate
 *.tfstate*
 .gitignore
-
-projects/wordpress/bitnami
+*.auto.tfvars

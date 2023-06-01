@@ -8,7 +8,7 @@ terraform {
   }
 }
 
-# Use -var-file to pass in auth.tfvars to get these variables
+# -var-file=auth/auth.tfvars
 variable "user_name" {
   type      = string
   sensitive = true
