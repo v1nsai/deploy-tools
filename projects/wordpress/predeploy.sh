@@ -2,6 +2,7 @@
 
 set -e
 source auth/alterncloud.env
+source auth/wordpress.env
 
 # add LEMP stack install script to cloud-config.yaml
 encoded_content=$(base64 -w 0 projects/wordpress/lemp-install.sh)
