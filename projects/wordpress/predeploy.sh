@@ -1,27 +1,26 @@
 #!/bin/bash
 
-set -e
-source auth/alterncloud.env
-source auth/wordpress.env
+template_file="projects/wordpress/cloud-init.tf"
 
-# add LEMP stack install script to cloud-config.yaml
-encoded_content=$(base64 -w 0 projects/wordpress/lemp-install.sh)
-yq e -i '.write_files[] |= select(.path == "/etc/lemp-install.sh") .content = "'$encoded_content'"' projects/wordpress/cloud-config.yaml
+# Find the line number containing "lemp-install.sh"
+line_number=$(grep -n '\- path: .*lemp-install.sh' "$template_file" | cut -d ":" -f 1)
 
-# add env variables to cloud-config.yaml
-encoded_content="export PASS_MYSQL_ROOT=$mysql_root_password
-export PASS_MYSQL_WP_USER=$mysql_wp_user_password
-export PASS_WORDPRESS=$wordpress_password"
-encoded_content=$(base64 -w 0 <<< "$encoded_content")
-yq e -i '(.write_files[] | select(.path == "/etc/environment").content) = "'$encoded_content'"' projects/wordpress/cloud-config.yaml
+if [ -z "$line_number" ]; then
+  echo "Line containing 'lemp-install.sh' not found in the template file."
+  exit 1
+fi
 
-# add ssh config to cloud-config.yaml
-encoded_content="Port 1355
-PermitRootLogin no
-PasswordAuthentication yes"
-encoded_content=$(base64 -w 0 <<< "$encoded_content")
-yq e -i '(.write_files[] | select(.path == "/etc/sshd_config").content) = "'$encoded_content'"' projects/wordpress/cloud-config.yaml
+# Find the line number of the first line after "lemp-install.sh" that contains "content: "
+next_line_number=$(awk "NR>$line_number && /content: / {print NR; exit}" "$template_file")
 
-# Update content of cloud-config.yaml in cloud-init.tf to trigger a rebuild if anything has changed
-encoded_content=$(base64 -w 0 projects/wordpress/cloud-config.yaml)
-sed -i '/filename\s*=\s*"cloud-config.yaml"/,/}/ s/content\s*=\s*base64decode("[^"]*")/content      = base64decode("'$encoded_content'")/' projects/wordpress/cloud-init.tf
+if [ -z "$next_line_number" ]; then
+  echo "Line containing 'content: ' not found after 'lemp-install.sh' in the template file."
+  exit 1
+fi
+
+# Replace the content after the colon and single space with a new value
+new_value=$(cat projects/wordpress/lemp-install.sh | base64 -w 0)
+sed -i "${next_line_number}s/: .*/: ${new_value}/" "$template_file"
+
+echo "Replacement complete. Updated template:"
+cat "$template_file"

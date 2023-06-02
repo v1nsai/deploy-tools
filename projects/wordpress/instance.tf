@@ -4,7 +4,7 @@ resource "openstack_compute_instance_v2" "wordpress" {
   flavor_name     = "alt.c2.medium"
   key_pair        = "wordpress"
   security_groups = ["default", "ssh-ingress", "HTTPS ingress", "HTTP ingress"]
-  user_data       = data.cloudinit_config.cloud-config.rendered
+  user_data       = data.template_cloudinit_config.cloud-config.rendered
 
   network {
     name = "wordpress"

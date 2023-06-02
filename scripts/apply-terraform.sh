@@ -11,7 +11,6 @@ POSTDEPLOY=$(echo projects/$1/postdeploy.sh)
 
 # Handle predeploy if found
 if [ -e $PREDEPLOY ]; then
-  # export CLOUDCONFIG=$(base64 -w 0 projects/$1/cloud-config.yaml)
   echo "Running predeploy..."
   projects/$1/predeploy.sh
 else
@@ -22,9 +21,9 @@ fi
 terraform -chdir=projects/$1 init -upgrade
 terraform -chdir=projects/$1 apply -var-file ../../auth/auth.tfvars -auto-approve
 echo "Terraform apply completed"
+
 # Handle postdeploy if found
 if [ -e $POSTDEPLOY ]; then
-  # export CLOUDCONFIG=$(base64 -w 0 projects/$1/cloud-config.yaml)
   echo "Running postdeploy..."
   projects/$1/postdeploy.sh
 else

@@ -2,6 +2,7 @@
 
 set -e
 
+# Set both of these to custom domain or indicated defaults
 # default none
 DOMAIN_OR_NONE=
 # default "default"
@@ -18,16 +19,16 @@ echo "Disabling grant tables and networking"
 mysqld_safe --skip-grant-tables --skip-networking &>/dev/null & disown
 echo "Waiting for mysql to start"
 sleep 10
-mysql -uroot -e "FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED BY '$PASS_MYSQL_ROOT'; "
+mysql -uroot -e "FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'; "
 killall -9 mysqld_safe mariadbd || true
 echo "Restarting mysql"
 systemctl start mysql
 
-mysql --user=root --password=${PASS_MYSQL_ROOT} -e "
+mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 DELETE FROM mysql.user WHERE User='';
 DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
-CREATE USER 'wordpressuser'@'localhost' IDENTIFIED BY '${PASS_MYSQL_WP_USER}';
+CREATE USER 'wordpressuser'@'localhost' IDENTIFIED BY '${MYSQL_WP_USER_PASSWORD}';
 CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 GRANT ALL ON wordpress.* TO 'wordpressuser'@'localhost';
 FLUSH PRIVILEGES; "
@@ -101,6 +102,10 @@ server {
 #     resolver 127.0.0.1;
 #}" > /etc/nginx/sites-available/$DOMAIN_OR_DEFAULT
 ln -s /etc/nginx/sites-available/$DOMAIN_OR_DEFAULT /etc/nginx/sites-enabled/$DOMAIN_OR_DEFAULT || true
+
+# Update certs
+/usr/sbin/update-ca-certificates
+
 nginx -t
 systemctl reload nginx
 
