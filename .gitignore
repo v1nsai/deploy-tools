@@ -16,3 +16,5 @@ terraform.tfstate
 *.tfstate*
 .gitignore
 *.auto.tfvars
+
+projects/devstack
