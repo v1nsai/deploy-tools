@@ -3,12 +3,6 @@
 set -e
 DOMAIN=
 
-echo "Moving files from postdeploy.zip.."
-cp -r /tmp/auth/wordpress/pki/techig-ca.crt /etc/ssl/certs/techig-ca.crt
-cp -r /tmp/auth/wordpress/pki/issued/wordpress.crt /etc/ssl/certs/wordpress.crt
-cp -r /tmp/auth/wordpress/pki/private/wordpress.key /etc/ssl/private/wordpress.key
-cp -r /tmp/projects/wordpress/nginx-domain /etc/nginx/sites-available/${DOMAIN:-"default"}
-
 echo "Configuring mariadb..."
 systemctl stop mysql
 killall -9 mysqld_safe mysqld mariadb mariadbd mysql || true
@@ -36,8 +30,12 @@ systemctl restart php7.4-fpm
 echo "Configuring nginx..."
 mkdir -p /var/www/$DOMAIN
 chown -R wordpress:wordpress /var/www/$DOMAIN
+touch /etc/nginx/sites-available/${DOMAIN:-"default"}
 ln -s /etc/nginx/sites-available/${DOMAIN:-"default"} /etc/nginx/sites-enabled/${DOMAIN:-"default"} || true
-curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/dhparam
+
+# Update certs
+# /usr/sbin/update-ca-certificates
+
 nginx -t
 systemctl reload nginx
 
@@ -50,6 +48,15 @@ mv /tmp/wordpress/* /var/www/$DOMAIN
 # Fix folder permissions
 chmod 755 -R /var/www/
 chown www-data:www-data -R /var/www/
+
+# Transfer files from postdeploy.zip to proper places
+mv /tmp/auth/pki/ca.crt /etc/ssl/certs/techig-ca.crt
+mv /tmp/auth/pki/issued/wordpress.crt /etc/ssl/certs/wordpress.crt
+mv /tmp/auth/pki/private/wordpress.key /etc/ssl/private/wordpress.key
+mv /tmp/projects/wordpress/nginx-domain /etc/nginx/sites-available/$DOMAIN
+
+# Generate dhparam
+curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/dhparam
 
 # cleanup
 rm -rf /tmp/latest.zip /tmp/wordpress /tmp/postdeploy.zip /tmp/auth /tmp/projects

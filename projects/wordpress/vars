@@ -1,0 +1,12 @@
+set_var EASYRSA_DN "org"
+set_var EASYRSA_KEY_SIZE 4096
+
+set_var EASYRSA_REQ_COUNTRY "DE"
+set_var EASYRSA_REQ_PROVINCE "Berlin"
+set_var EASYRSA_REQ_CITY "Berlin"
+set_var EASYRSA_REQ_ORG "BigchainDB GmbH"
+set_var EASYRSA_REQ_OU "IT"
+set_var EASYRSA_REQ_EMAIL "contact@ipdb.global"
+
+# exists?
+set_var EASYRSA_REQ_CN "ipdb.global"

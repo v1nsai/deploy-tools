@@ -19,13 +19,13 @@ fi
 
 # Apply terraform
 terraform -chdir=projects/$1 init -upgrade
-terraform -chdir=projects/$1 apply -var-file ../../auth/auth.tfvars -auto-approve
+terraform -chdir=projects/$1 apply -auto-approve #-var-file ../../auth/auth.tfvars
 echo "Terraform apply completed"
 
 # Handle postdeploy if found
 if [ -e $POSTDEPLOY ]; then
   echo "Running postdeploy..."
-  projects/$1/postdeploy.sh
+  bash -c "projects/$1/postdeploy.sh"
 else
   echo "No postdeploy script found in projects/$1"
 fi

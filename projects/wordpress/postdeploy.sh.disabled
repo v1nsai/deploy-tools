@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+source auth/alterncloud.env
+
+SERVER_IP=$(openstack server show wordpress -f json | jq '.addresses.wordpress[0]' | tr -d '"')
+echo "Waiting for SSH on ${SERVER_IP}..."
+retry_interval=5
+
+retries=0
+while [ ! $(ssh -o "StrictHostKeyChecking no" -i auth/wordpress.pem -p 1355 drew@$SERVER_IP echo) true ]; do
+  # ((retries++))
+  echo "SSH is not available. Waiting ${retry_interval} seconds..."
+  sleep "${retry_interval}"
+done
+
+echo "Zipping files and transferring to host ${SERVER_IP}..."
+zip -r projects/wordpress/postdeploy.zip auth/wordpress/pki projects/wordpress/lemp-install.sh projects/wordpress/nginx-domain
+scp -i auth/wordpress.pem -P 1355 projects/wordpress/postdeploy.zip drew@${SERVER_IP}:/tmp/postdeploy.zip
+
+echo "Postdeploy completed successfully"

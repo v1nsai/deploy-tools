@@ -3,8 +3,8 @@
 set -e
 source auth/alterncloud.env
 
-# sudo apt update
-# sudo apt install -y wget
+sudo apt update
+sudo apt install -y wget vim easy-rsa
 
 # kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
@@ -19,7 +19,7 @@ cd $CURRENTDIR
 # terraform
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update && sudo apt install -y terraform vim
+sudo apt install -y terraform vim
 
 # helm
 curl -fsSL -o https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -x

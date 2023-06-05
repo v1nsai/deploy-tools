@@ -1,26 +1,24 @@
 #!/bin/bash
 
 set -e
-# Variables
-SERVER_DIR="/etc/ssl/private"
-CA_DIR="/etc/ssl/certs"
-SERVER_NAME="server"
+mkdir -p auth/$1
+cd auth/$1
+SERVER_NAME="$1"
 
-# Cleanup before recreating
-rm -rf $SERVER_DIR
-mkdir -p $SERVER_DIR
+# # Initialize Easy-RSA
+easyrsa init-pki
 
-# Create CA
-cd $CA_DIR
-/usr/share/easy-rsa/easyrsa init-pki
-/usr/share/easy-rsa/easyrsa build-ca nopass
+# # Generate a new CA
+easyrsa --batch build-ca nopass
 
+# Generate a server key and signing request
+easyrsa --batch build-server-full $SERVER_NAME nopass
 
-# Generate server certificate and key
-cd $SERVER_DIR
-/usr/share/easy-rsa/easyrsa init-pki
-/usr/share/easy-rsa/easyrsa gen-req $SERVER_NAME nopass
-/usr/share/easy-rsa/easyrsa sign-req server $SERVER_NAME
+# Generate the server certificate
+cp pki/private/$SERVER_NAME.key pki/issued/$SERVER_NAME.crt
 
-cd 
-echo "Generated certs and added them to $1"
+# Sign the server certificate using the CA
+easyrsa --batch sign-req server $SERVER_NAME
+
+mv pki/ca.crt pki/techig-ca.crt
+cd $(git rev-parse --show-toplevel)
