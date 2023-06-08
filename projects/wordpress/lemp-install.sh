@@ -3,11 +3,11 @@
 set -e
 DOMAIN=
 
-echo "Moving files from postdeploy.zip.."
-cp -r /tmp/auth/wordpress/pki/techig-ca.crt /etc/ssl/certs/techig-ca.crt
-cp -r /tmp/auth/wordpress/pki/issued/wordpress.crt /etc/ssl/certs/wordpress.crt
-cp -r /tmp/auth/wordpress/pki/private/wordpress.key /etc/ssl/private/wordpress.key
-cp -r /tmp/projects/wordpress/nginx-domain /etc/nginx/sites-available/${DOMAIN:-"default"}
+# echo "Moving files from postdeploy.zip.."
+# cp -r /tmp/auth/wordpress/pki/techig-ca.crt /etc/ssl/certs/techig-ca.crt
+# cp -r /tmp/auth/wordpress/pki/issued/wordpress.crt /etc/ssl/certs/wordpress.crt
+# cp -r /tmp/auth/wordpress/pki/private/wordpress.key /etc/ssl/private/wordpress.key
+# cp -r /tmp/projects/wordpress/nginx-domain /etc/nginx/sites-available/${DOMAIN:-"default"}
 
 echo "Configuring mariadb..."
 systemctl stop mysql
