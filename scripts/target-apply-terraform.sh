@@ -1,4 +1,4 @@
 #!/bin/bash
-
-terraform -chdir=$1 init -upgrade
-terraform -chdir=$1 apply -var-file ../../auth/auth.tfvars -auto-approve -target $2
+set -e
+terraform -chdir=projects/$1 init -upgrade
+terraform -chdir=projects/$1 apply -auto-approve -target=$2

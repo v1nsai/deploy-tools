@@ -68,9 +68,9 @@ data "template_cloudinit_config" "cloud-config" {
     content_type = "text/cloud-config"
     content      = <<-EOF
       runcmd:
-        - cp /etc/skel/.bashrc /home/drew/.profile
-        - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/drew/.profile
-        - chown drew:drew /home/drew/.profile
+        - cp /etc/skel/.bashrc /home/drew/.bashrc
+        - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/drew/.bashrc
+        - chown drew:drew /home/drew/.bashrc
         - systemctl restart ssh
         # - while [ ! -f /tmp/postdeploy.zip ]; do echo "Waiting for postdeploy.zip to transfer..."; sleep 5; done
         # - unzip /tmp/postdeploy.zip -d /tmp

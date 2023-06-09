@@ -53,3 +53,12 @@ chown www-data:www-data -R /var/www/
 
 # cleanup
 rm -rf /tmp/latest.zip /tmp/wordpress /tmp/postdeploy.zip /tmp/auth /tmp/projects
+
+
+# fuck all that use trellis
+project_directory=projects/wordpress
+brew install roots/tap/trellis-cli
+mkdir -p $project_directory/trellis
+cd $project_directory/trellis
+trellis init
+trellis new $project_directory/doctor-ew.com
