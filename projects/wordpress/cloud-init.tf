@@ -43,6 +43,8 @@ data "template_cloudinit_config" "cloud-config" {
           ssh-authorized-keys:
             - ${data.local_file.ssh-pubkey.content}
         - name: wordpress
+          ssh-authorized-keys:
+            - ${data.local_file.ssh-pubkey.content}
           sudo: false
           groups: [www-data]
           shell: /bin/bash

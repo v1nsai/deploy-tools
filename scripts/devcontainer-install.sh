@@ -5,16 +5,11 @@ source auth/alterncloud.env
 
 sudo apt update
 sudo apt install -y wget vim python3 python3-pip
+sudo ln -s /usr/bin/python3 /usr/bin/python
 
 # kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-
-# kustomize
-# CURRENTDIR=$(pwd)
-# cd ~/.local/bin/
-# curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
-# cd $CURRENTDIR
 
 # terraform
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -23,7 +18,7 @@ sudo apt update
 sudo apt install -y terraform 
 
 # helm
-curl -fsSL -o https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -x
+# curl -fsSL -o "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3" | bash -x
 
 # openstack clients and python packages
 # python -m pip install --user -r projects/wireguard/requirements.txt 

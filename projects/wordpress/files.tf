@@ -3,5 +3,5 @@ data "local_file" "nginx-domain" {
 }
 
 data "local_file" "ssh-pubkey" {
-    filename = "${path.module}/../../auth/wordpress.pub"
+    filename = pathexpand("~/.ssh/wordpress.pub")
 }
