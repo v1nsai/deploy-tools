@@ -1,8 +1,7 @@
-variable "mysql_root_password" { type = string }
-variable "mysql_wp_user_password" { type = string }
-variable "wordpress_username" { type = string }
-variable "wordpress_password" { type = string }
 variable "ssh_password" { type = string }
+data "local_file" "ssh-pubkey" {
+    filename = pathexpand("~/.ssh/wordpress.pub")
+}
 
 data "template_cloudinit_config" "cloud-config" {
   gzip          = true
@@ -60,9 +59,8 @@ data "template_cloudinit_config" "cloud-config" {
         - path: /etc/ssh/sshd_config
           content: |
             PermitRootLogin no
-            PasswordAuthentication yes
           append: true
-    EOF
+      EOF
   }
 
   part {
@@ -74,9 +72,6 @@ data "template_cloudinit_config" "cloud-config" {
         - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/drew/.bashrc
         - chown drew:drew /home/drew/.bashrc
         - systemctl restart ssh
-        # - while [ ! -f /tmp/postdeploy.zip ]; do echo "Waiting for postdeploy.zip to transfer..."; sleep 5; done
-        # - unzip /tmp/postdeploy.zip -d /tmp
-        # - /tmp/projects/wordpress/lemp-install.sh
       EOF
   }
 }
