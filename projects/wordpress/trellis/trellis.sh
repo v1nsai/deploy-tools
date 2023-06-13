@@ -2,8 +2,8 @@
 
 set -e
 
-cd projects/wordpress/trellis/doctor-ew.com
+cd projects/wordpress/trellis/$1
 trellis init
-trellis provision staging
+trellis $2 $3
 
 cd $(git rev-parse --show-toplevel)

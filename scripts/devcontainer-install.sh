@@ -10,6 +10,7 @@ sudo ln -s /usr/bin/python3 /usr/bin/python
 # kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm /workspaces/deploy-tools/kubectl
 
 # terraform
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -22,7 +23,7 @@ sudo apt install -y terraform
 
 # openstack clients and python packages
 # python -m pip install --user -r projects/wireguard/requirements.txt 
-python -m pip install --user ansible python-openstackclient python-neutronclient python-octaviaclient python-heatclient python-magnumclient
+python -m pip install --user ansible python-openstackclient python-neutronclient python-octaviaclient python-heatclient python-magnumclient virtualenv
 
 # yq
 sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
@@ -30,5 +31,6 @@ sudo chmod a+x /usr/local/bin/yq
 
 #cleanup
 # echo "source /workspaces/deploy-tools/auth/alterncloud.env" >> ~/.profile
+sudo chmod 666 /run/host-services/ssh-auth.sock
 source ~/.bashrc
 terraform -install-autocomplete

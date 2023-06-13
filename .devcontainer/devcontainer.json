@@ -14,7 +14,12 @@
 	// "customizations": {},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
+	"containerEnv": {
+		"SSH_AUTH_SOCK": "/run/host-services/ssh-auth.sock"
+	},
 	"runArgs": [
+		"-v",
+		"/run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock",
 		"-v",
 		"/Users/doctor_ew/.ssh:/home/vscode/.ssh",
 		"--name",
@@ -31,3 +36,8 @@
 		}
 	}
 }
+
+-v /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock"
+
+		"-v",
+		"${localEnv:SSH_AUTH_SOCK}:/ssh-agent",

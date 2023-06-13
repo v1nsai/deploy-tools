@@ -27,3 +27,9 @@ resource "openstack_compute_instance_v2" "wordpress" {
 output "wordpress_ip" {
   value = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
 }
+
+resource "openstack_compute_floatingip_associate_v2" "floating_ip_associate" {
+  floating_ip = "216.87.32.215"
+  instance_id = "${openstack_compute_instance_v2.wordpress.id}"
+  fixed_ip    = "${openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4}"
+}

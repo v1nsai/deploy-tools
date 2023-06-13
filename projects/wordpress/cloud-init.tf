@@ -1,7 +1,7 @@
 variable "ssh_password" { type = string }
-data "local_file" "ssh-pubkey" {
-    filename = pathexpand("~/.ssh/wordpress.pub")
-}
+# data "local_file" "ssh-pubkey" {
+#     filename = pathexpand("~/.ssh/wordpress.pub")
+# }
 
 data "template_cloudinit_config" "cloud-config" {
   gzip          = true

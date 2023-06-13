@@ -14,7 +14,9 @@ wordpress_sites:
     multisite:
       enabled: false
     ssl:
-      enabled: false
-      provider: letsencrypt
+      enabled: true
+      provider: manual
+      cert: ../../../../auth/doctor-ew.com.crt
+      key:  ../../../../auth/doctor-ew.com.key
     cache:
       enabled: false
