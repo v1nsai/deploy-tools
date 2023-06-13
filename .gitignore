@@ -19,3 +19,4 @@ terraform.tfstate
 *.auto.tfvars
 
 projects/devstack
+projects/wordpress/trellis/doctor-ew.com
