@@ -9,5 +9,5 @@ echo "Waiting for cloudinit to finish..."
 sleep 60
 
 # Provision and deploy the wordpress instance
-projects/wordpress/trellis/trellis.sh doctor-ew.com provision staging
-projects/wordpress/trellis/trellis.sh doctor-ew.com deploy staging
+projects/wordpress/trellis/trellis.sh example.com provision staging
+projects/wordpress/trellis/trellis.sh example.com deploy staging

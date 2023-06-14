@@ -2,6 +2,8 @@
 
 set -e
 
+# git clone https://github.com/kubernetes/cloud-provider-openstack.git
+
 # Cleanup before redeploying
 kubectl -f projects/cinder-csi-plugin/cloud-provider-openstack/manifests/cinder-csi-plugin/ delete || true
 kubectl -f projects/cinder-csi-plugin/storageclass.yaml delete || true

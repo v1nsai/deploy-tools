@@ -11,15 +11,15 @@ resource "openstack_compute_instance_v2" "wordpress" {
   }
 
   # provisioner "file" {
-  #   source      = "${path.module}/ansible/templates/nginx-domain"
-  #   destination = "/etc/nginx/sites-available/nginx-domain"
+  #     source = "${path.module}/install.sh"
+  #     destination = "/home/localadmin/install.sh"
   # }
 
   # connection {
   #   type        = "ssh"
-  #   user        = "drew"
-  #   private_key = file("../../auth/wordpress.pem")
-  #   host        = "${self.access_ip_v4}"
+  #   user        = "localadmin"
+  #   private_key = file(pathexpand("~/.ssh/wordpress"))
+  #   host        = "216.87.32.215"
   # }
   # depends_on = [ openstack_networking_network_v2.wordpress, openstack_networking_subnet_v2.wordpress_subnet ]
 }
