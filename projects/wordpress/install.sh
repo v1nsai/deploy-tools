@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+
 USERDOMAIN=false
 if [[ -v DOMAIN ]]; then
     echo "Setting DOMAIN..."
