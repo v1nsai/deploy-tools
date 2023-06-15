@@ -17,3 +17,11 @@ data "local_file" "github_anonymous_pub" {
 data "local_file" "install_sh" {
     filename = "install.sh.base64"
 }
+
+data "local_file" "ssl-cert" {
+    filename = "../../auth/ssl.crt.base64"
+}
+
+data "local_file" "ssl-key" {
+    filename = "../../auth/ssl.key.base64"
+}
