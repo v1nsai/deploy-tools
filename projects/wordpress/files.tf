@@ -25,3 +25,11 @@ data "local_file" "ssl-cert" {
 data "local_file" "ssl-key" {
     filename = "../../auth/ssl.key.base64"
 }
+
+data "local_file" "ansible-inventory" {
+    filename = "ansible/inventory.yml.base64"
+}
+
+data "local_file" "ansible-playbook" {
+    filename = "ansible/deploy.yml.base64"
+}

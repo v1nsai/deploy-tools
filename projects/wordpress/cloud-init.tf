@@ -117,6 +117,16 @@ data "template_cloudinit_config" "cloud-config" {
             ${data.local_file.ssl-key.content}
           encoding: base64
           defer: true
+        - path: /opt/wp-deploy/ansible/inventory.yml
+          content: |
+            ${data.local_file.ansible-inventory.content}
+          owner: localadmin:localadmin
+          permissions: '0644'
+        - path: /opt/wp-deploy/ansible/deploy.yml
+          content: |
+            ${data.local_file.ansible-playbook.content}
+          owner: localadmin:localadmin
+          permissions: '0644'
       EOF
   }
 
