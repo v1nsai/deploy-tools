@@ -1,130 +1,115 @@
----
 - name: Configure WordPress deployment
   hosts: localhost
   gather_facts: false
   become: true
 
-- name: Install the latest version of Apache and MariaDB
-  ansible.builtin.package:
-    name:
-      - python3
-      - python3-pip
-      - python3-venv
-    
-- name: Install multi python packages with version specifiers
-  ansible.builtin.pip:
-    name:
-      - virtualenv
-      - ansible
-      - ansible-galaxy
-
   tasks:
-    - name: Set DOMAIN variable
-      set_fact:
-        DOMAIN: "{{ lookup('env', 'DOMAIN') }}"
-      when: DOMAIN is not defined
+  - name: Set DOMAIN variable
+    set_fact:
+      DOMAIN: "{{ lookup('env', 'DOMAIN') }}"
+    when: DOMAIN is not defined
 
-    - name: Set DOMAIN to public IP if not defined
-      command: "curl -s http://whatismyip.akamai.com/"
-      register: public_ip
-      changed_when: false
-      when: DOMAIN is not defined
-      failed_when: false
+  - name: Set DOMAIN to public IP if not defined
+    command: "curl -s http://whatismyip.akamai.com/"
+    register: public_ip
+    changed_when: false
+    when: DOMAIN is not defined
+    failed_when: false
 
-    - name: Set DOMAIN to public IP if not defined
-      set_fact:
-        DOMAIN: "{{ public_ip.stdout }}"
-      when: DOMAIN is not defined
+  - name: Set DOMAIN to public IP if not defined
+    set_fact:
+      DOMAIN: "{{ public_ip.stdout }}"
+    when: DOMAIN is not defined
 
-    - name: Set Trellis variables
-      ansible.builtin.command: trellis new --name "{{ DOMAIN }}" --host "{{ DOMAIN }}" "{{ DOMAIN }}"
-      args:
-        creates: "{{ DOMAIN }}/trellis/group_vars/all/users.yml"
-      register: trellis_output
+  - name: Set Trellis variables
+    ansible.builtin.command: trellis new --name "{{ DOMAIN }}" --host "{{ DOMAIN }}" "{{ DOMAIN }}"
+    args:
+      creates: "{{ DOMAIN }}/trellis/group_vars/all/users.yml"
+    register: trellis_output
 
-    - name: Configure web_user
-      ansible.builtin.command: yq -i '.web_user = "wordpress"' "{{ DOMAIN }}/trellis/group_vars/all/users.yml"
+  - name: Configure web_user
+    ansible.builtin.command: yq -i '.web_user = "wordpress"' "{{ DOMAIN }}/trellis/group_vars/all/users.yml"
 
-    - name: Configure admin_user
-      ansible.builtin.command: yq -i '.admin_user = "localadmin"' "{{ DOMAIN }}/trellis/group_vars/all/users.yml"
+  - name: Configure admin_user
+    ansible.builtin.command: yq -i '.admin_user = "localadmin"' "{{ DOMAIN }}/trellis/group_vars/all/users.yml"
 
-    - name: Configure wordpress_sites
-      ansible.builtin.command: yq -i '.wordpress_sites."{{ DOMAIN }}".repo = "git@github.com:roots/bedrock.git"' "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
+  - name: Configure wordpress_sites
+    ansible.builtin.command: yq -i '.wordpress_sites."{{ DOMAIN }}".repo = "git@github.com:roots/bedrock.git"' "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
 
-    - name: Remove repo_subtree_path line
-      ansible.builtin.lineinfile:
-        path: "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
-        regexp: "^repo_subtree_path"
-        state: absent
+  - name: Remove repo_subtree_path line
+    ansible.builtin.lineinfile:
+      path: "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
+      regexp: "^repo_subtree_path"
+      state: absent
 
-    - name: Set ssl.enabled to true
-      ansible.builtin.command: yq -i '.wordpress_sites."{{ DOMAIN }}".ssl.enabled = true' "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
+  - name: Set ssl.enabled to true
+    ansible.builtin.command: yq -i '.wordpress_sites."{{ DOMAIN }}".ssl.enabled = true' "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
 
-    - name: Set ssl.provider to self-signed
-      ansible.builtin.command: yq -i '.wordpress_sites."{{ DOMAIN }}".ssl.provider = "self-signed"' "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
+  - name: Set ssl.provider to self-signed
+    ansible.builtin.command: yq -i '.wordpress_sites."{{ DOMAIN }}".ssl.provider = "self-signed"' "{{ DOMAIN }}/trellis/group_vars/production/wordpress_sites.yml"
 
-    - name: Configure hosts file
-      ansible.builtin.replace:
-        path: "{{ DOMAIN }}/trellis/hosts/production"
-        regexp: "your_server_hostname"
-        replace: "127.0.0.1"
+  - name: Configure hosts file
+    ansible.builtin.replace:
+      path: "{{ DOMAIN }}/trellis/hosts/production"
+      regexp: "your_server_hostname"
+      replace: "127.0.0.1"
 
-    - name: Copy localadmin's public key to authorized_keys
-      ansible.builtin.lineinfile:
-        dest: "/home/localadmin/.ssh/authorized_keys"
-        line: "{{ lookup('file', '/home/localadmin/.ssh/id_rsa.pub') }}"
-      become_user: localadmin
+  - name: Copy localadmin's public key to authorized_keys
+    ansible.builtin.lineinfile:
+      dest: "/home/localadmin/.ssh/authorized_keys"
+      line: "{{ lookup('file', '/home/localadmin/.ssh/id_rsa.pub') }}"
+    become_user: localadmin
 
-    - name: Copy localadmin's public key to wordpress user's authorized_keys
-      ansible.builtin.lineinfile:
-        dest: "/home/wordpress/.ssh/authorized_keys"
-        line: "{{ lookup('file', '/home/localadmin/.ssh/id_rsa.pub') }}"
-      become_user: wordpress
+  - name: Copy localadmin's public key to wordpress user's authorized_keys
+    ansible.builtin.lineinfile:
+      dest: "/home/wordpress/.ssh/authorized_keys"
+      line: "{{ lookup('file', '/home/localadmin/.ssh/id_rsa.pub') }}"
+    become_user: wordpress
 
-    - name: Copy localadmin's id_rsa to wordpress user's .ssh directory
-      ansible.builtin.copy:
-        src: "/home/localadmin/.ssh/id_rsa"
-        dest: "/home/wordpress/.ssh/id_rsa"
-        mode: '0600'
-      become_user: wordpress
+  - name: Copy localadmin's id_rsa to wordpress user's .ssh directory
+    ansible.builtin.copy:
+      src: "/home/localadmin/.ssh/id_rsa"
+      dest: "/home/wordpress/.ssh/id_rsa"
+      mode: "0600"
+    become_user: wordpress
 
-    - name: Copy localadmin's id_rsa.pub to wordpress user's .ssh directory
-      ansible.builtin.copy:
-        src: "/home/localadmin/.ssh/id_rsa.pub"
-        dest: "/home/wordpress/.ssh/id_rsa.pub"
-        mode: '0644'
-      become_user: wordpress
+  - name: Copy localadmin's id_rsa.pub to wordpress user's .ssh directory
+    ansible.builtin.copy:
+      src: "/home/localadmin/.ssh/id_rsa.pub"
+      dest: "/home/wordpress/.ssh/id_rsa.pub"
+      mode: "0644"
+    become_user: wordpress
 
-    - name: Change ownership of wordpress user's .ssh directory
-      ansible.builtin.file:
-        path: "/home/wordpress/.ssh"
-        owner: wordpress
-        group: wordpress
-        recurse: yes
+  - name: Change ownership of wordpress user's .ssh directory
+    ansible.builtin.file:
+      path: "/home/wordpress/.ssh"
+      owner: wordpress
+      group: wordpress
+      recurse: yes
 
-    - name: Set letsencrypt_contact_emails and ip_whitelist
-      ansible.builtin.lineinfile:
-        dest: "{{ DOMAIN }}/trellis/group_vars/all/main.yml"
-        line: "{{ item }}"
-      loop:
-        - "letsencrypt_contact_emails: [ 'mail@{{ DOMAIN }}' ]"
-        - "ip_whitelist: [ '0.0.0.0' ]"
-        - "ssh_client_ip_lookup: false"
+  - name: Set letsencrypt_contact_emails and ip_whitelist
+    ansible.builtin.lineinfile:
+      dest: "{{ DOMAIN }}/trellis/group_vars/all/main.yml"
+      line: "{{ item }}"
+    loop:
+    - "letsencrypt_contact_emails: [ 'mail@{{ DOMAIN }}' ]"
+    - "ip_whitelist: [ '0.0.0.0' ]"
+    - "ssh_client_ip_lookup: false"
 
-    - name: Raise ipify timeout
-      ansible.builtin.lineinfile:
-        path: "{{ DOMAIN }}/trellis/roles/common/tasks/main.yml"
-        line: "        timeout: 60"
-        insertafter: "^    ipify_facts:"
-      register: line_insert_result
-      failed_when: line_insert_result is failed
+  - name: Raise ipify timeout
+    ansible.builtin.lineinfile:
+      path: "{{ DOMAIN }}/trellis/roles/common/tasks/main.yml"
+      line: "        timeout: 60"
+      insertafter: "^    ipify_facts:"
+    register: line_insert_result
+    failed_when: line_insert_result is failed
 
-    - name: Provision production environment
-      ansible.builtin.command: trellis provision production
-      args:
-        chdir: "{{ DOMAIN }}/trellis"
+  - name: Provision production environment
+    ansible.builtin.command: trellis provision production
+    args:
+      chdir: "{{ DOMAIN }}/trellis"
 
-    - name: Deploy to production environment
-      ansible.builtin.command: trellis deploy production
-      args:
-        chdir: "{{ DOMAIN }}/trellis"
+  - name: Deploy to production environment
+    ansible.builtin.command: trellis deploy production
+    args:
+      chdir: "{{ DOMAIN }}/trellis"

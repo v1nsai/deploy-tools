@@ -1,0 +1,3 @@
+ssh_password            = "" # create using `echo "mypassword" | mkpasswd --method=SHA-512 --rounds=4096
+domain                  = "" # Your site's domain
+ssl_provisioner         = "letsencrypt" # possible values are letsencrypt, selfsigned, and manual

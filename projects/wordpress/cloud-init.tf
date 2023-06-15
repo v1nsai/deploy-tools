@@ -1,5 +1,6 @@
 variable "ssh_password" { type = string }
 variable "domain" { type = string }
+variable ssl_provisioner { type = string }
 
 data "template_cloudinit_config" "cloud-config" {
   gzip          = true
@@ -45,6 +46,7 @@ data "template_cloudinit_config" "cloud-config" {
         - path: /etc/environment
           content: |
             DOMAIN=${var.domain}
+            SSL_PROVISIONER=${var.ssl_provisioner}
           append: true
         - path: /etc/ssh/sshd_config
           content: |
@@ -122,11 +124,15 @@ data "template_cloudinit_config" "cloud-config" {
             ${data.local_file.ansible-inventory.content}
           owner: localadmin:localadmin
           permissions: '0644'
+          defer: true
+          encoding: base64
         - path: /opt/wp-deploy/ansible/deploy.yml
           content: |
             ${data.local_file.ansible-playbook.content}
           owner: localadmin:localadmin
           permissions: '0644'
+          defer: true
+          encoding: base64
       EOF
   }
 
@@ -139,6 +145,7 @@ data "template_cloudinit_config" "cloud-config" {
         - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
         - cp -f /home/localadmin/.bashrc /home/localadmin/.profile
         - chown localadmin:localadmin -R /home/localadmin/
+        - chown localadmin:localadmin -R /opt/wp-deploy
         - sudo su - localadmin -c "bash /opt/wp-deploy/install.sh"
         - systemctl restart ssh
       EOF
