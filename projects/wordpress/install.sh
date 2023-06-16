@@ -11,7 +11,7 @@ else
     DOMAIN="$(curl -s http://whatismyip.akamai.com/)"
 fi
 
-sudo chmod 777 -R /opt/wp-deploy
+# sudo chmod 744 -R /opt/wp-deploy
 sudo chown -R localadmin:localadmin /opt/wp-deploy
 cd /opt/wp-deploy
 
@@ -23,7 +23,7 @@ sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd6
     sudo chmod +x /usr/bin/yq
 
 # Configure users
-trellis new --name $DOMAIN --host $DOMAIN $DOMAIN
+trellis new --name $DOMAIN --host $DOMAIN $DOMAIN || echo "Domain already exists, skipping trellis new"
 yq -i '.web_user = "wordpress"' $DOMAIN/trellis/group_vars/all/users.yml
 yq -i '.admin_user = "localadmin"' $DOMAIN/trellis/group_vars/all/users.yml
 
@@ -41,7 +41,7 @@ case $SSL_PROVISIONER in
         ;;
     "manual")
         echo "Setting up manual SSL..."
-        sed -i '/ssl:/,/letsencrypt/c\    ssl:\n      enabled: true\n      provider: manual\n      cert: /etc/nginx/ssl/ssl.crt\n      key: /etc/nginx/ssl/ssl.key' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
+        sed -i '/ssl:/,/letsencrypt/c\    ssl:\n      enabled: true\n      provider: manual\n      cert: /etc/ssl.crt\n      key: /etc/ssl.key' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
         ;;
     "self-signed")
         echo "Setting up self-signed SSL..."

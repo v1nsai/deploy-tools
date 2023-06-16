@@ -114,7 +114,7 @@ data "template_cloudinit_config" "cloud-config" {
           defer: true
         - path: /etc/ssl.key
           owner: root:root
-          permissions: '0600'
+          permissions: '0644'
           content: |
             ${data.local_file.ssl-key.content}
           encoding: base64
