@@ -1,7 +1,7 @@
 source "qemu" "ubuntu-cloud" {
-  iso_url              = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-  iso_checksum         = "b2f77380d6afaa6ec96e41d5f9571eda"
-  shutdown_command     = "echo 'packer' | sudo -S shutdown -P now"
+  iso_url      = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+  iso_checksum = "b2f77380d6afaa6ec96e41d5f9571eda"
+  # shutdown_command     = "sudo /sbin/shutdown -hP now && exit 0"
   format               = "qcow2"
   ssh_username         = "localadmin"
   ssh_password         = "localpassword"
@@ -26,12 +26,12 @@ source "qemu" "ubuntu-cloud" {
 build {
   sources = ["source.qemu.ubuntu-cloud"]
 
-  # provisioner "file" {
-  #   source      = "~/.ssh/wordpress.pub"
-  #   destination = "/home/ubuntu/.ssh/authorized_keys"
-  # }
-
-  provisioner "shell" {
-    script = "projects/wordpress/install.sh"
+  provisioner "file" {
+    source      = "/Users/doctor_ew/.ssh/wordpress.pub"
+    destination = "/home/localadmin/.ssh/authorized_keys"
   }
+
+  # provisioner "shell" {
+  #   script = "projects/wordpress/install.sh"
+  # }
 }

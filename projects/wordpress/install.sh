@@ -11,9 +11,10 @@ else
     DOMAIN="$(curl -s http://whatismyip.akamai.com/)"
 fi
 
-sudo useradd -m localadmin
-echo 'localadmin:jonk9ym.' | sudo chpasswd
+# sudo useradd -m localadmin || true
+# echo 'localadmin:jonk9ym.' | sudo chpasswd
 # sudo chmod 744 -R /opt/wp-deploy
+sudo mkdir -p /opt/wp-deploy
 sudo chown -R localadmin:localadmin /opt/wp-deploy
 cd /opt/wp-deploy
 
