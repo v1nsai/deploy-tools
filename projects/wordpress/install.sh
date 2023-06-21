@@ -11,9 +11,6 @@ else
     DOMAIN="$(curl -s http://whatismyip.akamai.com/)"
 fi
 
-# sudo useradd -m localadmin || true
-# echo 'localadmin:jonk9ym.' | sudo chpasswd
-# sudo chmod 744 -R /opt/wp-deploy
 sudo mkdir -p /opt/wp-deploy
 sudo chown -R localadmin:localadmin /opt/wp-deploy
 cd /opt/wp-deploy
@@ -21,12 +18,12 @@ cd /opt/wp-deploy
 # Install dependencies
 curl -sL https://roots.io/trellis/cli/get | sudo bash
 python3 -m pip install virtualenv ansible
-/home/localadmin/.local/bin/ansible-galaxy install kwoodson.yedit
+# /home/localadmin/.local/bin/ansible-galaxy install kwoodson.yedit
 sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
     sudo chmod +x /usr/bin/yq
 
 # Configure users
-trellis new --name $DOMAIN --host $DOMAIN $DOMAIN || echo "Domain already exists, skipping trellis new"
+trellis new --name $DOMAIN --host $DOMAIN $DOMAIN || echo "Domain already exists, skipping new website creation"
 yq -i '.web_user = "wordpress"' $DOMAIN/trellis/group_vars/all/users.yml
 yq -i '.admin_user = "localadmin"' $DOMAIN/trellis/group_vars/all/users.yml
 
@@ -61,12 +58,12 @@ esac
 # Configure hosts
 sed -i 's/your_server_hostname/127.0.0.1/g' $DOMAIN/trellis/hosts/production
 
-# Configure ssh user
-sudo cat /home/localadmin/.ssh/id_rsa.pub >> /home/localadmin/.ssh/authorized_keys
-sudo cat /home/localadmin/.ssh/id_rsa.pub | sudo tee -a /home/wordpress/.ssh/authorized_keys
-sudo cp -f /home/localadmin/.ssh/id_rsa /home/wordpress/.ssh/id_rsa
-sudo cp -f /home/localadmin/.ssh/id_rsa.pub /home/wordpress/.ssh/id_rsa.pub
-sudo chown -R wordpress:wordpress /home/wordpress/.ssh
+# Add all pubkeys to the authorized_keys file for privileged and non privileged users
+ssh-keygen -t rsa -f /home/localadmin/.ssh/id_rsa -P "" -b 4096
+cat /home/localadmin/.ssh/*.pub | sudo tee -a /home/localadmin/.ssh/authorized_keys
+cat /home/localadmin/.ssh/*.pub | sudo tee -a /home/wordpress/.ssh/authorized_keys
+chown wordpress:wordpress -R /home/wordpress/.ssh/
+chown localadmin:localadmin -R /home/localadmin/.ssh/
 
 # Configure access
 if [ $USERDOMAIN = true] ; then
@@ -84,3 +81,6 @@ sed -i 's/ipify_facts:/ipify_facts:\n        timeout: 60/g' $DOMAIN/trellis/role
 cd $DOMAIN/trellis
 trellis provision production
 trellis deploy production
+
+# Stop script from running again
+sed -i '/install.sh/d' /etc/rc.local

@@ -1,10 +1,8 @@
 source "qemu" "ubuntu-cloud" {
-  iso_url      = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-  iso_checksum = "b2f77380d6afaa6ec96e41d5f9571eda"
-  # shutdown_command     = "sudo /sbin/shutdown -hP now && exit 0"
+  iso_url              = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+  iso_checksum         = "b2f77380d6afaa6ec96e41d5f9571eda"
   format               = "qcow2"
   ssh_username         = "localadmin"
-  ssh_password         = "localpassword"
   ssh_private_key_file = "~/.ssh/wordpress"
   vm_name              = "ubuntu-packer"
   disk_image           = true
@@ -14,24 +12,21 @@ source "qemu" "ubuntu-cloud" {
   http_directory       = "projects/wordpress/packer/cloud-data"
   vnc_port_min         = 5900
   vnc_port_max         = 5900
-  # boot_command = [
-  #   "autoinstall ",
-  #   "ds=nocloud-net;s=http://{{.HTTPIP}}:{{.HTTPPort}}/cloud-config.yml",
-  #   "<enter>"
-  # ]
-  ssh_timeout = "20m"
-  qemuargs    = [["-smbios", "type=1,serial=ds=nocloud-net;instance-id=packer;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/"]]
+  ssh_timeout          = "20m"
+  qemuargs             = [["-smbios", "type=1,serial=ds=nocloud-net;instance-id=packer;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/"]]
 }
 
 build {
   sources = ["source.qemu.ubuntu-cloud"]
 
   provisioner "file" {
-    source      = "/Users/doctor_ew/.ssh/wordpress.pub"
-    destination = "/home/localadmin/.ssh/authorized_keys"
+    source      = "projects/wordpress/install.sh"
+    destination = "/home/localadmin/install.sh"
   }
 
-  # provisioner "shell" {
-  #   script = "projects/wordpress/install.sh"
-  # }
+  provisioner "shell" {
+    inline = [
+      "echo '/home/localadmin/install.sh' | sudo tee -a /etc/rc.local"
+    ]
+  }
 }
