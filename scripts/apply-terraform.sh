@@ -19,7 +19,7 @@ fi
 
 # Apply terraform
 terraform -chdir=projects/$1 init -upgrade
-terraform -chdir=projects/$1 apply -auto-approve #-var-file ../../auth/auth.tfvars
+terraform -chdir=projects/$1 apply -auto-approve
 echo "Terraform apply completed"
 
 # Handle postdeploy if found

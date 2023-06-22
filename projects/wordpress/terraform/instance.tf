@@ -1,9 +1,9 @@
-resource "openstack_compute_instance_v2" "wordpress" {
-  name            = "wordpress"
+resource "openstack_compute_instance_v2" "instance" {
+  name            = "instance"
   image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   flavor_name     = "alt.c2.medium"
   key_pair        = "wordpress"
-  security_groups = ["default", "ssh-ingress", "HTTPS ingress", "HTTP ingress"]
+  security_groups = ["default", "ssh-ingress"]
   user_data       = data.template_cloudinit_config.cloud-config.rendered
 
   network {

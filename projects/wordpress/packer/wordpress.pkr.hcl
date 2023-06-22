@@ -1,10 +1,10 @@
-source "qemu" "ubuntu-cloud" {
+source "qemu" "wordpress" {
   iso_url              = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
   iso_checksum         = "b2f77380d6afaa6ec96e41d5f9571eda"
   format               = "qcow2"
   ssh_username         = "localadmin"
   ssh_private_key_file = "~/.ssh/wordpress"
-  vm_name              = "ubuntu-packer"
+  vm_name              = "wordpress"
   disk_image           = true
   boot_wait            = "10s"
   use_default_display  = true
@@ -17,16 +17,22 @@ source "qemu" "ubuntu-cloud" {
 }
 
 build {
-  sources = ["source.qemu.ubuntu-cloud"]
+  sources = ["source.qemu.wordpress"]
+
+  # provisioner "shell-local" {
+  #   inline = [
+  #     # "cat projects/wordpress/install.sh | base64 -w 0 > projects/wordpress/install.sh.base64", # Linux
+  #     "cat projects/wordpress/install.sh | base64 > projects/wordpress/install.sh.base64", # MacOS
+  #     "yq -i '.write_files[0].content = load_str(\"projects/wordpress/install.sh.base64\")' projects/wordpress/packer/cloud-data/user-data"
+  #   ]
+  # }
 
   provisioner "file" {
-    source      = "projects/wordpress/install.sh"
-    destination = "/home/localadmin/install.sh"
+    source      = "${path.cwd}/projects/wordpress/install.sh"
+    destination = "/home/localadmin/provisioner-install.sh"
   }
 
   provisioner "shell" {
-    inline = [
-      "echo '/home/localadmin/install.sh' | sudo tee -a /etc/rc.local"
-    ]
+    inline = ["echo '/home/localadmin/install.sh' | sudo tee -a /etc/rc.local"]
   }
 }
