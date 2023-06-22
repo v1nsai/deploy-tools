@@ -1,7 +1,7 @@
 resource "openstack_compute_instance_v2" "instance" {
   name            = "instance"
   image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
-  flavor_name     = "alt.c2.medium"
+  flavor_name     = "alt.c2.large"
   key_pair        = "wordpress"
   security_groups = ["default", "ssh-ingress", "HTTPS ingress", "HTTP ingress"]
   user_data = <<EOF

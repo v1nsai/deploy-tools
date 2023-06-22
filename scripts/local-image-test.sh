@@ -12,3 +12,6 @@ qemu-system-x86_64                                              \
     -smbios type=1,serial=ds='nocloud-net;s=http://localhost:8000/'
 killall Python
 echo "Completed successfully"
+
+# terraform -chdir=templates/terraform/test init -var-file="../../../auth/alterncloud.auto.tfvars"
+# terraform -chdir=templates/terraform/test apply -target="openstack_compute_instance_v2.instance" -var-file="../../../auth/alterncloud.auto.tfvars" -auto-approve
