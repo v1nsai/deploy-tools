@@ -2,7 +2,7 @@ source "qemu" "wordpress" {
   iso_url              = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
   iso_checksum         = "b2f77380d6afaa6ec96e41d5f9571eda"
   format               = "qcow2"
-  ssh_username         = "localadmin"
+  ssh_username         = "root"
   ssh_private_key_file = "~/.ssh/wordpress"
   vm_name              = "wordpress"
   disk_image           = true
@@ -19,20 +19,31 @@ source "qemu" "wordpress" {
 build {
   sources = ["source.qemu.wordpress"]
 
-  # provisioner "shell-local" {
-  #   inline = [
-  #     # "cat projects/wordpress/install.sh | base64 -w 0 > projects/wordpress/install.sh.base64", # Linux
-  #     "cat projects/wordpress/install.sh | base64 > projects/wordpress/install.sh.base64", # MacOS
-  #     "yq -i '.write_files[0].content = load_str(\"projects/wordpress/install.sh.base64\")' projects/wordpress/packer/cloud-data/user-data"
-  #   ]
-  # }
+  provisioner "shell-local" {
+    inline = [
+      # "cat projects/wordpress/install.sh | base64 -w 0 > projects/wordpress/install.sh.base64", # Linux
+      "cat projects/wordpress/install.sh | base64 > projects/wordpress/install.sh.base64", # MacOS
+      "yq -i '.write_files[0].content = load_str(\"projects/wordpress/install.sh.base64\")' projects/wordpress/packer/cloud-data/user-data"
+    ]
+  }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/install.sh"
-    destination = "/home/localadmin/provisioner-install.sh"
+    destination = "/tmp/provisioner-install.sh"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/wordpress/install.sh"
+    destination = "/home/localadmin/provisioner-install2.sh"
   }
 
   provisioner "shell" {
-    inline = ["echo '/home/localadmin/install.sh' | sudo tee -a /etc/rc.local"]
+    inline = [
+      "mv /tmp/provisioner-install.sh /home/localadmin/provisioner-install.sh"
+    ]
   }
+
+  # provisioner "shell" {
+  #   inline = ["echo '/tmp/install.sh' | sudo tee -a /etc/rc.local"]
+  # }
 }

@@ -8,4 +8,4 @@ rm -rf output-*
 packer init -upgrade projects/$1/packer
 packer fmt projects/$1/packer
 packer validate projects/$1/packer
-packer build projects/$1/packer
+packer build $2 projects/$1/packer
