@@ -22,7 +22,7 @@ users:
       rsa_public: |
         ${indent(8, data.local_file.ssh-pubkey.content)}
 write_files:
-  - path: /home/localadmin/.ssh/devnode
+  - path: /home/localadmin/.ssh/devbox
     content: |
       ${indent(6, data.local_sensitive_file.private-key.content)}
     owner: localadmin:localadmin
@@ -39,7 +39,7 @@ write_files:
       Host github.com
         Hostname github.com
         User git
-        IdentityFile /home/localadmin/.ssh/devnode
+        IdentityFile /home/localadmin/.ssh/devbox
         IdentitiesOnly yes
     owner: localadmin:localadmin
     permissions: '0600'
