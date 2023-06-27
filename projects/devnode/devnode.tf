@@ -10,6 +10,11 @@ resource "openstack_compute_instance_v2" "devnode" {
     name = "wordpress"
   }
 
+  # personality {
+  #   file     = "/home/localadmin/.ssh/personality"
+  #   content = data.local_sensitive_file.private-key.content
+  # }
+
   # provisioner "file" {
   #     source = "${path.module}/install.sh"
   #     destination = "/home/localadmin/install.sh"
@@ -24,31 +29,6 @@ resource "openstack_compute_instance_v2" "devnode" {
   # depends_on = [ openstack_compute_floatingip_associate_v2.myip ]
 }
 
-locals {
-  cloud-init = <<EOF
-#cloud-config
-ssh_pwauth: true
-users:
-  - name: localadmin
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: users, admin, sudo
-    shell: /bin/bash
-    lock_passwd: false
-    passwd: $6$rounds=4096$nQEeaHtrjiUlxOPi$LQlgi0XBR6u46AJFhWxsWBBK8YqHbGWYWkWnG.YhmdYkc/lMiAacMwQAbZ0W7MosLFexushHQpfa05eG7gsL/1
-    ssh_authorized_keys:
-      - ${data.local_file.ssh-pubkey.content}
-    ssh_keys:
-      rsa_private: |
-        ${indent(8, data.local_file.private-key.content)}
-      rsa_public: |
-        ${indent(8, data.local_file.ssh-pubkey.content)}
-  EOF
-}
-
-output "cloud-init" {
-  value = local.cloud-init
-}
-
 resource "openstack_networking_floatingip_v2" "myip" {
   pool = "External"
 }
@@ -56,5 +36,5 @@ resource "openstack_networking_floatingip_v2" "myip" {
 resource "openstack_compute_floatingip_associate_v2" "myip" {
   floating_ip = openstack_networking_floatingip_v2.myip.address
   instance_id = openstack_compute_instance_v2.devnode.id
-  fixed_ip    = openstack_compute_instance_v2.devnode.access_ip_v4
+  # fixed_ip    = openstack_compute_instance_v2.devnode.access_ip_v4
 }
