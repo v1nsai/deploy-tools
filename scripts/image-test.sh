@@ -21,6 +21,7 @@ openstack server create \
   --key-name $1 \
   $1 \
   --wait
+openstack port create --network wordpress --device wordpress wordpress-port
 openstack server add floating ip $1 "216.87.32.215"
 
 echo "Connecting to instance..."
