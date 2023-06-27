@@ -21,5 +21,3 @@ terraform.tfstate
 
 # Packer
 output-*
-
-projects/homelab
