@@ -18,8 +18,8 @@ else
 fi
 
 # Apply terraform
-terraform -chdir=projects/$1 init -upgrade
-terraform -chdir=projects/$1 apply -auto-approve
+terraform -chdir=projects/$1/terraform init -upgrade
+terraform -chdir=projects/$1/terraform apply -auto-approve
 echo "Terraform apply completed"
 
 # Handle postdeploy if found
