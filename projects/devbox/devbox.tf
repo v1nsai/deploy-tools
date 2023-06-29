@@ -29,12 +29,12 @@ resource "openstack_compute_instance_v2" "devbox" {
   # depends_on = [ openstack_compute_floatingip_associate_v2.myip ]
 }
 
-# resource "openstack_networking_floatingip_v2" "myip" {
-#   pool = "External"
-# }
+resource "openstack_networking_floatingip_v2" "myip" {
+  pool = "External"
+}
 
-# resource "openstack_compute_floatingip_associate_v2" "myip" {
-#   floating_ip = openstack_networking_floatingip_v2.myip.address
-#   instance_id = openstack_compute_instance_v2.devbox.id
-#   # fixed_ip    = openstack_compute_instance_v2.devbox.access_ip_v4
-# }
+resource "openstack_compute_floatingip_associate_v2" "myip" {
+  floating_ip = openstack_networking_floatingip_v2.myip.address
+  instance_id = openstack_compute_instance_v2.devbox.id
+  # fixed_ip    = openstack_compute_instance_v2.devbox.access_ip_v4
+}

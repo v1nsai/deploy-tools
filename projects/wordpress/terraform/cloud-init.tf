@@ -65,19 +65,6 @@ data "template_cloudinit_config" "cloud-config" {
           owner: localadmin:localadmin
           permissions: '0600'
           defer: true
-        - path: /home/wordpress/.ssh/config
-          content: |
-            Host 127.0.0.1 localhost
-              StrictHostKeyChecking no
-
-            Host github.com
-              User git
-              HostName github.com
-              IdentityFile ~/.ssh/id_rsa
-              StrictHostKeyChecking no
-          owner: wordpress:wordpress
-          permissions: '0600'
-          defer: true
         - path: /opt/wp-deploy/install.sh
           content: |
             ${data.local_file.install_sh.content}
@@ -105,20 +92,6 @@ data "template_cloudinit_config" "cloud-config" {
           permissions: '0600'
           append: true
           defer: true
-        - path: /etc/ssl.crt
-          content: |
-            ${data.local_file.ssl-cert.content}
-          owner: root:root
-          permissions: '0644'
-          encoding: base64
-          defer: true
-        - path: /etc/ssl.key
-          owner: root:root
-          permissions: '0644'
-          content: |
-            ${data.local_file.ssl-key.content}
-          encoding: base64
-          defer: true
         - path: /opt/wp-deploy/ansible/inventory.yml
           content: |
             ${data.local_file.ansible-inventory.content}
@@ -144,6 +117,7 @@ data "template_cloudinit_config" "cloud-config" {
         - cp /etc/skel/.bashrc /home/localadmin/.bashrc
         - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
         - cp -f /home/localadmin/.bashrc /home/localadmin/.profile
+        - cp -f /home/localadmin/.ssh/config /home/wordpress/.ssh/config
         - chown localadmin:localadmin -R /home/localadmin/
         - chown localadmin:localadmin -R /opt/wp-deploy
         - sudo su - localadmin -c "bash /opt/wp-deploy/install.sh"
@@ -151,3 +125,5 @@ data "template_cloudinit_config" "cloud-config" {
       EOF
   }
 }
+
+# 
