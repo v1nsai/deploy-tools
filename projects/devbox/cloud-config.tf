@@ -50,6 +50,10 @@ write_files:
       ${indent(6, data.local_sensitive_file.alterncloud-env.content)}
     owner: localadmin:localadmin
     defer: true
+  - path: /etc/crontab
+    content: 30 3    * * *   root    /usr/sbin/shutdown -h
+    append: true
+    defer: true
 runcmd:
 - cp /etc/skel/.bashrc /home/localadmin/.bashrc
 - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
