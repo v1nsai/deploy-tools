@@ -67,7 +67,9 @@ EOF
 server_ip=$(openstack server show devbox -f json | jq '.addresses.'$network_name'[] | select(startswith("216"))' | sed 's/"//g')
 
 if [ "$direction" = "to" ]; then
-  scp -r -i ~/.ssh/$3 $1 localadmin@"$server_ip":$4
+  # scp -r -i ~/.ssh/$server_name $source_filename localadmin@"$server_ip":$destination_filename
+rsync -av --ignore-errors -e "ssh -i ~/.ssh/$server_name -l localadmin" "$source_filename" "$server_ip:$destination_filename"
 elif [ "$direction" = "from" ]; then
-  scp -r -i ~/.ssh/$3 localadmin@"$server_ip":$1 $4
+  # scp -r -i ~/.ssh/$server_name localadmin@"$server_ip":$source_filename $destination_filename
+  rsync -av --ignore-errors -e "ssh -i ~/.ssh/$server_name -l localadmin" "$server_ip:$source_filename" "$destination_filename"
 fi
