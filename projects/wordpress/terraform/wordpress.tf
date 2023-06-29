@@ -1,6 +1,6 @@
 resource "openstack_compute_instance_v2" "wordpress" {
   name            = "wordpress"
-  image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
+  image_name      = "wordpress"
   flavor_name     = "alt.c2.medium"
   key_pair        = "wordpress"
   security_groups = ["default", "ssh-ingress"]
@@ -30,6 +30,6 @@ output "wordpress_ip" {
 
 resource "openstack_compute_floatingip_associate_v2" "floating_ip_associate" {
   floating_ip = "216.87.32.215"
-  instance_id = "${openstack_compute_instance_v2.wordpress.id}"
-  fixed_ip    = "${openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4}"
+  instance_id = openstack_compute_instance_v2.wordpress.id
+  fixed_ip    = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
 }
