@@ -1,11 +1,11 @@
 #cloud-config
 ssh_pwauth: true
 users:
-  - name: root
-    lock_passwd: false
-    hashed_passwd: $6$rounds=4096$s0cBOA5fV0NQT3a7$x1/wtO50h8UjYX.AuEN1qxr9z4Tw7.bhW/DeGY1z8ZtPmS245FkezDAogv1/ZxLfazSING3H0qW2z6qXeDPkH0
-    ssh_authorized_keys:
-      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX3ZnnojSpqi1R7CWmP7uVFU2fEd2uS4PYQpWC23ScmDGP7KFHeTJfMc6eMaAhbxfIXx2CFdsIhP5U58BFLmAxkUIM8lGnHgh1uME/aOMZokZrDhYnw0eaamVOg0rdKD/uaTo87ASoxpf0XYnrqcrYhFIQodxjsCC8pCU5Egjh9QDgHsniJ5vWEkxZGPQ4SXIj4txh8uXMI0mh57BWJRK0zJIDzZCxubtrOpWoQnVvg/ZV+Thgy0P9m7e8OHbaM3U/7p4DBd1MZ95jNwjefMeD5hR46T35rkR9w/ebEIKhGjz0UB2yRUZPOPqBzVfixYA6gfd5c1AhjluCyCqhLEMd Generated-by-Nova
+  # - name: root
+  #   lock_passwd: false
+  #   hashed_passwd: $6$rounds=4096$s0cBOA5fV0NQT3a7$x1/wtO50h8UjYX.AuEN1qxr9z4Tw7.bhW/DeGY1z8ZtPmS245FkezDAogv1/ZxLfazSING3H0qW2z6qXeDPkH0
+  #   ssh_authorized_keys:
+  #     - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX3ZnnojSpqi1R7CWmP7uVFU2fEd2uS4PYQpWC23ScmDGP7KFHeTJfMc6eMaAhbxfIXx2CFdsIhP5U58BFLmAxkUIM8lGnHgh1uME/aOMZokZrDhYnw0eaamVOg0rdKD/uaTo87ASoxpf0XYnrqcrYhFIQodxjsCC8pCU5Egjh9QDgHsniJ5vWEkxZGPQ4SXIj4txh8uXMI0mh57BWJRK0zJIDzZCxubtrOpWoQnVvg/ZV+Thgy0P9m7e8OHbaM3U/7p4DBd1MZ95jNwjefMeD5hR46T35rkR9w/ebEIKhGjz0UB2yRUZPOPqBzVfixYA6gfd5c1AhjluCyCqhLEMd Generated-by-Nova
   - name: localadmin
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin, sudo
@@ -97,4 +97,32 @@ write_files:
     permissions: '0755'
     owner: localadmin:localadmin
     encoding: base64
+    defer: true
+  - path: /etc/ssh/sshd_config
+    content: |
+      PermitRootLogin no
+    append: true
+  - path: /home/localadmin/.ssh/config
+    content: |
+      Host 127.0.0.1 localhost
+        StrictHostKeyChecking no
+
+      Host github.com
+        User git
+        HostName github.com
+        IdentityFile ~/.ssh/id_rsa
+        StrictHostKeyChecking no
+    owner: localadmin:localadmin
+    permissions: '0600'
+    defer: true
+  - path: /home/wordpress/.ssh/authorized_keys
+    content: |
+      ${data.local_file.ssh-pubkey.content}
+    owner: wordpress:wordpress
+    permissions: '0600'
+    append: true
+    defer: true
+  - path: /etc/crontab
+    content: "30 23   * * *   root    /usr/sbin/shutdown -h"
+    append: true
     defer: true
