@@ -10,26 +10,21 @@ resource "openstack_compute_instance_v2" "wordpress" {
     name = "wordpress"
   }
 
-  # provisioner "file" {
-  #     source = "${path.module}/install.sh"
-  #     destination = "/home/localadmin/install.sh"
-  # }
 
-  # connection {
-  #   type        = "ssh"
-  #   user        = "localadmin"
-  #   private_key = file(pathexpand("~/.ssh/wordpress"))
-  #   host        = "216.87.32.215"
-  # }
-  # depends_on = [ openstack_networking_network_v2.wordpress, openstack_networking_subnet_v2.wordpress_subnet ]
+  # depends_on = [ openstack_compute_floatingip_associate_v2.floating_ip_associate ]
 }
 
 output "wordpress_ip" {
-  value = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
+  value = openstack_networking_floatingip_v2.floating_ip.address
+}
+
+resource "openstack_networking_floatingip_v2" "floating_ip" {
+  pool = "External"
 }
 
 resource "openstack_compute_floatingip_associate_v2" "floating_ip_associate" {
-  floating_ip = "216.87.32.215"
+  floating_ip = openstack_networking_floatingip_v2.floating_ip.address
   instance_id = openstack_compute_instance_v2.wordpress.id
   fixed_ip    = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
 }
+
