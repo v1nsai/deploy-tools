@@ -6,6 +6,7 @@ source "qemu" "wordpress" {
   ssh_private_key_file = "~/.ssh/wordpress"
   vm_name              = "wordpress"
   disk_image           = true
+  disk_size            = 10000
   boot_wait            = "10s"
   use_default_display  = true
   headless             = false

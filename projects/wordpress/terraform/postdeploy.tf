@@ -59,5 +59,5 @@ resource "null_resource" "upload-and-execute-file" {
     host        = openstack_networking_floatingip_v2.floating_ip.address
   }
 
-  depends_on = [ null_resource.create-directory-with-permissions ]
+  depends_on = [ null_resource.create_directory_with_permissions ]
 }
