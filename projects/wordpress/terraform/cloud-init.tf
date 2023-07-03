@@ -48,32 +48,10 @@ data "template_cloudinit_config" "cloud-config" {
             DOMAIN=${var.domain}
             SSL_PROVISIONER=${var.ssl_provisioner}
           append: true
-        # - path: /etc/ssh/sshd_config
-        #   content: |
-        #     PermitRootLogin no
-        #   append: true
-        # - path: /home/localadmin/.ssh/config
-        #   content: |
-        #     Host 127.0.0.1 localhost
-        #       StrictHostKeyChecking no
-
-        #     Host github.com
-        #       User git
-        #       HostName github.com
-        #       IdentityFile ~/.ssh/id_rsa
-        #       StrictHostKeyChecking no
-        #   owner: localadmin:localadmin
-        #   permissions: '0600'
-        #   defer: true
-        # - path: /home/wordpress/.ssh/authorized_keys
-        #   content: |
-        #     ${data.local_file.ssh-pubkey.content}
-        #   owner: wordpress:wordpress
-        #   permissions: '0600'
-        #   append: true
-        #   defer: true
         # - path: /etc/crontab
-        #   content: "30 23   * * *   root    /usr/sbin/shutdown -h"
+        #   content: |
+        #     30 23   * * *   root    /usr/sbin/shutdown -h 
+
         #   append: true
         #   defer: true
       EOF

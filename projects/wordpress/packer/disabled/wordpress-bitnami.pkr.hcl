@@ -68,7 +68,6 @@ build {
     inline = [
       "echo '/opt/wp-deploy/install.sh' | sudo tee -a /etc/rc.local",
       "sudo mkdir -p /opt/wp-deploy/ansible",
-      "echo @reboot bash /opt/wp-deploy/install.sh | crontab -",
       "sudo chown localadmin:localadmin -R /opt/wp-deploy",
       "mv /tmp/wp-deploy/* /opt/wp-deploy/",
     ]

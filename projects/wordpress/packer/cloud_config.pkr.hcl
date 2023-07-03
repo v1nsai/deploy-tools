@@ -5,11 +5,11 @@ locals {
 #cloud-config
 ssh_pwauth: true
 users:
-  - name: root
-    lock_passwd: false
-    hashed_passwd: ${var.hashed_passwd}
-    ssh_authorized_keys:
-      - ${local.ssh_pubkey}
+  # - name: root
+  #   lock_passwd: false
+  #   hashed_passwd: ${var.hashed_passwd}
+  #   ssh_authorized_keys:
+  #     - ${local.ssh_pubkey}
   - name: localadmin
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin, sudo
@@ -54,7 +54,7 @@ write_files:
     defer: true
   - path: /etc/crontab
     content: |
-      30 23   * * *   root    /usr/sbin/shutdown -h
+      @reboot localadmin /opt/wp-deploy/install.sh
 
     append: true
     defer: true
