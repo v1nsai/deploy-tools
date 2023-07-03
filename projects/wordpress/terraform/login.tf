@@ -8,7 +8,6 @@ terraform {
   }
 }
 
-# -var-file=auth/auth.tfvars
 variable "user_name" {
   type      = string
   sensitive = true

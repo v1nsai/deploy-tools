@@ -1,24 +1,27 @@
-source "qemu" "wordpress" {
-  iso_url              = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-  iso_checksum         = "b2f77380d6afaa6ec96e41d5f9571eda"
-  format               = "qcow2"
+source "openstack" "wordpress" {
+  username             = var.user_name
+  password             = var.password
+  tenant_name          = var.tenant_name
+  identity_endpoint    = var.auth_url
+  flavor               = "alt.st1.nano"
+  image_name           = "wordpress"
+  source_image         = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   ssh_username         = "localadmin"
+  ssh_keypair_name     = "wordpress"
   ssh_private_key_file = "~/.ssh/wordpress"
-  vm_name              = "wordpress"
-  disk_image           = true
-  disk_size            = 10000
-  boot_wait            = "10s"
-  use_default_display  = true
-  headless             = false
-  http_directory       = "projects/wordpress/packer/cloud-data"
-  vnc_port_min         = 5900
-  vnc_port_max         = 5900
   ssh_timeout          = "20m"
-  qemuargs             = [["-smbios", "type=1,serial=ds=nocloud-net;instance-id=packer;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/"]]
+  reuse_ips            = true
+  networks             = ["215f7325-1b59-4088-8026-10568369732d"]
+  floating_ip_network  = "External"
+  security_groups      = ["default", "ssh-ingress", "http-ingress", "https-ingress"]
+  user_data            = local.cloud_config
+  # use_blockstorage_volume = true
+  # volume_size             = 50
 }
 
 build {
-  sources = ["source.qemu.wordpress"]
+  # sources = ["source.qemu.wordpress"]
+  sources = ["source.openstack.wordpress"]
 
   provisioner "shell-local" {
     inline = [

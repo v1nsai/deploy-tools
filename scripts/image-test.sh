@@ -2,8 +2,9 @@
 
 set -e
 
-# echo "Building new image..."
-# scripts/packer-build.sh $1 -debug
+echo "Building new image..."
+openstack image delete $1 || echo "Image not found, skipping delete"
+scripts/packer-build.sh $1 $2
 
 # echo "Deleting old image and uploading new image..."
 # openstack image delete $1 || echo "Image not found, skipping delete"

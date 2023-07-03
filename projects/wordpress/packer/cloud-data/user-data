@@ -1,11 +1,11 @@
 #cloud-config
 ssh_pwauth: true
 users:
-  # - name: root
-  #   lock_passwd: false
-  #   hashed_passwd: $6$rounds=4096$s0cBOA5fV0NQT3a7$x1/wtO50h8UjYX.AuEN1qxr9z4Tw7.bhW/DeGY1z8ZtPmS245FkezDAogv1/ZxLfazSING3H0qW2z6qXeDPkH0
-  #   ssh_authorized_keys:
-  #     - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX3ZnnojSpqi1R7CWmP7uVFU2fEd2uS4PYQpWC23ScmDGP7KFHeTJfMc6eMaAhbxfIXx2CFdsIhP5U58BFLmAxkUIM8lGnHgh1uME/aOMZokZrDhYnw0eaamVOg0rdKD/uaTo87ASoxpf0XYnrqcrYhFIQodxjsCC8pCU5Egjh9QDgHsniJ5vWEkxZGPQ4SXIj4txh8uXMI0mh57BWJRK0zJIDzZCxubtrOpWoQnVvg/ZV+Thgy0P9m7e8OHbaM3U/7p4DBd1MZ95jNwjefMeD5hR46T35rkR9w/ebEIKhGjz0UB2yRUZPOPqBzVfixYA6gfd5c1AhjluCyCqhLEMd Generated-by-Nova
+  - name: root
+    lock_passwd: false
+    hashed_passwd: $6$rounds=4096$s0cBOA5fV0NQT3a7$x1/wtO50h8UjYX.AuEN1qxr9z4Tw7.bhW/DeGY1z8ZtPmS245FkezDAogv1/ZxLfazSING3H0qW2z6qXeDPkH0
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX3ZnnojSpqi1R7CWmP7uVFU2fEd2uS4PYQpWC23ScmDGP7KFHeTJfMc6eMaAhbxfIXx2CFdsIhP5U58BFLmAxkUIM8lGnHgh1uME/aOMZokZrDhYnw0eaamVOg0rdKD/uaTo87ASoxpf0XYnrqcrYhFIQodxjsCC8pCU5Egjh9QDgHsniJ5vWEkxZGPQ4SXIj4txh8uXMI0mh57BWJRK0zJIDzZCxubtrOpWoQnVvg/ZV+Thgy0P9m7e8OHbaM3U/7p4DBd1MZ95jNwjefMeD5hR46T35rkR9w/ebEIKhGjz0UB2yRUZPOPqBzVfixYA6gfd5c1AhjluCyCqhLEMd Generated-by-Nova
   - name: localadmin
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin, sudo
@@ -24,7 +24,7 @@ apt:
   preserve_sources_list: true
 package_update: false
 write_files:
-  - path: /home/localadmin/cloudinit-install.sh
+  - path: /etc/ssh/sshd_config
     content: |
       IyEvYmluL2Jhc2gKCnNldCAtZQoKVVNFUkRPTUFJTj1mYWxzZQppZiBbWyAkRE9NQUlOIF1dOyB0
       aGVuCiAgICBlY2hvICJTZXR0aW5nIERPTUFJTi4uLiIKICAgIFVTRVJET01BSU49dHJ1ZQplbHNl
@@ -94,13 +94,6 @@ write_files:
       cmVsbGlzIHByb3Zpc2lvbiBwcm9kdWN0aW9uCnRyZWxsaXMgZGVwbG95IHByb2R1Y3Rpb24KCiMg
       U3RvcCBzY3JpcHQgZnJvbSBydW5uaW5nIGFnYWluCnNlZCAtaSAnL2luc3RhbGwuc2gvZCcgL2V0
       Yy9yYy5sb2NhbA==
-    permissions: '0755'
-    owner: localadmin:localadmin
-    encoding: base64
-    defer: true
-  - path: /etc/ssh/sshd_config
-    content: |
-      PermitRootLogin no
     append: true
   - path: /home/localadmin/.ssh/config
     content: |
@@ -123,6 +116,7 @@ write_files:
     append: true
     defer: true
   - path: /etc/crontab
-    content: "30 23   * * *   root    /usr/sbin/shutdown -h"
+    content: |
+      30 23   * * *   root    /usr/sbin/shutdown -h
     append: true
     defer: true

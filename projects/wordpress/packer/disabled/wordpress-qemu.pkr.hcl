@@ -2,7 +2,7 @@ source "qemu" "wordpress" {
   iso_url              = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
   iso_checksum         = "b2f77380d6afaa6ec96e41d5f9571eda"
   format               = "qcow2"
-  ssh_username         = "localadmin"
+  ssh_username         = "root"
   ssh_private_key_file = "~/.ssh/wordpress"
   vm_name              = "wordpress"
   disk_image           = true
