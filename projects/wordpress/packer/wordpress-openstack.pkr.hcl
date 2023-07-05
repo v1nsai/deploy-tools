@@ -33,10 +33,15 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/wp-deploy",
-      "sudo chown localadmin:localadmin -R /opt/wp-deploy",
-      "mkdir -p /tmp/wp-deploy/ansible"
+      "sudo mkdir -p /opt/wp-deploy/ansible",
+      "mkdir -p /tmp/wp-deploy/ansible",
+      "sudo chown localadmin:localadmin -R /opt/wp-deploy"
     ]
+  }
+
+  provisioner "file" {
+    source      = "projects/wordpress/ssh-config"
+    destination = "/home/localadmin/.ssh/config"
   }
 
   provisioner "file" {
@@ -66,11 +71,11 @@ build {
 
   provisioner "shell" {
     inline = [
-      "echo '/opt/wp-deploy/install.sh' | sudo tee -a /etc/rc.local",
-      "sudo mkdir -p /opt/wp-deploy/ansible",
-      "echo @reboot bash /opt/wp-deploy/install.sh | crontab -",
-      "sudo chown localadmin:localadmin -R /opt/wp-deploy",
+      "echo '@reboot /opt/wp-deploy/install.sh > /opt/wp-deploy/install.sh.log 2>&1' | sudo crontab -",
       "mv /tmp/wp-deploy/* /opt/wp-deploy/",
+      "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
+      "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
+      "chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress"
     ]
   }
 }

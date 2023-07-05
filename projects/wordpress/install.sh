@@ -83,4 +83,4 @@ trellis provision production
 trellis deploy production
 
 # Stop script from running again
-sed -i '/install.sh/d' /etc/rc.local
+# sed -i '/install.sh/d' /etc/rc.local

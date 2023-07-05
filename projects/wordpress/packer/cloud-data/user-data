@@ -92,8 +92,8 @@ write_files:
       bWVvdXQ6IDYwL2cnICRET01BSU4vdHJlbGxpcy9yb2xlcy9jb21tb24vdGFza3MvbWFpbi55bWwK
       CiMgUHJvdmlzaW9uIGFuZCBkZXBsb3kgdG8gbG9jYWxob3N0CmNkICRET01BSU4vdHJlbGxpcwp0
       cmVsbGlzIHByb3Zpc2lvbiBwcm9kdWN0aW9uCnRyZWxsaXMgZGVwbG95IHByb2R1Y3Rpb24KCiMg
-      U3RvcCBzY3JpcHQgZnJvbSBydW5uaW5nIGFnYWluCnNlZCAtaSAnL2luc3RhbGwuc2gvZCcgL2V0
-      Yy9yYy5sb2NhbA==
+      U3RvcCBzY3JpcHQgZnJvbSBydW5uaW5nIGFnYWluCiMgc2VkIC1pICcvaW5zdGFsbC5zaC9kJyAv
+      ZXRjL3JjLmxvY2Fs
     append: true
   - path: /home/localadmin/.ssh/config
     content: |

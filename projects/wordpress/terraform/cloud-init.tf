@@ -6,38 +6,6 @@ data "template_cloudinit_config" "cloud-config" {
   gzip          = true
   base64_encode = true
 
-  # part {
-  #   filename     = "packages"
-  #   content_type = "text/cloud-config"
-  #   content      = <<-EOF
-  #     package_update: true
-  #     packages:
-  #       - python3
-  #       - python3-pip
-  #       - python3-venv
-  #     EOF
-  # }
-
-  # part {
-  #   filename     = "users"
-  #   content_type = "text/cloud-config"
-  #   content      = <<-EOF
-  #     users:
-  #       - name: localadmin
-  #         sudo: ['ALL=(ALL) NOPASSWD:ALL']
-  #         groups: [sudo, www-data]
-  #         shell: /bin/bash
-  #         lock_passwd: false
-  #         passwd: ${var.ssh_password}
-  #         ssh_authorized_keys:
-  #           - ${data.local_file.ssh-pubkey.content}
-  #       - name: wordpress
-  #         groups: [www-data]
-  #         shell: /bin/bash
-  #         lock_passwd: false
-  #     EOF
-  # }
-
   part {
     filename     = "write_files"
     content_type = "text/cloud-config"
@@ -50,29 +18,29 @@ data "template_cloudinit_config" "cloud-config" {
           append: true
         # - path: /etc/crontab
         #   content: |
-        #     30 23   * * *   root    /usr/sbin/shutdown -h 
+        #     30 23   * * *   root    /usr/sbin/shutdown -h
 
         #   append: true
         #   defer: true
       EOF
   }
 
-  part {
-    filename     = "runcmd"
-    content_type = "text/cloud-config"
-    content      = <<-EOF
-      runcmd:
-        - mkdir -p /opt/wp-deploy
-        - chown localadmin:localadmin -R /opt/wp-deploy
-        - cp /etc/skel/.bashrc /home/localadmin/.bashrc
-        - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
-        - cp -f /home/localadmin/.bashrc /home/localadmin/.profile
-        - cp -f /home/localadmin/.ssh/config /home/wordpress/.ssh/config
-        - chown localadmin:localadmin -R /home/localadmin/
-        - sudo su - localadmin -c "bash /opt/wp-deploy/install.sh" > /opt/wp-deploy/install.log 2>&1
-        - systemctl restart ssh
-      EOF
-  }
+  # part {
+  #   filename     = "runcmd"
+  #   content_type = "text/cloud-config"
+  #   content      = <<-EOF
+  #     runcmd:
+  #       - mkdir -p /opt/wp-deploy
+  #       - chown localadmin:localadmin -R /opt/wp-deploy
+  #       - cp /etc/skel/.bashrc /home/localadmin/.bashrc
+  #       - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
+  #       - cp -f /home/localadmin/.bashrc /home/localadmin/.profile
+  #       - cp -f /home/localadmin/.ssh/config /home/wordpress/.ssh/config
+  #       - chown localadmin:localadmin -R /home/localadmin/
+  #       - sudo su - localadmin -c "bash /opt/wp-deploy/install.sh" > /opt/wp-deploy/install.log 2>&1
+  #       - systemctl restart ssh
+  #     EOF
+  # }
 }
 
   #       - path: /opt/wp-deploy/install.sh

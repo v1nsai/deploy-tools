@@ -3,8 +3,6 @@
 set -e
 
 echo "Building new image..."
-openstack server delete $1 || echo "Server not found, skipping delete"
-openstack image delete $1 || echo "Image not found, skipping delete"
 scripts/packer-build.sh $1
 
 echo "Deleting and recreating new instance..."

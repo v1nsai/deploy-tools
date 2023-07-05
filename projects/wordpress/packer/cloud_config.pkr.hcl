@@ -1,6 +1,10 @@
 variable "hashed_passwd" { type = string }
 
 locals {
+  ssh_key              = file(pathexpand("~/.ssh/wordpress"))
+  ssh_pubkey           = file(pathexpand("~/.ssh/wordpress.pub"))
+  ssh_pubkey_anonymous = file(pathexpand("~/.ssh/github_anonymous.pub"))
+
   cloud_config = <<EOF
 #cloud-config
 ssh_pwauth: true
@@ -26,36 +30,34 @@ users:
     passwd: ${var.hashed_passwd}
 apt:
   preserve_sources_list: true
-package_update: false
+package_update: true
+packages:
+  - python3
+  - python3-pip
+  - python3-virtualenv
 write_files:
   - path: /etc/ssh/sshd_config
     content: |
       PermitRootLogin no
     append: true
-  - path: /home/localadmin/.ssh/config
-    content: |
-      Host 127.0.0.1 localhost
-        StrictHostKeyChecking no
+  # - path: /home/localadmin/.ssh/config
+  #   content: |
+  #     Host 127.0.0.1 localhost
+  #       StrictHostKeyChecking no
 
-      Host github.com
-        User git
-        HostName github.com
-        IdentityFile ~/.ssh/id_rsa
-        StrictHostKeyChecking no
-    owner: localadmin:localadmin
-    permissions: '0600'
-    defer: true
+  #     Host github.com
+  #       User git
+  #       HostName github.com
+  #       IdentityFile ~/.ssh/id_rsa
+  #       StrictHostKeyChecking no
+  #   owner: localadmin:localadmin
+  #   permissions: '0600'
+  #   defer: true
   - path: /home/wordpress/.ssh/authorized_keys
     content: |
-      ${local.ssh_pubkey}
+      ${local.ssh_pubkey_anonymous}
     owner: wordpress:wordpress
     permissions: '0600'
-    append: true
-    defer: true
-  - path: /etc/crontab
-    content: |
-      @reboot localadmin /opt/wp-deploy/install.sh
-
     append: true
     defer: true
 EOF
