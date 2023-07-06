@@ -16,12 +16,6 @@ data "template_cloudinit_config" "cloud-config" {
             DOMAIN=${var.domain}
             SSL_PROVISIONER=${var.ssl_provisioner}
           append: true
-        # - path: /etc/crontab
-        #   content: |
-        #     30 23   * * *   root    /usr/sbin/shutdown -h
-
-        #   append: true
-        #   defer: true
       EOF
   }
 
@@ -42,38 +36,3 @@ data "template_cloudinit_config" "cloud-config" {
   #     EOF
   # }
 }
-
-  #       - path: /opt/wp-deploy/install.sh
-  #         content: |
-  #           ${data.local_file.install_sh.content}
-  #         owner: localadmin:localadmin
-  #         permissions: '0777'
-  #         encoding: base64
-  #         defer: true
-  #       - path: /home/localadmin/.ssh/id_rsa
-  #         content: |
-  #           ${data.local_file.github_anonymous.content}
-  #         owner: localadmin:localadmin
-  #         permissions: '0600'
-  #         encoding: base64
-  #         defer: true
-  #       - path: /home/localadmin/.ssh/id_rsa.pub
-  #         content: |
-  #           ${data.local_file.github_anonymous_pub.content}
-  #         owner: localadmin:localadmin
-  #         permissions: '0644'
-  #         defer: true
-  #       - path: /opt/wp-deploy/ansible/inventory.yml
-  #         content: |
-  #           ${data.local_file.ansible-inventory.content}
-  #         owner: localadmin:localadmin
-  #         permissions: '0644'
-  #         defer: true
-  #         encoding: base64
-  #       - path: /opt/wp-deploy/ansible/deploy.yml
-  #         content: |
-  #           ${data.local_file.ansible-playbook.content}
-  #         owner: localadmin:localadmin
-  #         permissions: '0644'
-  #         defer: true
-  #         encoding: base64

@@ -71,11 +71,14 @@ build {
 
   provisioner "shell" {
     inline = [
-      "echo '@reboot /opt/wp-deploy/install.sh > /opt/wp-deploy/install.sh.log 2>&1' | sudo crontab -",
       "mv /tmp/wp-deploy/* /opt/wp-deploy/",
+      # "sudo cp -f /tmp/ssh-config /root/.ssh/config",
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
-      "chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress"
+      # "sudo chmod 600 -R /home/localadmin/.ssh",
+      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress",
+      "echo '@reboot /opt/wp-deploy/install.sh > /home/localadmin/install.sh.log 2>&1' | crontab -",
+      "sudo apt update && sudo apt install -y python3 python3-pip python3-venv net-tools"
     ]
   }
 }

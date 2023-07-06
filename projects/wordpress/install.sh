@@ -14,6 +14,9 @@ fi
 sudo mkdir -p /opt/wp-deploy
 sudo chown -R localadmin:localadmin /opt/wp-deploy
 cd /opt/wp-deploy
+# sudo apt update
+# sudo apt install -y python3 python3-pip python3-venv
+# sleep 60
 
 # Install dependencies
 curl -sL https://roots.io/trellis/cli/get | sudo bash
@@ -59,11 +62,16 @@ esac
 sed -i 's/your_server_hostname/127.0.0.1/g' $DOMAIN/trellis/hosts/production
 
 # Add all pubkeys to the authorized_keys file for privileged and non privileged users
-ssh-keygen -t rsa -f /home/localadmin/.ssh/id_rsa -P "" -b 4096
+# rm -rf /home/localadmin/.ssh/id_rsa*
+# sudo ssh-keygen -t rsa -f /root/.ssh/id_rsa -P "" -b 4096
+sudo cp -f /home/localadmin/.ssh/* /root/.ssh/
+sudo mkdir -p /home/wordpress/.ssh
 cat /home/localadmin/.ssh/*.pub | sudo tee -a /home/localadmin/.ssh/authorized_keys
-cat /home/localadmin/.ssh/*.pub | sudo tee -a /home/wordpress/.ssh/authorized_keys
-chown wordpress:wordpress -R /home/wordpress/.ssh/
-chown localadmin:localadmin -R /home/localadmin/.ssh/
+chmod 600 /home/localadmin/.ssh/id_rsa
+sudo cp /home/localadmin/.ssh/* /home/wordpress/.ssh/
+sudo cp /home/localadmin/.ssh/* /root/.ssh/
+sudo chown wordpress:wordpress -R /home/wordpress/.ssh/
+sudo chown localadmin:localadmin -R /home/localadmin/.ssh/
 
 # Configure access
 if [ $USERDOMAIN = true] ; then
@@ -82,5 +90,5 @@ cd $DOMAIN/trellis
 trellis provision production
 trellis deploy production
 
-# Stop script from running again
-# sed -i '/install.sh/d' /etc/rc.local
+# Disable root login now that trellis has finished
+echo -n "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config
