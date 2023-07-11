@@ -14,9 +14,6 @@ fi
 sudo mkdir -p /opt/wp-deploy
 sudo chown -R localadmin:localadmin /opt/wp-deploy
 cd /opt/wp-deploy
-# sudo apt update
-# sudo apt install -y python3 python3-pip python3-venv
-# sleep 60
 
 # Install dependencies
 curl -sL https://roots.io/trellis/cli/get | sudo bash
@@ -44,7 +41,7 @@ case $SSL_PROVISIONER in
         ;;
     "manual")
         echo "Setting up manual SSL..."
-        sed -i '/ssl:/,/letsencrypt/c\    ssl:\n      enabled: true\n      provider: manual\n      cert: /etc/ssl.crt\n      key: /etc/ssl.key' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
+        sed -i '/ssl:/,/letsencrypt/c\    ssl:\n      enabled: true\n      provider: manual\n      cert: /etc/ssl.crt\n      key: /etc/ssl.key' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml # TODO use yq to add new keys
         ;;
     "self-signed")
         echo "Setting up self-signed SSL..."
@@ -52,9 +49,8 @@ case $SSL_PROVISIONER in
         yq -i '.wordpress_sites."'$DOMAIN'".ssl.provider = "self-signed"' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
         ;;
     *)
-        echo "SSL_PROVISIONER not set, defaulting to self-signed"
-        yq -i '.wordpress_sites."'$DOMAIN'".ssl.enabled = true' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
-        yq -i '.wordpress_sites."'$DOMAIN'".ssl.provider = "self-signed"' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
+        echo "SSL_PROVISIONER not set, not setting up SSL."
+        yq -i '.wordpress_sites."'$DOMAIN'".ssl.enabled = false' $DOMAIN/trellis/group_vars/production/wordpress_sites.yml
     ;;
 esac
 
@@ -62,8 +58,6 @@ esac
 sed -i 's/your_server_hostname/127.0.0.1/g' $DOMAIN/trellis/hosts/production
 
 # Add all pubkeys to the authorized_keys file for privileged and non privileged users
-# rm -rf /home/localadmin/.ssh/id_rsa*
-# sudo ssh-keygen -t rsa -f /root/.ssh/id_rsa -P "" -b 4096
 sudo cp -f /home/localadmin/.ssh/* /root/.ssh/
 sudo mkdir -p /home/wordpress/.ssh
 cat /home/localadmin/.ssh/*.pub | sudo tee -a /home/localadmin/.ssh/authorized_keys
