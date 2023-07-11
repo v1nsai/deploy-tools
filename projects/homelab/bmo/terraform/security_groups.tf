@@ -72,3 +72,9 @@ resource "aws_security_group_rule" "plex6" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.plex.id
 }
+
+resource "aws_default_vpc" "default" {
+  tags = {
+    Name = "Homelab VPC"
+  }
+}
