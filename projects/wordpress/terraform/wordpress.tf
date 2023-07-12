@@ -1,7 +1,7 @@
 resource "openstack_compute_instance_v2" "wordpress" {
   name            = "wordpress"
   image_name      = "wordpress"
-  flavor_name     = "alt.st1.nano"
+  flavor_name     = "alt.st1.small"
   key_pair        = "wordpress"
   security_groups = ["default", "ssh-ingress", "http-ingress", "https-ingress"]
   user_data       = data.template_cloudinit_config.cloud-config.rendered

@@ -16,16 +16,6 @@ data "template_cloudinit_config" "cloud-config" {
             DOMAIN=${var.domain}
             SSL_PROVISIONER=${var.ssl_provisioner}
           append: true
-        - path: /etc/ssl.key
-          content: |
-            ${data.local_file.ssl_key.content}
-          owner: root:www-data
-          permissions: '0640'
-        - path: /etc/ssl.crt
-          content: |
-            ${data.local_file.ssl_crt.content}
-          owner: root:www-data
-          permissions: '0640'
       EOF
   }
 }
