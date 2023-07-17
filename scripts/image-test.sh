@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+source auth/alterncloud.env
 
 echo "Building new image..."
 # scripts/packer-build.sh $1
