@@ -5,7 +5,6 @@ set -e
 # Set variables
 DEVENV="staging"
 SERVERIP=$(curl -s http://whatismyip.akamai.com/)
-NAME="wordpress"
 if [[ $DOMAIN ]] && [[ $SSL_PROVISIONER == "none" ]]; then
     export DOMAIN=
 elif [[ -z $DOMAIN ]] && [[ $SSL_PROVISIONER != "none" ]]; then
@@ -25,10 +24,11 @@ sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd6
 sudo chmod +x /usr/bin/yq
 
 # Create a new project
-if [[ $SSL_PROVISIONER == "none"]]; then
-    trellis new --host $SERVERIP $NAME || echo "Trellis project already exists, continuing..."
+if [[ $SSL_PROVISIONER == "none" ]]; then
+    trellis new --host $SERVERIP --name $SERVERIP $SERVERIP || echo "Trellis project already exists, continuing..."
+    DOMAIN=$SERVERIP
 else
-    trellis new --host $DOMAIN --name $DOMAIN $NAME || echo "Trellis project already exists, continuing..."\j
+    trellis new --host $DOMAIN --name $DOMAIN $DOMAIN || echo "Trellis project already exists, continuing..."\j
 fi
 
 # Configure users
