@@ -3,13 +3,18 @@
 set -e
 
 # Set variables
-DEVENV="staging"
+DEVENV="production"
 SERVERIP=$(curl -s http://whatismyip.akamai.com/)
-if [[ $DOMAIN ]] && [[ $SSL_PROVISIONER == "none" ]]; then
-    export DOMAIN=
-elif [[ -z $DOMAIN ]] && [[ $SSL_PROVISIONER != "none" ]]; then
-    echo "DOMAIN must be set if SSL_PROVISIONER is not set to none, defaulting to public IP and no SSL"
-    SSL_PROVISIONER="none"
+
+# Generate a DNS record for the server
+if [[ -z $DOMAIN ]]; then
+    echo "ERROR - DOMAIN var must be set to either a valid domain name or 'dynamic' for a dynamic dns"
+    exit 1
+fi
+
+if [[ $DOMAIN == "dynamic" ]]; then
+    echo "Generating a dynamic DNS record for $SERVERIP..."
+
 fi
 
 sudo mkdir -p /opt/wp-deploy
@@ -99,9 +104,10 @@ cd $DOMAIN/trellis
 trellis provision $DEVENV
 trellis deploy $DEVENV
 
-# Disable root login now that trellis has finished
+# Disable root login and remove the install script from the crontab
 echo -n "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config
+sudo crontab -r
 
-echo -n "G" | aws ec2 get-console-output --instance-id $(scripts/get-instance-id-name.sh bmo) \
-    --output text \
-    --latest
+# echo -n "G" | aws ec2 get-console-output --instance-id $(scripts/get-instance-id-name.sh bmo) \
+#     --output text \
+#     --latest
