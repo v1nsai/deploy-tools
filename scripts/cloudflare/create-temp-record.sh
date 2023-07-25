@@ -1,15 +1,15 @@
 #!/bin/bash
 
 set -e
-source auth/cloudflare.env
+source auth/cloudflare.env || source /opt/wp-deploy/cloudflare.env
 
 # Create new subdomain and make sure it isn't already in use
 function generate_subdomain() {
     new_subdomain="temp$RANDOM.doctor-ew.com"
-    record_list=$(scripts/cloudflare/list-records.sh)
+    record_list=$(scripts/cloudflare/list-records.sh) || record_list=$(/opt/wp-deploy/list-records.sh)
     existing_subdomain=$(echo "$record_list" | jq -r '.result[] | select(.name | contains("'$new_subdomain'"))')
     if [ -z "$existing_subdomain" ]; then
-        echo -n "$new_subdomain"
+        echo -n $new_subdomain
     else
         echo "Subdomain $new_subdomain already exists, generating a new one"
         generate_subdomain
@@ -29,4 +29,4 @@ curl --request POST \
   "proxied": false,
   "type": "A",
   "comment": "Temporary subdomain for WordPress demoing"
-  }'
+  }' | jq -r '.result.name'

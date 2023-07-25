@@ -4,7 +4,7 @@ set -e
 source auth/alterncloud.env
 
 echo "Building new image..."
-# scripts/packer-build.sh $1
+scripts/packer-build.sh $1
 
 echo "Deleting and recreating new instance..."
 scripts/destroy-terraform.sh $1

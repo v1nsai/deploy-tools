@@ -2,7 +2,10 @@
 
 set -e
 
-# Set variables
+# Wait for cloud-init to finish
+cloud-init status --wait
+
+# Set variables and create working directory
 DEVENV="production"
 SERVERIP=$(curl -s http://whatismyip.akamai.com/)
 
@@ -14,12 +17,8 @@ fi
 
 if [[ $DOMAIN == "dynamic" ]]; then
     echo "Generating a dynamic DNS record for $SERVERIP..."
-
+    DOMAIN=$(/opt/wp-deploy/create-temp-record.sh)
 fi
-
-sudo mkdir -p /opt/wp-deploy
-sudo chown -R localadmin:localadmin /opt/wp-deploy
-cd /opt/wp-deploy
 
 # Install dependencies
 curl -sL https://roots.io/trellis/cli/get | sudo bash
@@ -47,7 +46,6 @@ sed -i '/repo_subtree_path/ s/.*//' $DOMAIN/trellis/group_vars/$DEVENV/wordpress
 
 # SSL config
 case $SSL_PROVISIONER in
-    echo "SSL_PROVISIONER set to $SSL_PROVISIONER"
     "letsencrypt")
         echo "Setting up letsencrypt..."
         yq -i '.wordpress_sites."'$DOMAIN'".ssl.enabled = true' $DOMAIN/trellis/group_vars/$DEVENV/wordpress_sites.yml
@@ -66,6 +64,7 @@ case $SSL_PROVISIONER in
         yq -i '.wordpress_sites."'$DOMAIN'".ssl.enabled = false' $DOMAIN/trellis/group_vars/$DEVENV/wordpress_sites.yml
     ;;
 esac
+echo "SSL_PROVISIONER set to $SSL_PROVISIONER"
 
 # Configure hosts
 sed -i 's/your_server_hostname/127.0.0.1/g' $DOMAIN/trellis/hosts/$DEVENV
@@ -98,7 +97,6 @@ sed -i '/- name: ensure ferm is installed/{N;s/$/\n    lock_timeout: 600/;}' $DO
 sudo unattended-upgrade -d
 sudo rm /var/lib/dpkg/lock-frontend
 
-exit 0
 # Provision and deploy to localhost
 cd $DOMAIN/trellis
 trellis provision $DEVENV
@@ -108,6 +106,4 @@ trellis deploy $DEVENV
 echo -n "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config
 sudo crontab -r
 
-# echo -n "G" | aws ec2 get-console-output --instance-id $(scripts/get-instance-id-name.sh bmo) \
-#     --output text \
-#     --latest
+echo "Installation complete. You can now access your site at https://$DOMAIN"
