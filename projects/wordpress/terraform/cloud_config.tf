@@ -38,7 +38,6 @@ locals {
         content: |
           ${indent(6, local.shutdown_script)}
     runcmd:
-      - echo "0 19-3 * * * /root/shutdown.sh" | crontab -
       - chown localadmin:localadmin -R /home/localadmin
       - chown localadmin:localadmin -R /opt/wp-deploy
   EOF

@@ -17,7 +17,3 @@ resource "openstack_compute_floatingip_associate_v2" "floating_ip_associate" {
   instance_id = openstack_compute_instance_v2.wordpress.id
   fixed_ip    = openstack_compute_instance_v2.wordpress.network.0.fixed_ip_v4
 }
-
-# output "cloud_config" {
-#   value = data.template_cloudinit_config.cloud-config.rendered
-# }

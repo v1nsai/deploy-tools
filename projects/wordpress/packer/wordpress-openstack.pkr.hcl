@@ -56,11 +56,6 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/docker/Dockerfile"
-    destination = "/opt/wp-deploy/Dockerfile"
-  }
-
-  provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/nginx/conf-templates/default.conf.template"
     destination = "/opt/wp-deploy/nginx/conf-templates/default.conf.template"
   }
