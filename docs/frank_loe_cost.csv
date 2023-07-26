@@ -1,0 +1,18 @@
+﻿Service,LOE Estimate,Instance size,Cost Per Hour,Mean Hours Per Month,Cost Per Month Estimate,Potential tech spikes
+Wireguard,3 days,alt.st1.small,$0.02,730.00,$14.60,docker swarm
+Guacamole,10 days,alt.c2.medium,$0.05,730.00,$36.50,docker swarm
+NextCloud,15 days,alt.c2.large,$0.08,730.00,$58.40,"docker swarm, addons, configuration"
+Proxy/Firewall,5 days,,,730.00,$730.00,squid is new to me
+Troubleshooting,10 days,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
+,,,,730.00,$730.00,
