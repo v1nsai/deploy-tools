@@ -45,7 +45,7 @@ services:
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
-    command: certonly --test-cert --webroot --webroot-path=/var/www/html --email youremail@domain.com --agree-tos --no-eff-email -d ${DOMAIN} -d www.${DOMAIN}
+    command: certonly --webroot --webroot-path=/var/www/html --email youremail@domain.com --agree-tos --no-eff-email -d ${DOMAIN} -d www.${DOMAIN}
     volumes:
       - ./nginx/ssl:/etc/letsencrypt
       - ./certbot/logs:/var/log/letsencrypt
