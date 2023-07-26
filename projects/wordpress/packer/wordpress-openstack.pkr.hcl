@@ -24,58 +24,58 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/wp-deploy/ansible",
-      "mkdir -p /tmp/wp-deploy/ansible",
+      "sudo mkdir -p /opt/wp-deploy/nginx/conf-templates",
+      "sudo mkdir -p /opt/wp-deploy/nginx/ssl",
       "sudo chown localadmin:localadmin -R /opt/wp-deploy"
     ]
   }
 
   provisioner "file" {
     source      = "${path.cwd}/auth/cloudflare.env"
-    destination = "/tmp/wp-deploy/cloudflare.env"
+    destination = "/opt/wp-deploy/cloudflare.env"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
-    destination = "/tmp/wp-deploy/create-temp-record.sh"
+    destination = "/opt/wp-deploy/create-temp-record.sh"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/scripts/cloudflare/list-records.sh"
-    destination = "/tmp/wp-deploy/list-records.sh"
+    destination = "/opt/wp-deploy/list-records.sh"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/docker.sh"
-    destination = "/tmp/wp-deploy/docker.sh"
+    destination = "/opt/wp-deploy/docker.sh"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/docker-compose.yaml"
-    destination = "/tmp/wp-deploy/docker-compose.yaml"
-  }
-
-  provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/docker/generate_certs.sh"
-    destination = "/tmp/wp-deploy/generate_certs.sh"
+    destination = "/opt/wp-deploy/docker-compose.yaml"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/Dockerfile"
-    destination = "/tmp/wp-deploy/Dockerfile"
+    destination = "/opt/wp-deploy/Dockerfile"
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/docker/nginx/templates/default.conf.template"
-    destination = "/tmp/wp-deploy/nginx/templates/default.conf.template"
+    source      = "${path.cwd}/projects/wordpress/docker/nginx/conf-templates/default.conf.template"
+    destination = "/opt/wp-deploy/nginx/conf-templates/default.conf.template"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/wordpress/docker/nginx/conf-templates/certbot.conf.template"
+    destination = "/opt/wp-deploy/nginx/conf-templates/certbot.conf.template"
   }
 
   provisioner "shell" {
     inline = [
-      "mv /tmp/wp-deploy/* /opt/wp-deploy/",
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
       "echo 'cd /opt/wp-deploy' >> /home/localadmin/.profile",
+      "echo 'tail -f /opt/wp-deploy/docker.sh.log' >> /home/localadmin/.profile",
       "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress",
       "echo '@reboot /opt/wp-deploy/docker.sh > /opt/wp-deploy/docker.sh.log 2>&1' | sudo crontab -",
       "cloud-init status --wait"

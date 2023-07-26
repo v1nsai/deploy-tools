@@ -29,11 +29,12 @@ services:
   nginx:
     container_name: nginx
     image: nginx:latest
-    restart: always
+    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
     volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/templates:/etc/nginx/templates
       - ./nginx/ssl:/etc/nginx/ssl
       - wordpress_data:/var/www/html
@@ -44,12 +45,12 @@ services:
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
-    command: certonly --test-cert --webroot --webroot-path=/var/www/html --email admin@${DOMAIN} --agree-tos --no-eff-email -d ${DOMAIN}
+    command: certonly --test-cert --webroot --webroot-path=/var/www/html --email youremail@domain.com --agree-tos --no-eff-email -d ${DOMAIN} -d www.${DOMAIN}
     volumes:
       - ./nginx/ssl:/etc/letsencrypt
       - ./certbot/logs:/var/log/letsencrypt
       - wordpress_data:/var/www/html
-    depends_on: 
+    depends_on:
       - nginx
     environment:
       DOMAIN: ${DOMAIN}

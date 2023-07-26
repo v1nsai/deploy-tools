@@ -11,15 +11,6 @@ locals {
 
   cloud_config    = <<-EOF
     #cloud-config
-    # packages:
-    #   - python3
-    #   - python3-pip
-    #   - python3-virtualenv
-    #   - net-tools
-    #   - jq
-    #   - docker
-    #   - docker-compose
-    # package_update: true
     ssh_pwauth: true
     users:
       - name: localadmin
