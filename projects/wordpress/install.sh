@@ -2,20 +2,23 @@
 
 set -e
 
-# Set variables
-DEVENV="staging"
+# Wait for cloud-init to finish
+cloud-init status --wait
+
+# Set variables and create working directory
+DEVENV="production"
 SERVERIP=$(curl -s http://whatismyip.akamai.com/)
-NAME="wordpress"
-if [[ $DOMAIN ]] && [[ $SSL_PROVISIONER == "none" ]]; then
-    export DOMAIN=
-elif [[ -z $DOMAIN ]] && [[ $SSL_PROVISIONER != "none" ]]; then
-    echo "DOMAIN must be set if SSL_PROVISIONER is not set to none, defaulting to public IP and no SSL"
-    SSL_PROVISIONER="none"
+
+# Generate a DNS record for the server
+if [[ -z $DOMAIN ]]; then
+    echo "ERROR - DOMAIN var must be set to either a valid domain name or 'dynamic' for a dynamic dns"
+    exit 1
 fi
 
-sudo mkdir -p /opt/wp-deploy
-sudo chown -R localadmin:localadmin /opt/wp-deploy
-cd /opt/wp-deploy
+if [[ $DOMAIN == "dynamic" ]]; then
+    echo "Generating a dynamic DNS record for $SERVERIP..."
+    DOMAIN=$(/opt/wp-deploy/create-temp-record.sh)
+fi
 
 # Install dependencies
 curl -sL https://roots.io/trellis/cli/get | sudo bash
@@ -25,10 +28,11 @@ sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd6
 sudo chmod +x /usr/bin/yq
 
 # Create a new project
-if [[ $SSL_PROVISIONER == "none"]]; then
-    trellis new --host $SERVERIP $NAME || echo "Trellis project already exists, continuing..."
+if [[ $SSL_PROVISIONER == "none" ]]; then
+    trellis new --host $SERVERIP --name $SERVERIP $SERVERIP || echo "Trellis project already exists, continuing..."
+    DOMAIN=$SERVERIP
 else
-    trellis new --host $DOMAIN --name $DOMAIN $NAME || echo "Trellis project already exists, continuing..."\j
+    trellis new --host $DOMAIN --name $DOMAIN $DOMAIN || echo "Trellis project already exists, continuing..."\j
 fi
 
 # Configure users
@@ -42,7 +46,6 @@ sed -i '/repo_subtree_path/ s/.*//' $DOMAIN/trellis/group_vars/$DEVENV/wordpress
 
 # SSL config
 case $SSL_PROVISIONER in
-    echo "SSL_PROVISIONER set to $SSL_PROVISIONER"
     "letsencrypt")
         echo "Setting up letsencrypt..."
         yq -i '.wordpress_sites."'$DOMAIN'".ssl.enabled = true' $DOMAIN/trellis/group_vars/$DEVENV/wordpress_sites.yml
@@ -61,6 +64,7 @@ case $SSL_PROVISIONER in
         yq -i '.wordpress_sites."'$DOMAIN'".ssl.enabled = false' $DOMAIN/trellis/group_vars/$DEVENV/wordpress_sites.yml
     ;;
 esac
+echo "SSL_PROVISIONER set to $SSL_PROVISIONER"
 
 # Configure hosts
 sed -i 's/your_server_hostname/127.0.0.1/g' $DOMAIN/trellis/hosts/$DEVENV
@@ -93,15 +97,13 @@ sed -i '/- name: ensure ferm is installed/{N;s/$/\n    lock_timeout: 600/;}' $DO
 sudo unattended-upgrade -d
 sudo rm /var/lib/dpkg/lock-frontend
 
-exit 0
 # Provision and deploy to localhost
 cd $DOMAIN/trellis
 trellis provision $DEVENV
 trellis deploy $DEVENV
 
-# Disable root login now that trellis has finished
+# Disable root login and remove the install script from the crontab
 echo -n "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config
+sudo crontab -r
 
-echo -n "G" | aws ec2 get-console-output --instance-id $(scripts/get-instance-id-name.sh bmo) \
-    --output text \
-    --latest
+echo "Installation complete. You can now access your site at https://$DOMAIN"

@@ -16,20 +16,11 @@ source "openstack" "wordpress" {
   security_groups      = ["default", "ssh-ingress", "http-ingress", "https-ingress"]
   user_data            = local.cloud_config
   # use_blockstorage_volume = true
-  # volume_size             = 50
+  # volume_size             = 10
 }
 
 build {
-  # sources = ["source.qemu.wordpress"]
   sources = ["source.openstack.wordpress"]
-
-  provisioner "shell-local" {
-    inline = [
-      # "cat projects/wordpress/install.sh | base64 -w 0 > projects/wordpress/install.sh.base64", # Linux
-      "cat projects/wordpress/install.sh | base64 > projects/wordpress/install.sh.base64", # MacOS
-      "yq -i '.write_files[0].content = load_str(\"projects/wordpress/install.sh.base64\")' projects/wordpress/packer/cloud-data/user-data"
-    ]
-  }
 
   provisioner "shell" {
     inline = [
@@ -40,45 +31,54 @@ build {
   }
 
   provisioner "file" {
-    source      = "projects/wordpress/ssh-config"
-    destination = "/home/localadmin/.ssh/config"
+    source      = "${path.cwd}/auth/cloudflare.env"
+    destination = "/tmp/wp-deploy/cloudflare.env"
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/install.sh"
-    destination = "/tmp/wp-deploy/install.sh"
+    source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
+    destination = "/tmp/wp-deploy/create-temp-record.sh"
   }
 
   provisioner "file" {
-    source      = pathexpand("~/.ssh/github_anonymous")
-    destination = "/home/localadmin/.ssh/id_rsa"
+    source      = "${path.cwd}/scripts/cloudflare/list-records.sh"
+    destination = "/tmp/wp-deploy/list-records.sh"
   }
 
   provisioner "file" {
-    source      = pathexpand("~/.ssh/github_anonymous.pub")
-    destination = "/home/localadmin/.ssh/id_rsa.pub"
+    source      = "${path.cwd}/projects/wordpress/docker/docker.sh"
+    destination = "/tmp/wp-deploy/docker.sh"
   }
 
   provisioner "file" {
-    source      = "${path.root}/../ansible/inventory.yml"
-    destination = "/tmp/wp-deploy/ansible/inventory.yml"
+    source      = "${path.cwd}/projects/wordpress/docker/docker-compose.yaml"
+    destination = "/tmp/wp-deploy/docker-compose.yaml"
   }
 
   provisioner "file" {
-    source      = "${path.root}/../ansible/deploy.yml"
-    destination = "/tmp/wp-deploy/ansible/deploy.yml"
+    source      = "${path.cwd}/projects/wordpress/docker/generate_certs.sh"
+    destination = "/tmp/wp-deploy/generate_certs.sh"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/wordpress/docker/Dockerfile"
+    destination = "/tmp/wp-deploy/Dockerfile"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/wordpress/docker/nginx/templates/default.conf.template"
+    destination = "/tmp/wp-deploy/nginx/templates/default.conf.template"
   }
 
   provisioner "shell" {
     inline = [
       "mv /tmp/wp-deploy/* /opt/wp-deploy/",
-      # "sudo cp -f /tmp/ssh-config /root/.ssh/config",
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
-      # "sudo chmod 600 -R /home/localadmin/.ssh",
+      "echo 'cd /opt/wp-deploy' >> /home/localadmin/.profile",
       "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress",
-      "echo '@reboot /opt/wp-deploy/install.sh > /home/localadmin/install.sh.log 2>&1' | crontab -",
-      "sudo apt update && sudo apt install -y python3 python3-pip python3-venv net-tools"
+      "echo '@reboot /opt/wp-deploy/docker.sh > /opt/wp-deploy/docker.sh.log 2>&1' | sudo crontab -",
+      "cloud-init status --wait"
     ]
   }
 }

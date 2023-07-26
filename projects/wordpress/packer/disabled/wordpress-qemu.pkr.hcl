@@ -20,14 +20,6 @@ source "qemu" "wordpress" {
 build {
   sources = ["source.qemu.wordpress"]
 
-  provisioner "shell-local" {
-    inline = [
-      # "cat projects/wordpress/install.sh | base64 -w 0 > projects/wordpress/install.sh.base64", # Linux
-      "cat projects/wordpress/install.sh | base64 > projects/wordpress/install.sh.base64", # MacOS
-      "yq -i '.write_files[0].content = load_str(\"projects/wordpress/install.sh.base64\")' projects/wordpress/packer/cloud-data/user-data"
-    ]
-  }
-
   provisioner "shell" {
     inline = [
       "sudo mkdir -p /opt/wp-deploy",
@@ -61,12 +53,24 @@ build {
     destination = "/tmp/wp-deploy/ansible/deploy.yml"
   }
 
+  provisioner "file" {
+    source      = "${path.cwd}/auth/cloudflare.env"
+    destination = "/tmp/wp-deploy/cloudflare.env"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
+    destination = "/tmp/wp-deploy/create-temp-record.sh"
+  }
+
   provisioner "shell" {
     inline = [
-      "echo '/opt/wp-deploy/install.sh' | sudo tee -a /etc/rc.local",
-      "sudo mkdir -p /opt/wp-deploy/ansible",
-      "sudo chown localadmin:localadmin -R /opt/wp-deploy",
       "mv /tmp/wp-deploy/* /opt/wp-deploy/",
+      "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
+      "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
+      "echo 'tail -f /opt/wp-deploy/install.sh.log' | tee -a /home/localadmin/.bashrc"
+      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress",
+      "echo '@reboot /opt/wp-deploy/install.sh > /opt/wp-deploy/install.sh.log 2>&1' | crontab -"
     ]
   }
 }

@@ -1,4 +1,4 @@
-`#!/bin/bash
+#!/bin/bash
 
 # bash/curl examples for interacting with the NameBright Domain API using the REST endpoints.
 
