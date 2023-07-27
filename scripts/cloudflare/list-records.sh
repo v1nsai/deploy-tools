@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-source auth/cloudflare.env || source /opt/wp-deploy/cloudflare.env
+source /opt/wp-deploy/cloudflare.env
 
 curl --request GET \
   --url https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records \

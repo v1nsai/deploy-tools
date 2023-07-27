@@ -71,7 +71,7 @@ build {
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
       "echo 'cd /opt/wp-deploy' >> /home/localadmin/.profile",
       "echo 'tail -f /opt/wp-deploy/docker.sh.log' >> /home/localadmin/.profile",
-      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown wordpress:wordpress -R /home/wordpress",
+      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/wp-deploy",
       "echo '@reboot /opt/wp-deploy/docker.sh > /opt/wp-deploy/docker.sh.log 2>&1' | sudo crontab -",
       "cloud-init status --wait"
     ]

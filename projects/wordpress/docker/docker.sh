@@ -26,7 +26,11 @@ if [[ "$DOMAIN" == "temporary" ]]; then
         exit 1
     fi
     echo "Creating a temporary domain name..."
-    DOMAIN=$(./create-temp-record.sh $DOMAIN)
+    SUBDOMAIN=$(./create-temp-record.sh doctor-ew.com)
+    echo "Temporary domain name created: $SUBDOMAIN"
+    DOMAIN="$SUBDOMAIN"
+    sed -i '/DOMAIN/d' /etc/environment
+    echo "DOMAIN=$SUBDOMAIN" | tee -a /etc/environment
     echo "Your site will be available at https://$DOMAIN"
 fi
 
@@ -50,7 +54,7 @@ if [[ "$SSL_PROVISIONER" == "manual" ]]; then
         echo "SSL certificates found."
         mkdir -p ./nginx/templates
         cp -f ./nginx/conf-templates/default.conf.template ./nginx/templates/default.conf.template
-        docker-compose up -d
+        docker-compose up -d 
     fi
 fi
 
