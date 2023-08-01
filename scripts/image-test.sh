@@ -3,7 +3,7 @@
 set -e
 source auth/alterncloud.env
 
-if [[ ! -z "$2" ]] && [[ "$2" == '--buildimage' ]]; then
+if [[ ! -z "$2" ]] && [[ "$2" == '--rebuild' ]]; then
     echo "Building new image..."
     scripts/packer-build.sh $1
 fi
