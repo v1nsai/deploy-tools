@@ -25,11 +25,5 @@ locals {
         passwd: ${var.hashed_passwd}
         ssh_authorized_keys:
           - ${local.ssh_pubkey}
-      - name: wordpress
-        groups: [www-data]
-        shell: /bin/bash
-        lock_passwd: false
-        ssh_pwauth: true
-        passwd: ${var.hashed_passwd}
   EOF
 }

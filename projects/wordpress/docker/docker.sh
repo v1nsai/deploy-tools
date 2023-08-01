@@ -8,16 +8,16 @@ docker-compose down
 rm -rf /opt/wp-deploy/nginx/ssl
 
 # Error on invalid DOMAIN or SSL_PROVISIONER
-if [[ -z "$DOMAIN" ]] || [[ -z "$SSL_PROVISIONER" ]]; then
-    echo "Please set the DOMAIN and SSL_PROVISIONER environment variables."
+if [[ -z "$DOMAIN" ]]; then
+    echo "Please set the DOMAIN environment variable."
     exit 1
 fi
 
-if [[ "$SSL_PROVISIONER" == "manual" ]] || [[ "$SSL_PROVISIONER" == "certbot" ]] || [[ "$SSL_PROVISIONER" == "selfsigned" ]]; then
+if [[ "$SSL_PROVISIONER" == "manual" ]] || [[ "$SSL_PROVISIONER" == "letsencrypt" ]]; then
     echo "SSL_PROVISIONER set to $SSL_PROVISIONER."
 else
-    echo "SSL_PROVISIONER not set to a valid value, defaulting to certbot..."
-    SSL_PROVISIONER="certbot"
+    echo "SSL_PROVISIONER not set to a valid value, defaulting to letsencrypt..."
+    SSL_PROVISIONER="letsencrypt"
 fi
 
 if [[ "$DOMAIN" == "temporary" ]]; then
@@ -35,11 +35,10 @@ if [[ "$DOMAIN" == "temporary" ]]; then
 fi
 
 # Deploy wordpress using SSL_PROVISIONER
-if [[ "$SSL_PROVISIONER" == "certbot" ]]; then
-    echo "Provisioning SSL certificates with certbot..."
+if [[ "$SSL_PROVISIONER" == "letsencrypt" ]]; then
+    echo "Provisioning SSL certificates with letsencrypt..."
     mkdir -p ./nginx/templates
     cp -f ./nginx/conf-templates/certbot.conf.template ./nginx/templates/default.conf.template
-    
     docker-compose up -d
     echo "Starting services..."
     echo "Sleeping 10s to wait for services to start..."
@@ -56,6 +55,12 @@ if [[ "$SSL_PROVISIONER" == "manual" ]]; then
         cp -f ./nginx/conf-templates/default.conf.template ./nginx/templates/default.conf.template
         docker-compose up -d 
     fi
+fi
+
+# Set admin password if provided
+if [[ -n "$ADMIN_PASSWD" ]]; then
+    echo "Setting admin password..."
+    echo 'localadmin:'"$ADMIN_PASSWD" | sudo chpasswd
 fi
 
 # Remove script from crontab after running successfully
