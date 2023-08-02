@@ -1,6 +1,6 @@
 resource "openstack_compute_instance_v2" "wordpress" {
   name            = "wordpress"
-  image_name      = "wordpress"
+  image_name      = "WordPress"
   # image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23"
   flavor_name     = "alt.st1.small"
   key_pair        = "wordpress"

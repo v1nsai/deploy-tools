@@ -1,7 +1,5 @@
-variable "ssh_password" { type = string }
 variable "domain" { type = string }
 variable "ssl_provisioner" { type = string }
-variable "hashed_passwd" { type = string }
 
 locals {
   shutdown_script = file("${path.cwd}/scripts/shutdown.sh")
@@ -16,6 +14,7 @@ locals {
         content: |
           DOMAIN=${var.domain}
           SSL_PROVISIONER=${var.ssl_provisioner}
+          ADMIN_PASSWD=';lkj;lkj'
         append: true
       - path: /root/shutdown.sh
         permissions: '0755'
