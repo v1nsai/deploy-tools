@@ -1,28 +1,7 @@
->>> 1. Who is your current cloud provider(s)? 
-AWS
->>>
->>> 2. Where is your current environment hosted? Onsite with a cloud provider, onsite with no provider, offsite in a public cloud or a hybrid onsite/offsite environment? 
-AWS East 1 Virginia
->>>
->>> 3. Are you using any services outside of your environment, such as third party API’s or web services? 
-Office 365 and ProtonMail for email, DUO for MFA to AWS enviroment, TeamViewer for screen sharing
->>>
->>> 4. Please list internal services that need to be migrated. This includes internally developed apps and services, as well as third party software running in your environment. 
-SAGE Windows application for accounting. Hosted on Windows Server platform as a member server in Terminal Services mode. Something comparable to Amazon Workspaces for workflow.
->>>
->>> 5. Please list all databases being used, such as engine (mysql, mongo etc.), types of data stored and the size of the data stores. 
-None
->>>
->>> 6. Are you using file storage? How big is the file store, and what is the current engine being used (AWS Elastic File Storage, Google Cloud Storage etc.) 
-AWS FSX for Windows
->>>
->>> 7. How much bandwidth does your current environment use per month? Great question - I'm having a hard time finding this stat in AWS - any hints on where to find it?
->>>
->>> 8. How many users need direct access to the ALTERNcloud panel? User creation and RBAC are only available on HPC (more expensive). 
-As in admin rights? I would like to only have two users - myself and a redundant account for someone else.
->>>
->>> 9. Describe any additional requirements for your network, such as subnetting, internal DNS, specific routing or other configurations that need to be preserved in the new environment? Is there a way to subnet it so Frank would be on the same environment but virtually separated from the rest of the team?
->>>
->>> 10. What data/services do you need to regularly back up? Do you want to automate backups at specific intervals? 
-Currently nightly for Windows Servers and every 12 hours for Workspaces.
+3. What operating system is on each of the servers? – Microsoft Windows Server 2016 Standard
+4. Are any of the servers leveraging virtualization? If so, which virtualization layer (e.g., VMWare)? – All Servers use VMWare for backups and replications
+
+7. What specific services are provided by the vendor to support your audits? -Huntress Reports, BCP Report and procedure, Network Diagram and breakdown for audit requirements/explanations, infrastructure layout between all the offices, Firewall management, Microsoft settings and encryptions (Including Managing Outlook Service for emails and encryptions), Content Filters, Data Recovery details and reports.
+8. What applications are supported by the IT vendor? -They handle the Backup/Replications of our data, Server Management/Updates, Installation of additional programs across all servers (For example: Microsoft Teams), Adobe Updates,
+9. What is the scope of your backup services? – We need to have daily backups of our information. We also have a replication site 100 miles away from our data center for an extra precaution. When we do the Business Continuity Plan – we ensure we can be back up and running within 24-48 hours from our backups and resources.
 
