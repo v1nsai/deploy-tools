@@ -1,0 +1,7 @@
+3. What operating system is on each of the servers? – Microsoft Windows Server 2016 Standard
+4. Are any of the servers leveraging virtualization? If so, which virtualization layer (e.g., VMWare)? – All Servers use VMWare for backups and replications
+
+7. What specific services are provided by the vendor to support your audits? -Huntress Reports, BCP Report and procedure, Network Diagram and breakdown for audit requirements/explanations, infrastructure layout between all the offices, Firewall management, Microsoft settings and encryptions (Including Managing Outlook Service for emails and encryptions), Content Filters, Data Recovery details and reports.
+8. What applications are supported by the IT vendor? -They handle the Backup/Replications of our data, Server Management/Updates, Installation of additional programs across all servers (For example: Microsoft Teams), Adobe Updates,
+9. What is the scope of your backup services? – We need to have daily backups of our information. We also have a replication site 100 miles away from our data center for an extra precaution. When we do the Business Continuity Plan – we ensure we can be back up and running within 24-48 hours from our backups and resources.
+
