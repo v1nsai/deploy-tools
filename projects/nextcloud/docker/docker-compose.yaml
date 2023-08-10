@@ -3,6 +3,7 @@ services:
     image: nextcloud/all-in-one:latest
     restart: always
     container_name: nextcloud-aio-mastercontainer # This line is not allowed to be changed as otherwise AIO will not work correctly
+    hostname: nextcloud-aio-mastercontainer
     volumes:
       - nextcloud_aio_mastercontainer:/mnt/docker-aio-config # This line is not allowed to be changed as otherwise the built-in backup solution will not work
       - /var/run/docker.sock:/var/run/docker.sock:ro # May be changed on macOS, Windows or docker rootless. See the applicable documentation. If adjusting, don't forget to also set 'WATCHTOWER_DOCKER_SOCKET_PATH'!
@@ -26,14 +27,10 @@ services:
       # - NEXTCLOUD_ADDITIONAL_APKS=imagemagick # This allows to add additional packages to the Nextcloud container permanently. Default is imagemagick but can be overwritten by modifying this value. See https://github.com/nextcloud/all-in-one#how-to-add-os-packages-permanently-to-the-nextcloud-container
       # - NEXTCLOUD_ADDITIONAL_PHP_EXTENSIONS=imagick # This allows to add additional php extensions to the Nextcloud container permanently. Default is imagick but can be overwritten by modifying this value. See https://github.com/nextcloud/all-in-one#how-to-add-php-extensions-permanently-to-the-nextcloud-container
       # - NEXTCLOUD_ENABLE_DRI_DEVICE=true # This allows to enable the /dev/dri device in the Nextcloud container. ⚠️⚠️⚠️ Warning: this only works if the '/dev/dri' device is present on the host! If it should not exist on your host, don't set this to true as otherwise the Nextcloud container will fail to start! See https://github.com/nextcloud/all-in-one#how-to-enable-hardware-transcoding-for-nextcloud
-      # - TALK_PORT=3478 # This allows to adjust the port that the talk container is using. See https://github.com/nextcloud/all-in-one#how-to-adjust-the-talk-port
+      - TALK_PORT=3478 # This allows to adjust the port that the talk container is using. See https://github.com/nextcloud/all-in-one#how-to-adjust-the-talk-port
       # - WATCHTOWER_DOCKER_SOCKET_PATH=/var/run/docker.sock # Needs to be specified if the docker socket on the host is not located in the default '/var/run/docker.sock'. Otherwise mastercontainer updates will fail. For macos it needs to be '/var/run/docker.sock'
     # networks: # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
-      # - nextcloud-aio # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
-    # network_mode: service:swag
-    # network_mode: host
-    # depends_on:
-    #   - swag
+    #   - nextcloud-aio # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
 
   swag:
     image: lscr.io/linuxserver/swag:latest
@@ -51,25 +48,16 @@ services:
       - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS} #optional
       - EXTRA_DOMAINS= #optional
       - STAGING=${STAGING} #optional
+      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=".template"
     volumes:
       - ./config:/config
-    network_mode: host
     restart: unless-stopped
-
-  # nginx:
-  #   container_name: nginx
-  #   image: nginx:latest
-  #   restart: unless-stopped
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - ./nginx/conf:/etc/nginx/conf.d
-  #     - ./nginx/templates:/etc/nginx/templates
-  #     - ./nginx/ssl:/etc/nginx/ssl
-  #   environment:
-  #     NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".template"
-  #     DOMAIN: ${DOMAIN}
+    network_mode: host
+    # networks:
+    #   - nextcloud-aio
+    # ports: 
+    #   - 80:80
+    #   - 443:443
 
 volumes:
   nextcloud_aio_mastercontainer:
@@ -80,7 +68,7 @@ volumes:
 # networks:
 #   nextcloud-aio:
 #     name: nextcloud-aio # This line is not allowed to be changed as otherwise the created network will not be used by the other containers of AIO
-#     driver: bridge
+    # driver: bridge
 #     enable_ipv6: true
 #     ipam:
 #       driver: default

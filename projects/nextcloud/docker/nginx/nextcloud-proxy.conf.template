@@ -24,7 +24,7 @@ server {
     # listen 443 quic reuseport;       # uncomment to enable HTTP/3 / QUIC - supported on nginx v1.25.0+ - please remove "reuseport" if there is already another quic listener on port 443 with enabled reuseport
     # listen [::]:443 quic reuseport;  # uncomment to enable HTTP/3 / QUIC - supported on nginx v1.25.0+ - please remove "reuseport" if there is already another quic listener on port 443 with enabled reuseport - keep comment to disable IPv6
 
-    server_name nextcloud.doctor-ew.com;
+    server_name $SUBDOMAIN.$DOMAIN;
 
     location / {
         proxy_pass http://127.0.0.1:11000$request_uri;
@@ -47,8 +47,8 @@ server {
         proxy_set_header Connection $connection_upgrade;
     }
 
-    ssl_certificate /etc/letsencrypt/live/nextcloud.doctor-ew.com/fullchain.pem;   # managed by certbot on host machine
-    ssl_certificate_key /etc/letsencrypt/live/nextcloud.doctor-ew.com/privkey.pem; # managed by certbot on host machine
+    ssl_certificate /etc/letsencrypt/live/$SUBDOMAIN.$DOMAIN/fullchain.pem;   # managed by certbot on host machine
+    ssl_certificate_key /etc/letsencrypt/live/$SUBDOMAIN.$DOMAIN/privkey.pem; # managed by certbot on host machine
 
     ssl_session_timeout 1d;
     ssl_session_cache shared:MozSSL:10m; # about 40000 sessions

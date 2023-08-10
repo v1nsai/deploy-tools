@@ -24,31 +24,30 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/nc-deploy/nginx/conf-templates",
-      "sudo mkdir -p /opt/nc-deploy/nginx/ssl",
+      "sudo mkdir -p /opt/nc-deploy/config/nginx/templates",
       "sudo chown localadmin:localadmin -R /opt/nc-deploy"
     ]
   }
 
-  provisioner "file" {
-    source      = "${path.cwd}/auth/cloudflare.env"
-    destination = "/opt/nc-deploy/cloudflare.env"
-  }
+  # provisioner "file" {
+  #   source      = "${path.cwd}/auth/cloudflare.env"
+  #   destination = "/opt/nc-deploy/cloudflare.env"
+  # }
 
-  provisioner "file" {
-    source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
-    destination = "/opt/nc-deploy/create-temp-record.sh"
-  }
+  # provisioner "file" {
+  #   source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
+  #   destination = "/opt/nc-deploy/create-temp-record.sh"
+  # }
 
-  provisioner "file" {
-    source      = "${path.cwd}/scripts/cloudflare/list-records.sh"
-    destination = "/opt/nc-deploy/list-records.sh"
-  }
+  # provisioner "file" {
+  #   source      = "${path.cwd}/scripts/cloudflare/list-records.sh"
+  #   destination = "/opt/nc-deploy/list-records.sh"
+  # }
 
-  provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud/docker/docker.sh"
-    destination = "/opt/nc-deploy/docker.sh"
-  }
+  # provisioner "file" {
+  #   source      = "${path.cwd}/projects/nextcloud/docker/docker.sh"
+  #   destination = "/opt/nc-deploy/docker.sh"
+  # }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"
@@ -56,24 +55,22 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud/docker/nginx/conf-templates/default.conf.template"
-    destination = "/opt/nc-deploy/nginx/conf-templates/default.conf.template"
-  }
-
-  provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud/docker/nginx/conf-templates/certbot.conf.template"
-    destination = "/opt/nc-deploy/nginx/conf-templates/certbot.conf.template"
+    source      = "${path.cwd}/projects/nextcloud/docker/nginx/nextcloud-proxy.conf.template"
+    destination = "/opt/nc-deploy/config/nginx/templates/default.conf.template"
   }
 
   provisioner "shell" {
     inline = [
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
-      "echo 'cd /opt/nc-deploy' | tee -a /home/localadmin/.profile",
-      "echo 'tail -f /opt/nc-deploy/docker.sh.log' | tee -a /home/localadmin/.profile",
+      "mkdir -p /opt/nc-deploy/config/nginx/site-confs",
+      "export MYCRON='@reboot cat /opt/nc-deploy/config/nginx/templates/default.conf.template | envsubst ;;$DOMAIN,$SUBDOMAIN;; > /opt/nc-deploy/config/nginx/site-confs/default.conf && docker-compose up -d > /opt/nc-deploy/docker.log 2>&1'",
+      "echo $MYCRON | sed 's/;;/'\\''/g' | sudo crontab -",
       "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/nc-deploy",
-      # "echo '@reboot /opt/nc-deploy/docker.sh > /opt/nc-deploy/docker.sh.log 2>&1' | sudo crontab -",
+      "echo 'waiting for cloud-init to finish...'",
       "cloud-init status --wait"
     ]
   }
 }
+
+# end to end and server side encryption must be enabled in the nextcloud admin settings

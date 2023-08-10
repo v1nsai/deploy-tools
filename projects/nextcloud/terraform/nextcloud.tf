@@ -1,7 +1,7 @@
 resource "openstack_compute_instance_v2" "nextcloud" {
   name            = "nextcloud"
-  # image_name      = "nextcloud"
-  image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
+  image_name      = "nextcloud"
+  # image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   flavor_name     = "alt.c2.medium"
   key_pair        = "nextcloud"
   security_groups = ["default", "ssh-ingress", "http-ingress", "https-ingress"]

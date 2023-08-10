@@ -25,5 +25,10 @@ locals {
         passwd: ${var.hashed_passwd}
         ssh_authorized_keys:
           - ${local.ssh_pubkey}
+    write_files:
+      - path: /etc/environment
+        content: |
+          COMPOSE_FILE="/opt/nc-deploy/docker-compose.yaml"
+        append: true
   EOF
 }
