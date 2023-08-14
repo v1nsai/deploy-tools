@@ -11,6 +11,7 @@ auth/
 .kube*
 *.subst
 wg-configs/
+.env
 
 # Terraform
 .terraform*
