@@ -26,28 +26,34 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=US/Eastern
-      - URL=${DOMAIN}
-      - VALIDATION=http
-      - SUBDOMAINS=${SUBDOMAIN} #optional
-      - EMAIL= #optional
-      - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS} #optional
-      - EXTRA_DOMAINS= #optional
-      - STAGING=${STAGING} #optional
-    volumes:
-      - ./swag:/config
+  nginx:
+    container_name: nginx
+    image: nginx:latest
     restart: unless-stopped
     ports:
       - 80:80
       - 443:443
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/templates:/etc/nginx/templates
+      - ./nginx/ssl:/etc/nginx/ssl
+      - wordpress_data:/var/www/html
+    environment:
+      NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".template"
+      DOMAIN: ${DOMAIN}
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=/var/www/html --email youremail@domain.com --agree-tos --no-eff-email -d ${DOMAIN}
+    volumes:
+      - ./nginx/ssl:/etc/letsencrypt
+      - ./certbot/logs:/var/log/letsencrypt
+      - wordpress_data:/var/www/html
+    depends_on:
+      - nginx
+    environment:
+      DOMAIN: ${DOMAIN}
 
 volumes:
   db_data:

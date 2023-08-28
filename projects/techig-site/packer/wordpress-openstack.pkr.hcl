@@ -4,7 +4,7 @@ source "openstack" "wordpress" {
   tenant_name       = var.tenant_name
   identity_endpoint = var.auth_url
   flavor            = "alt.st1.nano"
-  image_name        = "wordpress-auto-ssl"
+  image_name        = "WordPress"
   # image_description    = "Deploy the latest version of WordPress in minutes"
   source_image         = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   ssh_username         = "localadmin"
@@ -24,10 +24,26 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/wp-deploy/",
+      "sudo mkdir -p /opt/wp-deploy/nginx/conf-templates",
+      "sudo mkdir -p /opt/wp-deploy/nginx/ssl",
       "sudo chown localadmin:localadmin -R /opt/wp-deploy"
     ]
   }
+
+  # provisioner "file" {
+  #   source      = "${path.cwd}/auth/cloudflare.env"
+  #   destination = "/opt/wp-deploy/cloudflare.env"
+  # }
+
+  # provisioner "file" {
+  #   source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
+  #   destination = "/opt/wp-deploy/create-temp-record.sh"
+  # }
+
+  # provisioner "file" {
+  #   source      = "${path.cwd}/scripts/cloudflare/list-records.sh"
+  #   destination = "/opt/wp-deploy/list-records.sh"
+  # }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/docker.sh"
@@ -41,14 +57,18 @@ build {
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/nginx/conf-templates/default.conf.template"
-    destination = "/opt/wp-deploy/default.conf.template"
+    destination = "/opt/wp-deploy/nginx/conf-templates/default.conf.template"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/wordpress/docker/nginx/conf-templates/certbot.conf.template"
+    destination = "/opt/wp-deploy/nginx/conf-templates/certbot.conf.template"
   }
 
   provisioner "shell" {
     inline = [
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
-      "sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config",
       "echo 'cd /opt/wp-deploy' >> /home/localadmin/.profile",
       "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/wp-deploy",
       "echo '@reboot /opt/wp-deploy/docker.sh > /opt/wp-deploy/docker.sh.log 2>&1' | sudo crontab -",

@@ -3,65 +3,48 @@
 set -e
 cd /opt/wp-deploy
 
-# TODO REMOVE FOR TESTING ONLY
-docker-compose down
-rm -rf /opt/wp-deploy/nginx/ssl
-
 # Error on invalid DOMAIN or SSL_PROVISIONER
 if [[ -z "$DOMAIN" ]]; then
     echo "Please set the DOMAIN environment variable."
     exit 1
 fi
 
-if [[ "$SSL_PROVISIONER" == "manual" ]] || [[ "$SSL_PROVISIONER" == "letsencrypt" ]]; then
-    echo "SSL_PROVISIONER set to $SSL_PROVISIONER."
-else
-    echo "SSL_PROVISIONER not set to a valid value, defaulting to letsencrypt..."
-    SSL_PROVISIONER="letsencrypt"
-fi
-
-if [[ "$DOMAIN" == "temporary" ]]; then
-    if [[ "$SSL_PROVISIONER" == "manual" ]]; then
-        echo "Can't use manual SSL_PROVISIONER with temporary domain name."
-        exit 1
-    fi
+# Parse DOMAIN and error if invalid
+echo "Setting DOMAIN and SUBDOMAIN environment variables..."
+if [[ $DOMAIN =~ (https?:\/\/)?([a-z]+)\.([a-z]*\.[a-z]{3}) ]]; then
+    echo 1
+    SUBDOMAIN="${BASH_REMATCH[2]}"
+    DOMAIN="${BASH_REMATCH[3]}"
+    SEP='.'
+elif [[ $DOMAIN =~ (https?:\/\/)?([a-z]*\.[a-z]{3}$) ]]; then
+    echo 2
+    DOMAIN="${BASH_REMATCH[2]}"
+    DOMAIN="$SUBDOMAIN$SEP$DOMAIN"
+    SUBDOMAIN=
+    ONLY_SUBDOMAINS=false
+    SEP=
+elif [[ "$DOMAIN" == "temporary" ]]; then
     echo "Creating a temporary domain name..."
-    SUBDOMAIN=$(./create-temp-record.sh doctor-ew.com)
-    echo "Temporary domain name created: $SUBDOMAIN"
-    DOMAIN="$SUBDOMAIN"
-    sed -i '/DOMAIN/d' /etc/environment
-    echo "DOMAIN=$SUBDOMAIN" | tee -a /etc/environment
-    echo "Your site will be available at https://$DOMAIN"
+    SUBDOMAIN=$(echo "temp$RANDOM")
+    DOMAIN="techig.com"
+    SEP='.'
+else
+    echo "Invalid domain name: $DOMAIN"
+    exit 1
 fi
+FULL_DOMAIN="$SUBDOMAIN$SEP$DOMAIN"
+echo "FULL_DOMAIN=$FULL_DOMAIN" | sudo tee -a /etc/environment
+echo "SUBDOMAIN=$SUBDOMAIN" | sudo tee -a /etc/environment
+echo "DOMAIN=$DOMAIN" | sudo tee -a /etc/environment
+echo "ONLY_SUBDOMAINS=$ONLY_SUBDOMAINS" | sudo tee -a /etc/environment
+while read -r env; do export "$env"; done # set variables system-wide immediately
+echo "Your site will be available at https://$FULL_DOMAIN"
 
-# Deploy wordpress using SSL_PROVISIONER
-if [[ "$SSL_PROVISIONER" == "letsencrypt" ]]; then
-    echo "Provisioning SSL certificates with letsencrypt..."
-    mkdir -p ./nginx/templates
-    cp -f ./nginx/conf-templates/certbot.conf.template ./nginx/templates/default.conf.template
-    docker-compose up -d
-    echo "Starting services..."
-    echo "Sleeping 10s to wait for services to start..."
-    sleep 10
-    cp -f ./nginx/conf-templates/default.conf.template ./nginx/templates/default.conf.template
-    docker-compose restart nginx
-fi
+# Use envsubst on the nginx template to create the nginx config
+mkdir -p ./swag/nginx/site-confs
+envsubst '$FULL_DOMAIN' < default.conf.template > ./swag/nginx/site-confs/default.conf
+ 
+docker-compose up -d
 
-if [[ "$SSL_PROVISIONER" == "manual" ]]; then
-    echo "Using user-supplied ssl certificates..."
-    if [[ -f "./nginx/ssl/live/$DOMAIN/fullchain.pem" ]] && [[ -f "./nginx/ssl/live/$DOMAIN/privkey.pem" ]]; then
-        echo "SSL certificates found."
-        mkdir -p ./nginx/templates
-        cp -f ./nginx/conf-templates/default.conf.template ./nginx/templates/default.conf.template
-        docker-compose up -d 
-    fi
-fi
-
-# Set admin password if provided
-if [[ -n "$ADMIN_PASSWD" ]]; then
-    echo "Setting admin password..."
-    echo 'localadmin:'"$ADMIN_PASSWD" | sudo chpasswd
-fi
-
-# Remove script from crontab after running successfully
-(sudo crontab -l | grep -v "$SEARCH_STRING") | sudo crontab -
+# Remove front crontab when finished
+sudo crontab -r

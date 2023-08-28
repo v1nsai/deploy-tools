@@ -39,9 +39,12 @@ locals {
         content: |
           ${indent(6, local.docker_compose)}
         owner: localadmin:localadmin
+      - path: /etc/ssh/sshd_config
+        permissions: '0644'
+        content: |
+          PermitRootLogin no
     runcmd:
       - cp -f /etc/skel/.bashrc /home/localadmin/.profile
       - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile
-      - 
   EOF
 }

@@ -28,27 +28,7 @@ build {
       "sudo chown localadmin:localadmin -R /opt/nc-deploy"
     ]
   }
-
-  # provisioner "file" {
-  #   source      = "${path.cwd}/auth/cloudflare.env"
-  #   destination = "/opt/nc-deploy/cloudflare.env"
-  # }
-
-  # provisioner "file" {
-  #   source      = "${path.cwd}/scripts/cloudflare/create-temp-record.sh"
-  #   destination = "/opt/nc-deploy/create-temp-record.sh"
-  # }
-
-  # provisioner "file" {
-  #   source      = "${path.cwd}/scripts/cloudflare/list-records.sh"
-  #   destination = "/opt/nc-deploy/list-records.sh"
-  # }
-
-  # provisioner "file" {
-  #   source      = "${path.cwd}/projects/nextcloud/docker/docker.sh"
-  #   destination = "/opt/nc-deploy/docker.sh"
-  # }
-
+  
   provisioner "file" {
     source      = "${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"
     destination = "/opt/nc-deploy/docker-compose.yaml"

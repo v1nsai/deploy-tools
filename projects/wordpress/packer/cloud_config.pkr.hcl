@@ -14,6 +14,7 @@ locals {
       - jq
       - docker
       - docker-compose
+      - nnn
     package_update: true
     ssh_pwauth: true
     users:
@@ -25,5 +26,13 @@ locals {
         passwd: ${var.hashed_passwd}
         ssh_authorized_keys:
           - ${local.ssh_pubkey}
+    write_files:
+      - path: /etc/environment
+        append: true
+        content: |
+          DOMAIN=temporary
+          SUBDOMAIN=
+          ONLY_SUBDOMAINS=true
+          STAGING=false
   EOF
 }
