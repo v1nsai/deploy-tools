@@ -1,0 +1,180 @@
+#cloud-config
+packages:
+  - python3
+  - python3-pip
+  - python3-virtualenv
+  - net-tools
+  - jq
+  - docker
+  - docker-compose
+  - nnn
+package_update: true
+ssh_pwauth: true
+users:
+  - name: localadmin
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin, sudo, docker
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: $6$rounds=4096$nQEeaHtrjiUlxOPi$LQlgi0XBR6u46AJFhWxsWBBK8YqHbGWYWkWnG.YhmdYkc/lMiAacMwQAbZ0W7MosLFexushHQpfa05eG7gsL/1
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX3ZnnojSpqi1R7CWmP7uVFU2fEd2uS4PYQpWC23ScmDGP7KFHeTJfMc6eMaAhbxfIXx2CFdsIhP5U58BFLmAxkUIM8lGnHgh1uME/aOMZokZrDhYnw0eaamVOg0rdKD/uaTo87ASoxpf0XYnrqcrYhFIQodxjsCC8pCU5Egjh9QDgHsniJ5vWEkxZGPQ4SXIj4txh8uXMI0mh57BWJRK0zJIDzZCxubtrOpWoQnVvg/ZV+Thgy0P9m7e8OHbaM3U/7p4DBd1MZ95jNwjefMeD5hR46T35rkR9w/ebEIKhGjz0UB2yRUZPOPqBzVfixYA6gfd5c1AhjluCyCqhLEMd
+write_files:
+  - path: /etc/environment
+    append: true
+    content: |
+      DOMAIN=techig.com
+      SUBDOMAIN=
+      ONLY_SUBDOMAINS=false
+      STAGING=false
+  - path: /opt/wp-deploy/docker-compose.yml
+    owner: localadmin:localadmin
+    permissions: '0644'
+    content: |
+      version: "3.9"
+      services:
+        wordpress:
+          container_name: wordpress
+          image: wordpress:php8.2-apache
+          restart: always
+          stdin_open: true
+          tty: true
+          environment:
+            WORDPRESS_DB_HOST: mariadb
+            WORDPRESS_DB_USER: wordpress
+            WORDPRESS_DB_PASSWORD: Ch4ngeM3N0w!
+            WORDPRESS_DB_NAME: wordpress
+          volumes:
+            - wordpress_data:/var/www/html
+
+        mariadb:
+          container_name: mariadb
+          image: mariadb
+          restart: always
+          environment:
+            MYSQL_DATABASE: wordpress
+            MYSQL_USER: wordpress
+            MYSQL_PASSWORD: Ch4ngeM3N0w!
+            MYSQL_RANDOM_ROOT_PASSWORD: 'root_pass'
+          volumes:
+            - db_data:/var/lib/mysql
+
+        swag:
+          image: lscr.io/linuxserver/swag:latest
+          container_name: swag
+          cap_add:
+            - NET_ADMIN
+          environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=US/Eastern
+            - URL=${DOMAIN}
+            - VALIDATION=http
+            - SUBDOMAINS=${SUBDOMAIN} #optional
+            - EMAIL= #optional
+            - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS} #optional
+            - EXTRA_DOMAINS= #optional
+            - STAGING=${STAGING} #optional
+          volumes:
+            - ./swag:/config
+          restart: unless-stopped
+          ports:
+            - 80:80
+            - 443:443
+
+      volumes:
+        db_data:
+        wordpress_data:
+  - path: /opt/wp-deploy/swag/nginx/site-confs/default.conf
+    owner: localadmin:localadmin
+    permissions: '0644'
+    defer: true
+    content: |
+      server {
+          listen [::]:80;
+          listen 80;
+
+          server_name techig.com;
+
+          location ~ /.well-known/acme-challenge {
+              allow all;
+              root /var/www/html;
+          }
+
+          location / {
+              return 301 https://techig.com$request_uri;
+          }
+      }
+
+      server {
+          listen [::]:443 ssl http2;
+          listen 443 ssl http2;
+
+          server_name techig.com;
+
+          ssl_certificate /etc/letsencrypt/live/techig.com/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/techig.com/privkey.pem;
+
+          root /var/www/html;
+          index index.php;
+
+          location ~ /.well-known/acme-challenge {
+              allow all; 
+              root /var/www/html;
+          }
+
+          location / {
+              try_files $uri @apache;
+          }
+
+          location ~ ^/.user.ini {
+              deny all;
+          }
+
+          location ~*  .(svg|svgz)$ {
+              types {}
+              default_type image/svg+xml;
+          }
+
+          location = /favicon.ico {
+              log_not_found off;
+              access_log off;
+          }
+
+          location = /robots.txt {
+              allow all;
+              log_not_found off;
+              access_log off;
+          }
+
+          location @apache {
+              proxy_set_header X-Real-IP  $remote_addr;
+              proxy_set_header X-Forwarded-For $remote_addr;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Host $host;
+              proxy_pass http://wordpress:80;
+          }
+
+          location ~[^?]*/$ {
+              proxy_set_header X-Real-IP  $remote_addr;
+              proxy_set_header X-Forwarded-For $remote_addr;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Host $host;
+              proxy_pass http://wordpress:80;
+          }
+
+          location ~ .php$ {
+              proxy_set_header X-Real-IP  $remote_addr;
+              proxy_set_header X-Forwarded-For $remote_addr;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Host $host;
+              proxy_pass http://wordpress:80;
+          }
+      }
+runcmd:
+  - DOMAIN=techig.com ONLY_SUBDOMAINS=false STAGING=false docker-compose -f /opt/wp-deploy/docker-compose.yml up -d > /opt/wp-deploy/docker.log 2>&1
+  - cp -f /etc/skel/.bashrc /home/localadmin/.profile
+  - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile
+  - echo 'cd /opt/wp-deploy' | tee -a /home/localadmin/.profile
+  - chown localadmin:localadmin /home/localadmin/.profile
+  - chown localadmin:localadmin -R /opt/wp-deploy

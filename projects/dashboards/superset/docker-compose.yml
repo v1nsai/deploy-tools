@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  superset:
+    ports:
+      - 8080:8088
+    environment:
+      - SUPERSET_SECRET_KEY='x1mzDi/dpqQh882GPNv1cItr6tT8UUjVcX675TSs33OmxQTbUXUffSxe'
+    container_name: superset
+    image: apache/superset

@@ -1,0 +1,41 @@
+﻿Service,LOE Estimate (Hours),Cost per Hour,Instance size,Instance Count,Cost Per Hour,Cost Per Month Estimate,Notes
+VPN (wireguard),,,,,,,
+  - Initial setup (TechIG),24,,,,,"$17,520.00",
+  - Monthly operating cost (ALTERN),,,alt.c2.medium,3,$0.05,$109.50,docker swarm auto scaling could be complex to set up
+  - Anticipated monthly maintenance,0,,,,,$0.00,
+Remote Desktop (Guacamole),,,,,,,
+  - Initial setup (TechIG),40,,,,,"$29,200.00",docker swarm auto scaling could be complex to set up
+  - Monthly operating cost (ALTERN),,,alt.c2.large,5,$0.08,$292.00,
+  - Anticipated monthly maintenance (TechIG),8,,,,,"$5,840.00",
+Office (Nextcloud),,,,,,,
+  - Initial setup (TechIG),80,,,,,"$58,400.00",docker swarm auto scaling could be complex to set up
+  - Monthly operating cost (ALTERN),,,alt.c2.medium,3,$0.05,$109.50,
+  - Anticipated monthly maintenance (TechIG),8,,,,,"$5,840.00",
+MFA (Duo),,,,,,,
+  - Initial setup (TechIG),24,,,,,"$17,520.00",docker swarm auto scaling could be complex to set up
+  - Monthly operating cost (ALTERN),,,,0,$0.00,$0.00,
+  - Anticipated monthly maintenance (TechIG),0,,,,,$0.00,
+Auto Scaling Configuration,,,,,,,
+  - Initial setup (TechIG),40,,,,,"$29,200.00",docker swarm auto scaling could be complex to set up
+  - Monthly operating cost (ALTERN),,,,0,$0.00,$0.00,
+  - Anticipated monthly maintenance (TechIG),8,,,,,"$5,840.00",
+,,,,,,,
+Data migration,5,,,,,"$3,650.00",Depends on how much data actually needs to be transferred
+,,,,,,$730.00,
+,,,,,,,
+label by sprints,,,,,,,
+wireguard = setup encrypted comms,,,,,,,
+organized by capability,,,,,,,
+breakout nextcloud by capability,,,,,,,
+full day devoted to before kickoff,,,,,,,
+training and go live,,,,,,,
+"ongoing O&M, needs for this?  More hours first month, then less next month and next month etc.",,,,,,,
+update automation of security,,,,,,,
+CIS compliance scan for extra,,,,,,,
+Cost ranges instead of single number,,,,,,,
+tags for altern pricing and techig pricing,,,,,,,
+data transfer cost for flavor (5TB too much?),,,,,,,
+separate spreadsheet for altern costs,,,,,,,
+,,,,,,,
+John Tenaglia (early next week),,,,,,,
+james sending data about migration for LOE,,,,,,,
