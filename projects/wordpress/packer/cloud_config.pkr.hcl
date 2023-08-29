@@ -32,7 +32,7 @@ locals {
         content: |
           DOMAIN=temporary
           SUBDOMAIN=
-          ONLY_SUBDOMAINS=true
+          ONLY_SUBDOMAINS=false
           STAGING=false
   EOF
 }

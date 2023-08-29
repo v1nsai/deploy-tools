@@ -1,6 +1,6 @@
 resource "openstack_compute_instance_v2" "wordpress" {
   name            = "wordpress"
-  image_name      = "wordpress-auto-ssl"
+  image_name      = "Wordpress-latest on Ubuntu 22.04"
   flavor_name     = "alt.st1.small"
   key_pair        = "wordpress"
   security_groups = ["default", "ssh-ingress", "http-ingress", "https-ingress"]

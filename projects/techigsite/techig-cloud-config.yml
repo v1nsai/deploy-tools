@@ -112,8 +112,8 @@ write_files:
 
           server_name techig.com;
 
-          ssl_certificate /etc/letsencrypt/live/techig.com/fullchain.pem;
-          ssl_certificate_key /etc/letsencrypt/live/techig.com/privkey.pem;
+          ssl_certificate /etc/nginx/ssl/live/techig.com/fullchain.pem;
+          ssl_certificate_key /etc/nginx/ssl/live/techig.com/privkey.pem;
 
           root /var/www/html;
           index index.php;

@@ -37,9 +37,9 @@ services:
       - TZ=US/Eastern
       - URL=${DOMAIN}
       - VALIDATION=http
-      - SUBDOMAINS=${SUBDOMAIN} #optional
+      # - SUBDOMAINS=${SUBDOMAIN} #optional
       - EMAIL= #optional
-      - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS} #optional
+      - ONLY_SUBDOMAINS=false #optional
       - EXTRA_DOMAINS= #optional
       - STAGING=${STAGING} #optional
     volumes:

@@ -1,7 +1,7 @@
-variable "domain" { type = string }
+variable "domain"  { type = string }
+variable "staging" { type = bool }
 
 locals {
-  docker_compose  = file("${path.cwd}/projects/wordpress/docker/docker.sh")
   ssh_key         = file(pathexpand("~/.ssh/wordpress"))
   ssh_pubkey      = file(pathexpand("~/.ssh/wordpress.pub"))
 
@@ -11,7 +11,7 @@ locals {
       - path: /etc/environment
         content: |
           DOMAIN=${var.domain}
-          STAGING=true
+          # STAGING=${var.staging}
           # SUBDOMAIN=
           # ONLY_SUBDOMAINS=
         append: true
