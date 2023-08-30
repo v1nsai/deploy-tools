@@ -53,11 +53,15 @@ services:
       - ./config:/config
     restart: unless-stopped
     network_mode: host
-    # networks:
-    #   - nextcloud-aio
-    # ports: 
-    #   - 80:80
-    #   - 443:443
+  
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped 
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - 9090:9090
 
 volumes:
   nextcloud_aio_mastercontainer:
