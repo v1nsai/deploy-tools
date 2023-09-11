@@ -4,7 +4,7 @@ set -e
 source auth/alterncloud.env
 
 sudo apt update
-sudo apt install -y wget vim python3 python3-pip
+sudo apt install -y wget vim python3 python3-pip whois nnn
 sudo ln -s /usr/bin/python3 /usr/bin/python || echo "Python symlink already exists, skipping..."
 
 # kubectl

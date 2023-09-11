@@ -1,21 +1,69 @@
-version: '3.3'
+version: "3"
+
 services:
-  wg-easy:
-    container_name: wg-easy
-    environment:
-      - WG_HOST=${WG_HOST}
-      - PASSWORD=${PASSWORD}
-      - WG_DEVICE=ens5
+  wireguard:
+    image: linuxserver/wireguard:latest
+    container_name: wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-      - net.ipv4.ip_forward=1
     volumes:
-      - ./wg-easy:/etc/wireguard
-    ports:
-      - '51820:51820/udp'
-      - '51821:51821/tcp'
+      - ./wireguard:/config
+      - /lib/modules:/lib/modules
+    network_mode: service:swag
+    environment:
+      - PEERS=10
+
+  wireguard-ui:
+    image: ngoduykhanh/wireguard-ui:latest
+    container_name: wireguard-ui
+    depends_on:
+      - wireguard
+    cap_add:
+      - NET_ADMIN
+    # use the network of the 'wireguard' service. this enables to show active clients in the status page
+    network_mode: service:swag
+    environment:
+      - SENDGRID_API_KEY
+      - EMAIL_FROM_ADDRESS
+      - EMAIL_FROM_NAME
+      - SESSION_SECRET
+      - WGUI_USERNAME=admin
+      - WGUI_PASSWORD=jonk9ym.
+      - WG_CONF_TEMPLATE
+      - WGUI_MANAGE_START=true
+      - WGUI_MANAGE_RESTART=true
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    volumes:
+      - ./wireguard-ui-db:/app/db
+      - ./wireguard-ui:/etc/wireguard
+
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - URL=test.techig.com
+      - VALIDATION=http
+      # - SUBDOMAINS=${SUBDOMAIN} #optional
+      - EMAIL= #optional
+      - ONLY_SUBDOMAINS=false #optional
+      - EXTRA_DOMAINS= #optional
+      - STAGING=false #optional
+    volumes:
+      - ./swag:/config
     restart: unless-stopped
-    image: weejewel/wg-easy
+    ports:
+      - 80:80
+      - 443:443
+      # port for wireguard-ui. this must be set here as the `wireguard-ui` container joins the network of this container and hasn't its own network over which it could publish the ports
+      - 5000:5000
+      # port of the wireguard server
+      - 51820:51820
