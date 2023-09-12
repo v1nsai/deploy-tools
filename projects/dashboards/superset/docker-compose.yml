@@ -7,3 +7,10 @@ services:
       - SUPERSET_SECRET_KEY='x1mzDi/dpqQh882GPNv1cItr6tT8UUjVcX675TSs33OmxQTbUXUffSxe'
     container_name: superset
     image: apache/superset
+    restart: always
+
+  metabase:
+    ports:
+      - '3000:3000'
+    container_name: metabase
+    image: metabase/metabase
