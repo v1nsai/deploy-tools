@@ -1,3 +1,0 @@
-[submodule "projects/wordpress"]
-	path = projects/wordpress
-	url = git@github.com:TechIG-official/wordpress.git
