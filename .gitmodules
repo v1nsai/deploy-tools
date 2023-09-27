@@ -1,3 +1,6 @@
 [submodule "projects/wordpress"]
 	path = projects/wordpress
 	url = git@github.com:TechIG-official/wordpress.git
+[submodule "projects/monitoring"]
+	path = projects/monitoring
+	url = git@github.com:TechIG-official/monitoring.git

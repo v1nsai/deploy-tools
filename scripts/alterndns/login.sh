@@ -2,11 +2,6 @@
 
 set -e
 
-POST_DATA="{
-    \"username\": \"$OS_USERNAME\",
-    \"password\": \"$OS_PASSWORD\"
-}"
-
-curl -i -X POST "https://cloud.alterncloud.com/api/login" \
-   -H "Content-Type: application/json" \
-   -d "${POST_DATA}"
+curl 'https://cloud.alterncloud.com/api/login' \
+    -d username="alt_client_14_3"\
+    -d password='xsA|n%4E'
