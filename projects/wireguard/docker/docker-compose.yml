@@ -2,17 +2,31 @@ version: "3"
 
 services:
   wireguard:
-    image: linuxserver/wireguard:latest
+    image: lscr.io/linuxserver/wireguard:latest
     container_name: wireguard
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
+      - SYS_MODULE #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      # - SERVERURL=  #optional
+      - SERVERPORT=51820 #optional
+      - PEERS=5 #optional
+      - PEERDNS=1.1.1.1,1.0.0.1 #optional
+      # - INTERNAL_SUBNET=10.13.13.0 #optional
+      - ALLOWEDIPS=0.0.0.0/0 #optional
+      - PERSISTENTKEEPALIVE_PEERS= #optional
+      - LOG_CONFS=true #optional
     volumes:
       - ./wireguard:/config
-      - /lib/modules:/lib/modules
-    network_mode: service:swag
-    environment:
-      - PEERS=10
+      - /lib/modules:/lib/modules #optional
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
 
   wireguard-ui:
     image: ngoduykhanh/wireguard-ui:latest
@@ -41,29 +55,27 @@ services:
       - ./wireguard-ui-db:/app/db
       - ./wireguard-ui:/etc/wireguard
 
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=US/Eastern
-      - URL=test.techig.com
-      - VALIDATION=http
-      # - SUBDOMAINS=${SUBDOMAIN} #optional
-      - EMAIL= #optional
-      - ONLY_SUBDOMAINS=false #optional
-      - EXTRA_DOMAINS= #optional
-      - STAGING=false #optional
-    volumes:
-      - ./swag:/config
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
-      # port for wireguard-ui. this must be set here as the `wireguard-ui` container joins the network of this container and hasn't its own network over which it could publish the ports
-      - 5000:5000
-      # port of the wireguard server
-      - 51820:51820
+  # swag:
+  #   image: lscr.io/linuxserver/swag:latest
+  #   container_name: swag
+  #   cap_add:
+  #     - NET_ADMIN
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=US/Eastern
+  #     - URL=wireguard.techig.com
+  #     - VALIDATION=http
+  #     # - SUBDOMAINS=${SUBDOMAIN} #optional
+  #     - EMAIL= #optional
+  #     - ONLY_SUBDOMAINS=false #optional
+  #     - EXTRA_DOMAINS= #optional
+  #     - STAGING=false #optional
+  #   volumes:
+  #     - ./swag:/config
+  #   restart: unless-stopped
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #     # port for wireguard-ui. this must be set here as the `wireguard-ui` container joins the network of this container and hasn't its own network over which it could publish the ports
+  #     - 5000:5000
