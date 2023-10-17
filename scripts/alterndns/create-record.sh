@@ -6,11 +6,12 @@ subdomain="$1"
 domain="$2"
 type="A"
 ip=$(curl ifconfig.me)
+source /opt/wp-deploy/.env
 
 echo "Getting token..."
 token=$(curl -s 'https://cloud.alterncloud.com/api/login' \
--d username="info@techig.com" \
--d password='M_6anDsm_GPnU2k')
+    -d username="$dns_username" \
+    -d password="$dns_password")
 if echo "$token" | grep -q "error"; then
     echo "Encountered an error getting a token.  Error: $token"
 else
@@ -44,9 +45,9 @@ if [[ -z "$existing_record" ]]; then
     }"
 
     response=$(curl -sX POST "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id/records" \
-    -H "Authorization: Bearer $token" \
-    -H "Content-Type: application/json" \
-    -d "${POST_DATA}")
+        -H "Authorization: Bearer $token" \
+        -H "Content-Type: application/json" \
+        -d "${POST_DATA}")
     success=$(echo $response | jq -r '.success')
 else
     echo "Editing already existing record..."
@@ -64,9 +65,9 @@ else
     }"
 
     response=$(curl -sX PUT "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id/records/$record_id" \
-    -H "Authorization: Bearer $token" \
-    -H "Content-Type: application/json" \
-    -d "${POST_DATA}")
+        -H "Authorization: Bearer $token" \
+        -H "Content-Type: application/json" \
+        -d "${POST_DATA}")
     success=$(echo $response | jq -r '.success')
 fi
 
@@ -74,7 +75,7 @@ if [[ "$success" == "true" ]]; then
     echo "Record created/updated successfully!"
 else
     if [[ "$response" == *"Contents are identical"* ]]; then
-        echo "Record already exists, skipping..."
+        echo "Records are identical, skipping edit..."
     else
         echo "Something went wrong, full response: $response"
         exit 1
