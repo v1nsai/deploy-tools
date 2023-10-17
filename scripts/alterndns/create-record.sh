@@ -28,7 +28,7 @@ echo "Setting service and zone ids..."
 service_id=$(echo $zone | jq -r '.service_id')
 zone_id=$(echo $zone | jq -r '.domain_id')
 
-echo "Getting records for domain: $domain, zone_id: $zone_id, service_id:$service_id..."
+echo "Getting records for domain: $domain"
 records=$(curl -sX GET "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id" \
     -H "Authorization: Bearer $token" | jq -r '.records[]')
 
