@@ -24,7 +24,7 @@ server {
     # listen 443 quic reuseport;       # uncomment to enable HTTP/3 / QUIC - supported on nginx v1.25.0+ - please remove "reuseport" if there is already another quic listener on port 443 with enabled reuseport
     # listen [::]:443 quic reuseport;  # uncomment to enable HTTP/3 / QUIC - supported on nginx v1.25.0+ - please remove "reuseport" if there is already another quic listener on port 443 with enabled reuseport - keep comment to disable IPv6
 
-    server_name $SUBDOMAIN.$DOMAIN;
+    server_name $URL;
 
     location / {
         proxy_pass http://127.0.0.1:11000$request_uri;

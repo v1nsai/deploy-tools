@@ -6,7 +6,9 @@ subdomain="$1"
 domain="$2"
 type="A"
 ip=$(curl ifconfig.me)
-source /opt/wp-deploy/.env
+source_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $source_dir/.env
+rm $source_dir/.env
 
 echo "Getting token..."
 token=$(curl -s 'https://cloud.alterncloud.com/api/login' \

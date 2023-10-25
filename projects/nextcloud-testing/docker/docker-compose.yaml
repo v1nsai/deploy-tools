@@ -41,27 +41,18 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=US/Eastern
-      - URL=${DOMAIN}
+      - URL=${URL}
       - VALIDATION=http
-      - SUBDOMAINS=${SUBDOMAIN} #optional
+      # - SUBDOMAINS= #optional
       - EMAIL= #optional
-      - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS} #optional
+      - ONLY_SUBDOMAINS=false #optional
       - EXTRA_DOMAINS= #optional
-      - STAGING=${STAGING} #optional
+      - STAGING=false #optional
       - NGINX_ENVSUBST_TEMPLATE_SUFFIX=".template"
     volumes:
-      - ./config:/config
+      - /etc/swag:/config
     restart: unless-stopped
     network_mode: host
-  
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    restart: unless-stopped 
-    volumes:
-      - ./prometheus:/etc/prometheus
-    ports:
-      - 9090:9090
 
 volumes:
   nextcloud_aio_mastercontainer:

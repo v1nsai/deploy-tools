@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+# set -e
 
 echo "Getting all image IDs matching $1..."
 image_ids=$(openstack image list -f json | jq -r '.[] | select(.Name == "'$1'") | .ID')

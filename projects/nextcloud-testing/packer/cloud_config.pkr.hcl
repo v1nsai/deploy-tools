@@ -1,8 +1,8 @@
 variable "hashed_passwd" { type = string }
 
 locals {
-  ssh_key    = file(pathexpand("~/.ssh/nextcloud"))
-  ssh_pubkey = file(pathexpand("~/.ssh/nextcloud.pub"))
+  ssh_key    = file(pathexpand("~/.ssh/nextcloud-testing"))
+  ssh_pubkey = file(pathexpand("~/.ssh/nextcloud-testing.pub"))
 
   cloud_config = <<EOF
     #cloud-config
@@ -28,7 +28,7 @@ locals {
     write_files:
       - path: /etc/environment
         content: |
-          COMPOSE_FILE="/opt/nc-deploy/docker-compose.yaml"
+          URL=nextcloud-testing.techig.com
         append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'
