@@ -30,8 +30,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud-testing/docker/docker-compose.yaml"
-    destination = "/opt/nc-deploy/docker-compose.yaml"
+    source      = "${path.cwd}/projects/nextcloud-testing/docker/docker-compose.yml"
+    destination = "/opt/nc-deploy/docker-compose.yml"
   }
 
   provisioner "file" {

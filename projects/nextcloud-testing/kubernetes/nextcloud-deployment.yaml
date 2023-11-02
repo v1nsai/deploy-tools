@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f projects/nextcloud-testing/docker/docker-compose.yml -o projects/nextcloud-testing/kubernetes
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nextcloud
+  name: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: nextcloud
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f projects/nextcloud-testing/docker/docker-compose.yml -o projects/nextcloud-testing/kubernetes
+        kompose.version: 1.31.2 (a92241f79)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/docker-default: "true"
+        io.kompose.service: nextcloud
+    spec:
+      containers:
+        - env:
+            - name: APACHE_IP_BINDING
+              value: 127.0.0.1
+            - name: APACHE_PORT
+              value: "11000"
+            - name: TALK_PORT
+              value: "3478"
+          image: nextcloud/all-in-one:latest
+          name: nextcloud-aio-mastercontainer
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: /mnt/docker-aio-config
+              name: nextcloud-aio-mastercontainer
+            - mountPath: /var/run/docker.sock
+              name: nextcloud-claim1
+              readOnly: true
+      hostname: nextcloud-aio-mastercontainer
+      restartPolicy: Always
+      volumes:
+        - name: nextcloud-aio-mastercontainer
+          persistentVolumeClaim:
+            claimName: nextcloud-aio-mastercontainer
+        - name: nextcloud-claim1
+          persistentVolumeClaim:
+            claimName: nextcloud-claim1
+            readOnly: true
+status: {}
