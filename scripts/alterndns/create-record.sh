@@ -52,25 +52,28 @@ if [[ -z "$existing_record" ]]; then
         -d "${POST_DATA}")
     success=$(echo $response | jq -r '.success')
 else
-    echo "Editing already existing record..."
-    record_id=$(echo $existing_record | jq -r '.id')
-    if [[ -z "$record_id" ]]; then
-        echo "Record id is empty, full error: $record_id"
-        exit 1
-    fi
+    # echo "Editing already existing record..."
+    # record_id=$(echo $existing_record | jq -r '.id')
+    # if [[ -z "$record_id" ]]; then
+    #     echo "Record id is empty, full error: $record_id"
+    #     exit 1
+    # fi
 
-    POST_DATA="{
-        \"name\": \"$subdomain.$domain\",
-        \"ttl\": 3600,
-        \"type\": \"A\",
-        \"content\": \"$ip\"
-    }"
+    # POST_DATA="{
+    #     \"name\": \"$subdomain.$domain\",
+    #     \"ttl\": 3600,
+    #     \"type\": \"A\",
+    #     \"content\": \"$ip\"
+    # }"
 
-    response=$(curl -sX PUT "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id/records/$record_id" \
-        -H "Authorization: Bearer $token" \
-        -H "Content-Type: application/json" \
-        -d "${POST_DATA}")
-    success=$(echo $response | jq -r '.success')
+    # response=$(curl -sX PUT "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id/records/$record_id" \
+    #     -H "Authorization: Bearer $token" \
+    #     -H "Content-Type: application/json" \
+    #     -d "${POST_DATA}")
+    # success=$(echo $response | jq -r '.success')
+    response="ERROR: subdomain already exists!"
+    echo $response
+    exit 1
 fi
 
 if [[ "$success" == "true" ]]; then
