@@ -7,14 +7,14 @@ resource "openstack_compute_instance_v2" "wireguard" {
   user_data       = local.cloud_config
 
   network {
-    name = "wireguard"
+    name = "nextcloud-helm"
   }
 
-  depends_on = [ openstack_networking_network_v2.wireguard ]
+  # depends_on = [ openstack_networking_network_v2.wireguard ]
 }
 
 resource "openstack_compute_floatingip_associate_v2" "floating_ip_associate" {
-  floating_ip = "216.87.32.38" # openstack_networking_floatingip_v2.floating_ip.address
+  floating_ip = "216.87.32.76" # openstack_networking_floatingip_v2.floating_ip.address
   instance_id = openstack_compute_instance_v2.wireguard.id
   fixed_ip    = openstack_compute_instance_v2.wireguard.network.0.fixed_ip_v4
 }
