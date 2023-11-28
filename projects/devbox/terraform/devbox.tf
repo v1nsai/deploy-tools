@@ -7,34 +7,12 @@ resource "openstack_compute_instance_v2" "devbox" {
   user_data       = local.cloud-init
 
   network {
-    name = "nextcloud-helm"
+    name = "nextcloud"
   }
-
-  personality {
-    file     = "/home/localadmin/.ssh/personality"
-    content = data.local_sensitive_file.private-key.content
-  }
-
-  # provisioner "file" {
-  #     source = "${path.module}/install.sh"
-  #     destination = "/home/localadmin/install.sh"
-  # }
-
-  # connection {
-  #   type        = "ssh"
-  #   user        = "localadmin"
-  #   private_key = file(pathexpand("~/.ssh/wordpress"))
-  #   host        = "${openstack_compute_floatingip_associate_v2.myip.address}"
-  # }
-  # depends_on = [ openstack_compute_floatingip_associate_v2.myip ]
 }
 
-# resource "openstack_networking_floatingip_v2" "myip" {
-#   pool = "External"
-# }
-
 resource "openstack_compute_floatingip_associate_v2" "myip" {
-  floating_ip = "216.87.32.41"
+  floating_ip = "216.87.32.71"
   instance_id = openstack_compute_instance_v2.devbox.id
   # fixed_ip    = openstack_compute_instance_v2.devbox.access_ip_v4
 }
