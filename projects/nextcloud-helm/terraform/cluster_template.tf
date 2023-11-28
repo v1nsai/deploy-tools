@@ -18,7 +18,7 @@ resource "openstack_containerinfra_clustertemplate_v1" "nextcloud-helm" {
 
 
   labels = {
-    kube_dashboard_enabled           = "True"
+    # kube_dashboard_enabled           = "True"
     # prometheus_monitoring            = "True"
     # influx_grafana_dashboard_enabled = "True"
     # csi_snapshotter_tag              = "v4.0.0"

@@ -29,6 +29,7 @@ locals {
       - path: /etc/environment
         content: |
           URL=nextcloud-testing.techig.com
+          OPENPROJECT_URL=openproject.techig.com
         append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'

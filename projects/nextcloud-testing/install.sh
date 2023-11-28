@@ -32,6 +32,7 @@ install() {
     # Use envsubst on the nginx template to create the nginx config
     mkdir -p /etc/swag/nginx/site-confs
     envsubst '$URL' < /opt/nc-deploy/default.conf.template > /etc/swag/nginx/site-confs/default.conf
+    envsubst '$OPENPROJECT_URL' < /opt/nc-deploy/openproject.conf.template > /etc/swag/nginx/site-confs/default.conf
 
     docker-compose up -d
 }
