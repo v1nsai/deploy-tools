@@ -23,11 +23,6 @@ locals {
         ssh_authorized_keys:
           - ${indent(6, file("~/.ssh/wireguard.pub"))}
     write_files:
-      - path: /etc/environment
-        append: true
-        content: |
-          PASSWORD="jonk9ym.;lkj;lkj"
-        append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'
         content: |

@@ -8,6 +8,8 @@ locals {
       - python3
       - python3-pip
       - python3-venv
+      - nnn
+      - net-tools
     ssh_pwauth: true
     users:
       - name: localadmin
@@ -18,15 +20,16 @@ locals {
         passwd: ${var.hashed_passwd}
         ssh_authorized_keys:
           - ${data.local_file.ssh-pubkey.content}
-        ssh_keys:
-          rsa_private: |
-            ${indent(8, data.local_sensitive_file.private-key.content)}
-          rsa_public: |
-            ${indent(8, data.local_file.ssh-pubkey.content)}
     write_files:
       - path: /home/localadmin/.ssh/devbox
         content: |
-          ${indent(6, data.local_sensitive_file.private-key.content)}
+          ${indent(8, data.local_sensitive_file.private-key.content)}
+        owner: localadmin:localadmin
+        permissions: '0600'
+        defer: true
+      - path: /home/localadmin/.ssh/devbox.pub
+        content: |
+          ${indent(8, data.local_file.ssh-pubkey.content)}
         owner: localadmin:localadmin
         permissions: '0600'
         defer: true
@@ -42,7 +45,6 @@ locals {
             Hostname github.com
             User git
             IdentityFile /home/localadmin/.ssh/devbox
-            IdentitiesOnly yes
         owner: localadmin:localadmin
         permissions: '0600'
         append: true
@@ -52,15 +54,10 @@ locals {
           ${indent(6, data.local_sensitive_file.alterncloud-env.content)}
         owner: localadmin:localadmin
         defer: true
-      - path: /etc/crontab
-        content: 30 3    * * *   root    /usr/sbin/shutdown -h
-        append: true
-        defer: true
     runcmd:
       - cp /etc/skel/.bashrc /home/localadmin/.bashrc
       - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
       - cp -f /home/localadmin/.bashrc /home/localadmin/.profile
-      - cp -f /home/localadmin/.ssh/config /root/.ssh/config
       - chown localadmin:localadmin -R /home/localadmin/
       - systemctl restart ssh
   EOF

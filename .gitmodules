@@ -4,3 +4,6 @@
 [submodule "projects/monitoring"]
 	path = projects/monitoring
 	url = git@github.com:TechIG-official/monitoring.git
+[submodule "projects/openproject"]
+	path = projects/openproject
+	url = git@github.com:techig-official/openproject
