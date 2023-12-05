@@ -4,4 +4,5 @@ set -e
 
 rm -rf ~/.kube
 mkdir -p ~/.kube
-openstack coe cluster config wordpress --dir ~/.kube --use-certificate
+openstack coe cluster config $1 --dir ~/.kube --use-certificate --force
+
