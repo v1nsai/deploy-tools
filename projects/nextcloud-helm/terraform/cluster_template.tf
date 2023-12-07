@@ -8,24 +8,23 @@ resource "openstack_containerinfra_clustertemplate_v1" "nextcloud-helm" {
   docker_storage_driver = "overlay"
   docker_volume_size    = 10
   volume_driver         = "cinder"
-  network_driver        = "calico"
+  network_driver        = "flannel" # calico works
   server_type           = "vm"
   external_network_id   = "b1d12129-bbfc-4482-a5d2-c20458459ddc"
   # fixed_network         = "nextcloud-testing"
   # fixed_subnet          = "nextcloud-testing_subnet"
   master_lb_enabled     = true
-  # floating_ip_enabled   = true
-
+  # floating_ip_enabled   = true # won't run if this is enabled
 
   labels = {
-    kube_dashboard_enabled           = true
+    kube_dashboard_enabled           = false
     # prometheus_monitoring            = "True"
     # influx_grafana_dashboard_enabled = "True"
-    # csi_snapshotter_tag              = "v4.0.0"
-    # kube_tag                         = "v1.23.3-rancher1"
+    csi_snapshotter_tag              = "v4.0.0"
+    kube_tag                         = "v1.23.3-rancher1"
     cloud_provider_enabled           = true
-    # hyperkube_prefix                 = "docker.io/rancher/"
-    # ingress_controller               = "octavia"
+    hyperkube_prefix                 = "docker.io/rancher/"
+    ingress_controller               = "octavia"
     master_lb_floating_ip_enabled    = true
   }
 }
