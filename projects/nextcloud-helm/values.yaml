@@ -3,7 +3,7 @@
 ##
 image:
   repository: nextcloud
-  # tag: 24.0.3-apache
+  tag: fpm-alpine
   pullPolicy: IfNotPresent
   # pullSecrets:
   #   - myRegistrKeySecretName
@@ -21,41 +21,41 @@ replicaCount: 1
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
-  enabled: false
-  # className: nginx
-  annotations: {}
-  #  nginx.ingress.kubernetes.io/proxy-body-size: 4G
-  #  kubernetes.io/tls-acme: "true"
-  #  cert-manager.io/cluster-issuer: letsencrypt-prod
+  enabled: true
+  className: nginx
+  annotations:
+   nginx.ingress.kubernetes.io/proxy-body-size: 4G
+   kubernetes.io/tls-acme: "true"
+   cert-manager.io/cluster-issuer: letsencrypt-prod
   #  # Keep this in sync with the README.md:
-  #  nginx.ingress.kubernetes.io/server-snippet: |-
-  #    server_tokens off;
-  #    proxy_hide_header X-Powered-By;
-  #    rewrite ^/.well-known/webfinger /index.php/.well-known/webfinger last;
-  #    rewrite ^/.well-known/nodeinfo /index.php/.well-known/nodeinfo last;
-  #    rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-  #    rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
-  #    location = /.well-known/carddav {
-  #      return 301 $scheme://$host/remote.php/dav;
-  #    }
-  #    location = /.well-known/caldav {
-  #      return 301 $scheme://$host/remote.php/dav;
-  #    }
-  #    location = /robots.txt {
-  #      allow all;
-  #      log_not_found off;
-  #      access_log off;
-  #    }
-  #    location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
-  #      deny all;
-  #    }
-  #    location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
-  #      deny all;
-  #    }
-  # tls:
-  #   - secretName: nextcloud-tls
-  #     hosts:
-  #       - nextcloud.kube.home
+   nginx.ingress.kubernetes.io/server-snippet: |-
+     server_tokens off;
+     proxy_hide_header X-Powered-By;
+     rewrite ^/.well-known/webfinger /index.php/.well-known/webfinger last;
+     rewrite ^/.well-known/nodeinfo /index.php/.well-known/nodeinfo last;
+     rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+     rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
+     location = /.well-known/carddav {
+       return 301 $scheme://$host/remote.php/dav;
+     }
+     location = /.well-known/caldav {
+       return 301 $scheme://$host/remote.php/dav;
+     }
+     location = /robots.txt {
+       allow all;
+       log_not_found off;
+       access_log off;
+     }
+     location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+       deny all;
+     }
+     location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
+       deny all;
+     }
+  tls:
+    - secretName: nextcloud-tls
+      hosts:
+        - nextcloud.kube.home
   labels: {}
   path: /
   pathType: Prefix
@@ -72,9 +72,9 @@ phpClientHttpsFix:
   protocol: https
 
 nextcloud:
-  host: nextcloud.kube.home
+  host: nextcloud-test.techig.com
   username: admin
-  password: changeme
+  password: 
   ## Use an existing secret
   existingSecret:
     enabled: false
@@ -92,16 +92,16 @@ nextcloud:
   persistence:
     subPath:
   mail:
-    enabled: false
-    fromAddress: user
-    domain: domain.com
+    enabled: true
+    fromAddress: nextcloud@techig.com
+    domain: techig.com
     smtp:
-      host: domain.com
+      host: 
       secure: ssl
-      port: 465
+      port: 
       authtype: LOGIN
-      name: user
-      password: pass
+      name: 
+      password: 
   # PHP Configuration files
   # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
   phpConfigs: {}
@@ -210,7 +210,7 @@ nextcloud:
 
 nginx:
   ## You need to set an fpm version of the image for nextcloud if you want to use nginx!
-  enabled: false
+  enabled: true
   image:
     repository: nginx
     tag: alpine
@@ -234,7 +234,7 @@ nginx:
   #   readOnlyRootFilesystem: true
 
 internalDatabase:
-  enabled: true
+  enabled: false
   name: nextcloud
 
 ##
@@ -275,7 +275,7 @@ mariadb:
   ## Whether to deploy a mariadb server from the bitnami mariab db helm chart
   # to satisfy the applications database requirements. if you want to deploy this bitnami mariadb, set this and externalDatabase to true
   # To use an ALREADY DEPLOYED mariadb database, set this to false and configure the externalDatabase parameters
-  enabled: false
+  enabled: true
 
   auth:
     database: nextcloud
@@ -371,7 +371,7 @@ cronjob:
 service:
   type: ClusterIP
   port: 8080
-  loadBalancerIP: ""
+  loadBalancerIP: "216.87.32.112"
   nodePort: nil
 
 ## Enable persistence using Persistent Volume Claims
