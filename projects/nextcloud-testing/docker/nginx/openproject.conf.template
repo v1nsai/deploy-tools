@@ -23,8 +23,11 @@ server {
     server_name $OPENPROJECT_URL;
 
     location / {
-        proxy_pass http://openproject-proxy:9080$request_uri;
+        set $openproject http://openproject-proxy-1:80;
 
+        resolver 127.0.0.11;
+        proxy_pass $openproject;
+        
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Port $server_port;
         proxy_set_header X-Forwarded-Scheme $scheme;
