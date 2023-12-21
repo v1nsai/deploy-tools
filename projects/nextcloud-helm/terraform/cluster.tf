@@ -4,5 +4,5 @@ resource "openstack_containerinfra_cluster_v1" "nextcloud-helm" {
   master_count        = 1
   node_count          = 2
   keypair             = "nextcloud"
-  create_timeout      = 20
+  create_timeout      = 30
 }

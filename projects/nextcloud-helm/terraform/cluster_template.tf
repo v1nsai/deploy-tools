@@ -8,7 +8,7 @@ resource "openstack_containerinfra_clustertemplate_v1" "nextcloud-helm" {
   docker_storage_driver = "overlay"
   docker_volume_size    = 10
   volume_driver         = "cinder"
-  network_driver        = "flannel" 
+  network_driver        = "flannel"
   server_type           = "vm"
   external_network_id   = "b1d12129-bbfc-4482-a5d2-c20458459ddc"
   master_lb_enabled     = true

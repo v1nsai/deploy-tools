@@ -3,59 +3,63 @@
 set -e
 
 # REMOVE FOR TESTING ONLY
-helm uninstall nextcloud-helm || true
+helm -n nextcloud uninstall nextcloud || true
 
-echo "Generating credentials..."
-APP_HOST=nextcloud-test.techig.com
-if [[ -z "$APP_PASSWORD" ]]; then
-    APP_PASSWORD=$(openssl rand -base64 20)
+echo "Generating or retrieving credentials..."
+NC_ADMIN_SECRET_NAME=nextcloud-admin
+NC_NAMESPACE=nextcloud
+MARIADB_SECRET_NAME=mariadb-passwords
+
+if kubectl get secrets -n nextcloud | grep -q "$NC_ADMIN_SECRET_NAME"; then
+    echo "Secret $NC_ADMIN_SECRET_NAME already exists"
 else
-    APP_PASSWORD=$(kubectl get secret --namespace default nextcloud-helm -o jsonpath="{.data.nextcloud-password}" | base64 --decode)
-fi
-if [[ -z "$MARIADB_PASSWORD" ]]; then
-    MARIADB_PASSWORD=$(openssl rand -base64 20)
-else
-    MARIADB_PASSWORD=$(kubectl get secret --namespace default nextcloud-helm-mariadb -o jsonpath="{.data.mariadb-password}" | base64 --decode)
-fi
-if [[ -z "$MARIADB_PASSWORD" ]]; then
-    MARIADB_PASSWORD=$(openssl rand -base64 20)
-else
-    MARIADB_PASSWORD=$(kubectl get secret --namespace default nextcloud-helm-mariadb -o jsonpath="{.data.mariadb-password}" | base64 --decode)
-fi
-if [[ $(kubectl get secrets | grep -q nextcloud-smtp) > 0 ]]; then
-    source auth/smtp.env
-    kubectl create secret generic nextcloud-smtp \
-        --from-literal=SMTP_PASS=$SMTP_PASS \
-        --from-literal=SMTP_HOST=$SMTP_HOST \
-        --from-literal=SMTP_PORT=$SMTP_PORT \
-        --from-literal=SMTP_USER=$SMTP_USER
-else
-    SMTP_PASS=$(kubectl get secret --namespace default nextcloud-smtp -o jsonpath="{.data.SMTP_PASS}" | base64 --decode)
-    SMTP_HOST=$(kubectl get secret --namespace default nextcloud-smtp -o jsonpath="{.data.SMTP_HOST}" | base64 --decode)
-    SMTP_PORT=$(kubectl get secret --namespace default nextcloud-smtp -o jsonpath="{.data.SMTP_PORT}" | base64 --decode)
-    SMTP_USER=$(kubectl get secret --namespace default nextcloud-smtp -o jsonpath="{.data.SMTP_USER}" | base64 --decode)
+    echo "Generating $NC_ADMIN_SECRET_NAME..."
+    source projects/nextcloud/secrets.env
+    NC_PASSWORD=$(openssl rand -base64 20)
+    kubectl create secret -n nextcloud generic $NC_ADMIN_SECRET_NAME \
+        --from-literal=nextcloud-password=$NC_PASSWORD \
+        --from-literal=nextcloud-host=$NC_HOST \
+        --from-literal=nextcloud-username=admin \
+        --from-literal=nextcloud-token=$NC_PASSWORD \
+        --from-literal=smtp-password=$SMTP_PASS \
+        --from-literal=smtp-host=$SMTP_HOST \
+        --from-literal=smtp-port=$SMTP_PORT \
+        --from-literal=smtp-username=$SMTP_USER
 fi
 
-echo "Installing the repo and helm chart..."
+if kubectl get secrets -n nextcloud | grep -q $MARIADB_SECRET_NAME; then
+    echo "Secret mariadb-passwords already exists"
+else
+    echo "Generating mariadb-passwords..."
+    MARIADB_PASSWORD=$(openssl rand -base64 20)
+    MARIADB_ROOT_PASSWORD=$(openssl rand -base64 20)
+    MARIADB_REPLICATION_PASSWORD=$(openssl rand -base64 20)
+    kubectl create secret -n nextcloud generic mariadb-passwords \
+        --from-literal=mariadb-password=$MARIADB_PASSWORD \
+        --from-literal=password=$MARIADB_PASSWORD \
+        --from-literal=mariadb-root-password=$MARIADB_ROOT_PASSWORD \
+        --from-literal=mariadb-replication-password=$MARIADB_REPLICATION_PASSWORD
+fi
+
+# echo "Installing the repo and helm chart..."
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
+helm install nextcloud nextcloud/nextcloud \
+    --debug \
+    --namespace nextcloud \
+    --set image.tag=fpm-alpine \
+    # --set nextcloud.host=$NC_HOST \
+    # --set nextcloud.existingSecret.enabled=true \
+    # --set nextcloud.existingSecret.secretName=$NC_ADMIN_SECRET_NAME \
+    # --set nextcloud.existingSecret.usernameKey=nextcloud-username \
+    # --set nextcloud.existingSecret.passwordKey=nextcloud-password \
+    # --set nextcloud.existingSecret.tokenKey=nextcloud-token \
+    # --set nginx.enabled=true \
+    # --set externalDatabase.enabled=true \
+    # --set mariadb.enabled=true \
+    # --set mariadb.auth.existingSecret=$MARIADB_SECRET_NAME \
+    # --set mariadb.architecture=standalone \
+    # --set service.type=NodePort \
+    # --set service.nodePort=30080
 
-envsubst '$SMTP_PASS,$SMTP_HOST,$SMTP_PORT,$SMTP_USER,$MARIADB_PASSWORD,$APP_PASSWORD' < projects/nextcloud-helm/values.yaml.template > projects/nextcloud-helm/values.yaml
-helm install -f projects/nextcloud-helm/values.yaml nextcloud-helm nextcloud/nextcloud
-
-# kubectl get secret --namespace default nextcloud-helm -o jsonpath="{.data.nextcloud-password}" | base64 --decode
-
-    # --set ingress.annotations.kubernetes.io/tls-acme=true \
-
-# echo "Deploying..."
-# helm install nextcloud-helm nextcloud/nextcloud \
-#     --set nextcloud.password=$APP_PASSWORD \
-#     --set nextcloud.host=$APP_HOST \
-#     --set service.type=LoadBalancer \
-#     --set ingress.enabled=true \
-#     --set app.kubernetes.io/ingress.class=nginx \
-#     --set app.kubernetes.io/tls-acme=true \
-#     --set ingress.tls[0].secretName=nextcloud-tls \
-#     --set ingress.tls[0].hosts[0]=$APP_HOST \
-#     --set mariadb.enabled=true \
-#     --set mariadb.auth.password=$MARIADB_PASSWORD
+# kubectl get secret --namespace default nextcloud -o jsonpath="{.data.nextcloud-password}" | base64 --decode

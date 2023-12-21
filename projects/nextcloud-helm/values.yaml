@@ -27,7 +27,7 @@ ingress:
    nginx.ingress.kubernetes.io/proxy-body-size: 4G
    kubernetes.io/tls-acme: "true"
    cert-manager.io/cluster-issuer: letsencrypt-prod
-  #  # Keep this in sync with the README.md:
+   # Keep this in sync with the README.md:
    nginx.ingress.kubernetes.io/server-snippet: |-
      server_tokens off;
      proxy_hide_header X-Powered-By;
@@ -55,11 +55,10 @@ ingress:
   tls:
     - secretName: nextcloud-tls
       hosts:
-        - nextcloud.kube.home
+        - nextcloud-testing.techig.com
   labels: {}
   path: /
   pathType: Prefix
-
 
 # Allow configuration of lifecycle hooks
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
@@ -72,13 +71,13 @@ phpClientHttpsFix:
   protocol: https
 
 nextcloud:
-  host: nextcloud-test.techig.com
+  host: nextcloud-testing.techig.com
   username: admin
-  password: 
+  password: changeme
   ## Use an existing secret
   existingSecret:
-    enabled: false
-    # secretName: nameofsecret
+    enabled: true
+    secretName: nextcloud-admin-passwords
     usernameKey: nextcloud-username
     passwordKey: nextcloud-password
     tokenKey: nextcloud-token
@@ -92,16 +91,16 @@ nextcloud:
   persistence:
     subPath:
   mail:
-    enabled: true
-    fromAddress: nextcloud@techig.com
-    domain: techig.com
+    enabled: false
+    fromAddress: user
+    domain: domain.com
     smtp:
-      host: 
+      host: domain.com
       secure: ssl
-      port: 
+      port: 465
       authtype: LOGIN
-      name: 
-      password: 
+      name: user
+      password: pass
   # PHP Configuration files
   # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
   phpConfigs: {}
@@ -213,7 +212,7 @@ nginx:
   enabled: true
   image:
     repository: nginx
-    tag: alpine
+    tag: latest
     pullPolicy: IfNotPresent
   containerPort: 80
 
@@ -241,7 +240,7 @@ internalDatabase:
 ## External database configuration
 ##
 externalDatabase:
-  enabled: false
+  enabled: true
 
   ## Supported database engines: mysql or postgresql
   type: mysql
@@ -283,7 +282,7 @@ mariadb:
     password: changeme
     # Use existing secret (auth.rootPassword, auth.password, and auth.replicationPassword will be ignored).
     # secret must contain the keys mariadb-root-password, mariadb-replication-password and mariadb-password
-    existingSecret: ""
+    existingSecret: mariadb-passwords
 
   architecture: standalone
 
@@ -369,7 +368,7 @@ cronjob:
   #   readOnlyRootFilesystem: true
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 8080
   loadBalancerIP: "216.87.32.112"
   nodePort: nil
