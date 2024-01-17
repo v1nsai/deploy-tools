@@ -6,15 +6,18 @@ set -e
 helm -n nextcloud uninstall nextcloud || true
 
 echo "Generating or retrieving credentials..."
+source projects/nextcloud-helm/secrets.env
 NC_ADMIN_SECRET_NAME=nextcloud-admin
 NC_NAMESPACE=nextcloud
 MARIADB_SECRET_NAME=mariadb-passwords
+STORAGECLASS=cinder-default
+
+kubectl create namespace $NC_NAMESPACE || true
 
 if kubectl get secrets -n nextcloud | grep -q "$NC_ADMIN_SECRET_NAME"; then
     echo "Secret $NC_ADMIN_SECRET_NAME already exists"
 else
     echo "Generating $NC_ADMIN_SECRET_NAME..."
-    source projects/nextcloud/secrets.env
     NC_PASSWORD=$(openssl rand -base64 20)
     kubectl create secret -n nextcloud generic $NC_ADMIN_SECRET_NAME \
         --from-literal=nextcloud-password=$NC_PASSWORD \
@@ -34,32 +37,33 @@ else
     MARIADB_PASSWORD=$(openssl rand -base64 20)
     MARIADB_ROOT_PASSWORD=$(openssl rand -base64 20)
     MARIADB_REPLICATION_PASSWORD=$(openssl rand -base64 20)
-    kubectl create secret -n nextcloud generic mariadb-passwords \
+    kubectl create secret -n nextcloud generic $MARIADB_SECRET_NAME \
         --from-literal=mariadb-password=$MARIADB_PASSWORD \
         --from-literal=password=$MARIADB_PASSWORD \
         --from-literal=mariadb-root-password=$MARIADB_ROOT_PASSWORD \
         --from-literal=mariadb-replication-password=$MARIADB_REPLICATION_PASSWORD
 fi
 
-# echo "Installing the repo and helm chart..."
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
 helm install nextcloud nextcloud/nextcloud \
-    --debug \
     --namespace nextcloud \
-    --set image.tag=fpm-alpine \
+    --set nextcloud.username=admin \
+    --set nextcloud.existingSecret.enabled=true \
+    --set nextcloud.existingSecret.secretName=$NC_ADMIN_SECRET_NAME \
+    --set internalDatabase.enabled=false \
+    --set externalDatabase.enabled=true \
+    --set mariadb.enabled=true \
+    --set service.type=NodePort \
+    --set service.nodePort=30080 \
+    --set persistence.enabled=true \
+    --set persistence.storageClass=$STORAGECLASS
+    # --set ingress.enabled=true \
     # --set nextcloud.host=$NC_HOST \
-    # --set nextcloud.existingSecret.enabled=true \
-    # --set nextcloud.existingSecret.secretName=$NC_ADMIN_SECRET_NAME \
-    # --set nextcloud.existingSecret.usernameKey=nextcloud-username \
-    # --set nextcloud.existingSecret.passwordKey=nextcloud-password \
-    # --set nextcloud.existingSecret.tokenKey=nextcloud-token \
-    # --set nginx.enabled=true \
-    # --set externalDatabase.enabled=true \
-    # --set mariadb.enabled=true \
     # --set mariadb.auth.existingSecret=$MARIADB_SECRET_NAME \
-    # --set mariadb.architecture=standalone \
-    # --set service.type=NodePort \
-    # --set service.nodePort=30080
+    # --set mariadb.primary.persistence.enabled=true \
+    # --set mariadb.primary.persistence.storageClass=$STORAGECLASS \
+    # --set persistence.nextcloudData.enabled=true \
+    # --set persistence.nextcloudData.storageClass=$STORAGECLASS 
 
-# kubectl get secret --namespace default nextcloud -o jsonpath="{.data.nextcloud-password}" | base64 --decode
+kubectl get events -n nextcloud -w
