@@ -1,72 +1,89 @@
 #!/bin/bash
 
 # set -e
-cd /opt/nc-deploy
+cd /opt/deploy
 
-create-record() {
-    # if URL contains .techig.com, then create a DNS entry for it
-    if [[ "$URL" == *".techig.com" ]]; then
-        split=(${URL//./ })
-        subdomain="${split[0]}"
-        domain="techig.com"
-        URL="$subdomain.$domain"
-        /opt/nc-deploy/create-record.sh "$subdomain" "$domain" &
-    else
-        echo "Not creating a DNS entry for $URL. Please be sure to create a DNS entry for $URL pointing to this server."
-    fi
-}
+echo "Generating /opt/deploy/.env file..."
+if [ -f /opt/deploy/.env ]; then
+    source /opt/deploy/.env
+else
+    echo "COMPOSE_PROJECT_NAME=nextcloud" | tee -a .env
+    source .env
+fi
 
 install() {
-    echo "Setting up Nextcloud with SSL..."
+    echo "Setting up WordPress with SSL..."
     if [[ -z "$URL" ]]; then
-        # echo "Please set the URL environment variable."
-        # return 1
-        URL="$(curl ifconfig.me)"
-        install-self-signed
-        return 0
+        echo "URL variable not set, defaulting to self-signed certificate..."
+        return 1
     fi
-
-    create-record # create a DNS record if needed
+    URL=$(echo $URL | sed 's/https\?:\/\///g') # strip http(s):// from URL
     echo "Your site will be available at https://$URL"
 
-    # Use envsubst on the nginx template to create the nginx config
-    mkdir -p /etc/swag/nginx/site-confs
-    envsubst '$URL' < /opt/nc-deploy/default.conf.template > /etc/swag/nginx/site-confs/default.conf
-    envsubst '$OPENPROJECT_URL' < /opt/nc-deploy/openproject.conf.template > /etc/swag/nginx/site-confs/default.conf
-
-    docker-compose up -d
+    echo "Creating nginx config..."
+    mkdir -p /config/nginx/site-confs
+    rm -rf /config/nginx/site-confs/nextcloud.conf
+    curl -o /config/nginx/site-confs/nextcloud.conf https://raw.githubusercontent.com/linuxserver/reverse-proxy-confs/master/nextcloud.subdomain.conf.sample
+    sed -i "s/server_name.*$/server_name $URL;/g" /config/nginx/site-confs/nextcloud.conf
+    
+    echo "Starting containers..."
+    docker compose --profile selfsigned down nginx
+    docker compose --profile swag -f /opt/deploy/docker-compose.yaml up -d
+    while [[ ! -f /config/etc/letsencrypt/live/${URL}/fullchain.pem ]] && [[ ! -f /config/etc/letsencrypt/live/${URL}/privkey.pem ]]; do
+        echo "Waiting for SSL certs and keys to be generated..."
+        sleep 10
+    done
+    rm -f /config/nginx/ssl/privkey.pem /config/nginx/ssl/fullchain.pem
+    ln -s /etc/letsencrypt/live/$URL/fullchain.pem /config/nginx/ssl/fullchain.pem
+    ln -s /etc/letsencrypt/live/$URL/privkey.pem /config/nginx/ssl/privkey.pem
+    docker restart swag
 }
 
 install-self-signed() {
-    sed -i 's/STAGING=false/STAGING=true/' /opt/nc-deploy/docker-compose.yml
-    
-    create-record # create a DNS record if needed
+    echo "Creating a self-signed certificate..."
+    URL=$(curl -s ifconfig.io)
+    mkdir -p /config/nginx/ssl
+    openssl req -newkey rsa:2048 -nodes -keyout /config/nginx/ssl/privkey.pem -x509 -days 365 -out /config/nginx/ssl/fullchain.pem -subj "/CN=$URL/emailAddress=support@techig.com/C=US"
+
     echo "Your site will be available at https://$URL"
-    
-    # Use envsubst on the nginx template to create the nginx config
-    mkdir -p /etc/swag/nginx/site-confs
-    envsubst '$URL' < /opt/nc-deploy/default.conf.template > /etc/swag/nginx/site-confs/default.conf
+    rm -rf /config/nginx/site-confs/nextcloud.conf
+    envsubst '$URL' < /config/nginx/templates/nextcloud.conf.template > /config/nginx/site-confs/nextcloud.conf
 
-    docker-compose up -d
-}
-
-install-no-ssl() {
-    echo "Encountered an error, continuing installation without SSL..."
-    docker-compose -f /opt/nc-deploy/docker-compose-no-ssl.yml up -d
+    docker compose -f /opt/deploy/docker-compose.yaml --profile selfsigned up -d
 }
 
 cleanup() {
-    sed -i '/bearer_token/d' /etc/environment
-    sed -i '/dns_username/d' /etc/environment
-    sed -i '/dns_password/d' /etc/environment
+    echo "Checking health status of containers..."
+    sleep 30
+    for container in "nextcloud-aio-mastercontainer" "swag"; do
+        healthcheck $container
+    done
     sudo crontab -r
-    chown localadmin -R /opt/nc-deploy
+    echo "Deleting install files..."
     cd
-    rm -rf /opt/nc-deploy
+    rm -rf /opt/deploy
     echo "Finished cleanup"
 }
 
-# Try to install with SSL, if it fails then install without SSL
-install || install-self-signed || install-no-ssl || true
-cleanup
-# rm -- "$0"
+healthcheck() {
+    echo "Checking health status of container $1..."
+    while [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "starting" ]]; do
+        echo "Container $1 is still starting..."
+        sleep 10
+    done
+    if [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "healthy" ]]; then
+        echo "Container $1 is healthy"
+        return 0
+    else
+        echo "Container $1 is not healthy"
+        exit 1
+    fi
+}
+
+# Try to install with hostname in the URL variable, if that fails then install with a self-signed certificate
+install
+if [[ $? -eq 0 ]]; then
+    cleanup
+else
+    install-self-signed
+fi

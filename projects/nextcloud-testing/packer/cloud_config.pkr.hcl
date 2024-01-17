@@ -1,7 +1,6 @@
 variable "hashed_passwd" { type = string }
 
 locals {
-  ssh_key    = file(pathexpand("~/.ssh/nextcloud-testing"))
   ssh_pubkey = file(pathexpand("~/.ssh/nextcloud-testing.pub"))
 
   cloud_config = <<EOF
@@ -13,7 +12,9 @@ locals {
       - net-tools
       - jq
       - docker
-      - docker-compose
+      - docker-compose-v2
+      - net-tools
+      - nnn
     package_update: true
     ssh_pwauth: true
     users:
@@ -28,8 +29,7 @@ locals {
     write_files:
       - path: /etc/environment
         content: |
-          URL=nextcloud-testing.techig.com
-          OPENPROJECT_URL=openproject.techig.com
+          URL=
         append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'

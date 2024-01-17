@@ -1,5 +1,8 @@
 services:
   nextcloud:
+    profiles:
+      - swag
+      - selfsigned
     image: nextcloud/all-in-one:latest
     restart: always
     container_name: nextcloud-aio-mastercontainer # This line is not allowed to be changed as otherwise AIO will not work correctly
@@ -35,6 +38,8 @@ services:
   swag:
     image: lscr.io/linuxserver/swag:latest
     container_name: swag
+    profiles:
+      - swag
     cap_add:
       - NET_ADMIN
     environment:
@@ -44,15 +49,36 @@ services:
       - URL=${URL}
       - VALIDATION=http
       # - SUBDOMAINS= #optional
-      - EMAIL= #optional
+      - EMAIL=support@techig.com #optional
       - ONLY_SUBDOMAINS=false #optional
       - EXTRA_DOMAINS= #optional
-      - STAGING=false #optional
-      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=".template"
+      - STAGING=${STAGING:-false} #optional
     volumes:
-      - /etc/swag:/config
+      - /config:/config
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - 80:80
+      - 443:443
+    healthcheck:
+      test: "curl --fail https://${URL}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    profiles:
+      - selfsigned
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - /config/nginx/templates:/etc/nginx/templates/
+      - /config/nginx/site-confs:/etc/nginx/conf.d/
+      - /config/nginx/ssl:/etc/nginx/ssl/
 
 volumes:
   nextcloud_aio_mastercontainer:

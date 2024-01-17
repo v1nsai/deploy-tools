@@ -12,7 +12,7 @@ resource "openstack_compute_instance_v2" "nextcloud-testing" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "floating_ip_associate" {
-  floating_ip = "216.87.32.72" 
+  floating_ip = "216.87.32.33" 
   instance_id = openstack_compute_instance_v2.nextcloud-testing.id
   fixed_ip    = openstack_compute_instance_v2.nextcloud-testing.network.0.fixed_ip_v4
 }

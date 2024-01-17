@@ -24,42 +24,36 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/nc-deploy/config/nginx/templates",
-      "sudo chown localadmin:localadmin -R /opt/nc-deploy"
+      "sudo mkdir -p /opt/deploy/",
+      "sudo chown localadmin:localadmin -R /opt/deploy",
+      "sudo mkdir -p /config/nginx/conf-templates",
+      "sudo chown localadmin:localadmin -R /config/nginx/conf-templates",
+      "sudo mkdir -p /config/nginx/site-confs/",
+      "sudo chown localadmin:localadmin -R /config/nginx/site-confs/",
     ]
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud-testing/docker/docker-compose.yml"
-    destination = "/opt/nc-deploy/docker-compose.yml"
+    source      = "${path.cwd}/projects/nextcloud-testing/docker/docker-compose.yaml"
+    destination = "/opt/deploy/docker-compose.yaml"
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud-testing/docker/nginx/default.conf.template"
-    destination = "/opt/nc-deploy/default.conf.template"
+    source      = "${path.cwd}/projects/nextcloud-testing/docker/nginx/site-confs/default.conf"
+    destination = "/config/nginx/site-confs/default.conf"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/nextcloud-testing/install.sh"
-    destination = "/opt/nc-deploy/install.sh"
-  }
-
-  provisioner "file" {
-    source      = "${path.cwd}/scripts/alterndns/create-record.sh"
-    destination = "/opt/nc-deploy/create-record.sh"
-  }
-
-  provisioner "file" {
-    source      = "${path.cwd}/auth/alterndns.env"
-    destination = "/opt/nc-deploy/.env"
+    destination = "/opt/deploy/install.sh"
   }
 
   provisioner "shell" {
     inline = [
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
-      "echo '@reboot /opt/nc-deploy/install.sh > /var/log/nc-deploy.log 2>&1' | sudo crontab -",
-      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/nc-deploy",
+      "echo '@reboot /opt/deploy/install.sh > /var/log/deploy.log 2>&1' | sudo crontab -",
+      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/deploy",
       "echo 'waiting for cloud-init to finish...'",
       "cloud-init status --wait"
     ]
