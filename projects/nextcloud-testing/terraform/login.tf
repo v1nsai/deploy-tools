@@ -7,27 +7,18 @@ terraform {
   }
 }
 
-variable "user_name" {
-  type      = string
-  sensitive = true
-}
-variable "tenant_name" {
-  type      = string
-  sensitive = true
-}
-variable "password" {
-  type      = string
-  sensitive = true
-}
-variable "auth_url" {
-  type      = string
-  sensitive = true
-}
-
 # Configure providers
 provider "openstack" {
-  user_name   = var.user_name
-  tenant_name = var.tenant_name
-  password    = var.password
-  auth_url    = var.auth_url
+  user_name   = data.external.env.result["OS_USERNAME"]
+  tenant_name = data.external.env.result["OS_PROJECT_NAME"]
+  password    = data.external.env.result["OS_PASSWORD"]
+  auth_url    = data.external.env.result["OS_AUTH_URL"]
+}
+
+data "external" "env" {
+  program = ["${path.cwd}/scripts/envvars-to-terraform.sh"]
+}
+
+output "env" {
+  value = data.external.env.result
 }

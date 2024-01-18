@@ -44,6 +44,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "${path.cwd}/projects/nextcloud-testing/docker/nginx/conf-templates/nextcloud.conf.template"
+    destination = "/config/nginx/conf-templates/nextcloud.conf.template"
+  }
+
+  provisioner "file" {
     source      = "${path.cwd}/projects/nextcloud-testing/install.sh"
     destination = "/opt/deploy/install.sh"
   }
@@ -59,5 +64,3 @@ build {
     ]
   }
 }
-
-# end to end and server side encryption must be enabled in the nextcloud-testing admin settings
