@@ -1,6 +1,7 @@
 resource "openstack_compute_instance_v2" "nextcloud-testing" {
   name            = "nextcloud-testing"
   image_name      = "nextcloud-testing"
+  # image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23"
   flavor_name     = "alt.c2.large"
   key_pair        = "nextcloud-testing"
   security_groups = [ "default", "ssh-ingress", "http-ingress", "https-ingress" ]

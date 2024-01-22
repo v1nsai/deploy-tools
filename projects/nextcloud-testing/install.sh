@@ -47,7 +47,7 @@ install-self-signed() {
 
     echo "Your site will be available at https://$URL"
     rm -rf /config/nginx/site-confs/nextcloud.conf
-    envsubst '$URL' < /config/nginx/templates/nextcloud.conf.template > /config/nginx/site-confs/nextcloud.conf
+    envsubst '$URL' < /config/nginx/conf-templates/nextcloud.conf.template > /config/nginx/site-confs/nextcloud.conf
 
     docker compose -f /opt/deploy/docker-compose.yaml --profile selfsigned up -d
 }

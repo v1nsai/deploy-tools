@@ -1,3 +1,21 @@
 #!/bin/bash
-source auth/alterncloud.env
-openstack server ssh $2 $1 -- -l localadmin -i ~/.ssh/$1 $3
+
+while [ $# -ne 0 ]
+do
+    arg="$1"
+    case "$arg" in
+        --sandbox | --dev)
+            ENV=auth/sandbox-openrpc.sh
+            ;;
+        --production | --prod)
+            ENV=auth/production-openrpc.sh
+            ;;
+        *)
+            PROJECT=$arg
+            ;;
+    esac
+    shift
+done
+
+source $ENV
+openstack server ssh $PROJECT -- -l localadmin -i ~/.ssh/$PROJECT
