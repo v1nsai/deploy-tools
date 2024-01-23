@@ -21,5 +21,8 @@ services:
       - STAGING=${STAGING:-false} #optional
     volumes:
       - /config:/config
-    network_mode: host
+    # network_mode: host
+    ports:
+      - 80:80
+      - 443:443
     restart: unless-stopped

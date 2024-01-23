@@ -8,6 +8,7 @@ locals {
       - docker-compose
       - net-tools
       - nnn
+      - jq
     package_update: true
     ssh_pwauth: true
     users:
@@ -27,16 +28,25 @@ locals {
         append: true
       - path: /opt/deploy/install.sh
         content: |
-          ${file("${path.cwd}/projects/nextcloud-swarm/install.sh")}
+          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/install.sh"))}
         permissions: '0755'
       - path: /config/nginx/site-confs/default.conf
         content: |
-          ${file("${path.cwd}/projects/nextcloud-swarm/docker/nginx/site-confs/default.conf")}
+          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/nginx/site-confs/default.conf"))}
         permissions: '0644'
       - path: /config/nginx/conf-templates/nextcloud.conf.template
         content: |
-          ${file("${path.cwd}/projects/nextcloud-swarm/docker/nginx/conf-templates/nextcloud.conf.template")}
+          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/nginx/conf-templates/nextcloud.conf.template"))}
         permissions: '0644'
-      - path: 
+      - path: /opt/deploy/nginx.yaml
+        content: |
+          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/nginx.yaml"))}
+        permissions: '0644'
+      - path: /opt/deploy/swag.yaml
+        content: |
+          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/swag.yaml"))}
+        permissions: '0644'
+    runcmd:
+      - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
   EOF
 }
