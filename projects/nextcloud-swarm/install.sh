@@ -25,10 +25,11 @@ install() {
         echo "Waiting for SSL certs and keys to be generated..."
         sleep 10
     done
+    mkdir -p /config/nginx/ssl
     rm -f /config/nginx/ssl/privkey.pem /config/nginx/ssl/fullchain.pem
     ln -s /etc/letsencrypt/live/$URL/fullchain.pem /config/nginx/ssl/fullchain.pem
     ln -s /etc/letsencrypt/live/$URL/privkey.pem /config/nginx/ssl/privkey.pem
-    docker service update swag
+    docker service update swag_swag
 }
 
 install-self-signed() {

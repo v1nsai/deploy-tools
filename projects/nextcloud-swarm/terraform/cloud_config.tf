@@ -5,7 +5,7 @@ locals {
     #cloud-config
     packages:
       - docker
-      - docker-compose
+      - docker-compose-v2
       - net-tools
       - nnn
       - jq
@@ -48,5 +48,6 @@ locals {
         permissions: '0644'
     runcmd:
       - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+      - /opt/deploy/install.sh > /var/log/deploy.log 2>&1 &
   EOF
 }
