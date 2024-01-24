@@ -24,6 +24,17 @@ do
     shift
 done
 
+if [ -z "$PROJECT" ]; then
+    echo "Usage: $0 [--rebuild] [--sandbox|--dev|--production|--prod] <project>"
+    exit 1
+elif [ -z "$ENV" ]; then
+    echo "Usage: $0 [--rebuild] [--sandbox|--dev|--production|--prod] <project>"
+    exit 1
+elif [ ! -f "$ENV" ]; then
+    echo "Environment file $ENV does not exist"
+    exit 1
+fi
+
 source $ENV
 
 if $REBUILD; then
