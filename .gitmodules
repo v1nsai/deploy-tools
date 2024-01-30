@@ -7,3 +7,6 @@
 [submodule "projects/openproject"]
 	path = projects/openproject
 	url = git@github.com:techig-official/openproject
+[submodule "projects/nextcloud"]
+	path = projects/nextcloud
+	url = git@github.com:TechIG-official/nextcloud.git
