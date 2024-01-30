@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt-dynamic.yaml:/etc/traefik/letsencrypt-dynamic.yaml
+      - ./selfsigned-dynamic.yaml:/etc/traefik/selfsigned-dynamic.yaml
+      - ./traefik.yaml:/etc/traefik/traefik.yaml
+      - ./config/acme.json:/acme.json
+      - ./certs:/etc/traefik/certs
+    network_mode: host
+    # networks: 
+    #   - traefik-net
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      traefik.http.services.traefik-dashboard-service.loadbalancer.server.port: 9999
+      # traefik.providers.file.filename: /etc/traefik/letsencrypt-dynamic.yaml # ${TRAEFIK_DYNAMIC_CONFIG_FILE}
+    
+  whoami:
+    image: traefik/whoami:latest
+    container_name: whoami
+    ports:
+      - 11000:80
+#     networks: 
+#       - traefik-net
+
+# networks:
+#   traefik-net:

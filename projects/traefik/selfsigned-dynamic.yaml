@@ -1,0 +1,23 @@
+http:
+  routers:
+    localrouter:
+      rule: Host(`test.techig.com`) && PathPrefix(`/whoami`)
+      service: whoami
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt-staging
+        domains:
+          - main: test.techig.com
+
+    dashboard:
+      rule: HostRegexp(`*`) && PathPrefix(`/dashboard`)
+      service: api@internal
+      entryPoints:
+        - webalt
+
+  services:
+    whoami:
+      loadBalancer:
+        servers:
+          - url: http://127.0.0.1:11000
