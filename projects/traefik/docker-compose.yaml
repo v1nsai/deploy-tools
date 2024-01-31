@@ -10,7 +10,6 @@ services:
       - ./selfsigned-dynamic.yaml:/etc/traefik/selfsigned-dynamic.yaml
       - ./traefik.yaml:/etc/traefik/traefik.yaml
       - ./config/acme.json:/acme.json
-      - ./certs:/etc/traefik/certs
     network_mode: host
     # networks: 
     #   - traefik-net

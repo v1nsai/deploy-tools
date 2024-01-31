@@ -12,7 +12,7 @@ providers:
   docker:
     exposedByDefault: true
   file:
-    filename: /etc/traefik/letsencrypt-dynamic.yaml
+    filename: /etc/traefik/selfsigned-dynamic.yaml
 certificatesResolvers:
   letsencrypt-prod:
     acme:
