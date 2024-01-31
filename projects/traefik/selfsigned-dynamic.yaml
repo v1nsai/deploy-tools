@@ -1,23 +1,17 @@
 http:
   routers:
-    localrouter:
+    router:
       rule: Host(`test.techig.com`) && PathPrefix(`/whoami`)
-      service: whoami
+      service: service
       entryPoints:
         - websecure
       tls:
-        certResolver: letsencrypt-staging
-        domains:
-          - main: test.techig.com
-
-    dashboard:
-      rule: HostRegexp(`*`) && PathPrefix(`/dashboard`)
-      service: api@internal
-      entryPoints:
-        - webalt
+        certificates:
+        - certFile: /etc/traefik/certs/selfsigned.crt
+          keyFile:  /etc/traefik/certs/selfsigned.pem
 
   services:
-    whoami:
+    service:
       loadBalancer:
         servers:
           - url: http://127.0.0.1:11000
