@@ -1,0 +1,115 @@
+version: "3.9"
+services:
+  wordpress:
+    container_name: wordpress
+    image: wordpress:latest
+    profiles:
+      - selfsigned
+      - swag
+    restart: always
+    stdin_open: true
+    tty: true
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'AUTOMATIC_UPDATER_DISABLED', false );
+        define( 'WP_AUTO_UPDATE_CORE', true );
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress_network
+    healthcheck:
+      test: "curl --fail http://localhost:80"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+
+  wp-cli:
+    container_name: wp-cli
+    image: wordpress:cli
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress_network
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    profiles:
+      - selfsigned
+      - swag
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wordpress_network
+
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    profiles:
+      - swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - URL=${URL}
+      - VALIDATION=http
+      # - SUBDOMAINS= #optional
+      - EMAIL=support@techig.com #optional
+      - ONLY_SUBDOMAINS=false #optional
+      - EXTRA_DOMAINS= #optional
+      - STAGING=${STAGING:-false} #optional
+    volumes:
+      - /config:/config
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    healthcheck:
+      test: "curl --fail https://${URL}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+    networks:
+      - wordpress_network
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    profiles:
+      - selfsigned
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - /config/nginx/templates:/etc/nginx/templates/
+      - /config/nginx/site-confs:/etc/nginx/conf.d/
+      - /config/nginx/ssl:/etc/nginx/ssl/
+    networks:
+      - wordpress_network
+
+volumes:
+  db_data:
+  wordpress_data:
+
+networks:
+  wordpress_network:
