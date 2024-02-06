@@ -1,0 +1,16 @@
+http:
+  routers:
+    router:
+      rule: Host(`{{ env "URL" }}`) && PathPrefix(`/`)
+      service: service
+      entryPoints:
+        - websecure
+        - web
+      tls:
+        certResolver: letsencrypt-prod
+  services:
+    service:
+      loadBalancer:
+        servers:
+          - url: http://127.0.0.1:11000
+        # - url: http://whoami:11000

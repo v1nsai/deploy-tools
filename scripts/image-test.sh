@@ -13,9 +13,11 @@ do
             ;;
         --sandbox | --dev)
             ENV=auth/sandbox-openrpc.sh
+            NAME="--dev"
             ;;
         --production | --prod)
             ENV=auth/production-openrpc.sh
+            NAME="--prod"
             ;;
         *)
             PROJECT=$arg
@@ -50,4 +52,4 @@ echo "Switching to instance logs..."
 scripts/watch-log.sh $PROJECT
 
 echo "Connecting to instance..."
-scripts/ssh-servername.sh $PROJECT
+scripts/ssh-servername.sh $PROJECT $NAME
