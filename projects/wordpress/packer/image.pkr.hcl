@@ -4,7 +4,7 @@ source "openstack" "wordpress" {
   tenant_name          = var.tenant_name
   identity_endpoint    = var.auth_url
   flavor               = "alt.st1.nano"
-  image_name           = "WordPress: automated"                 # WordPress-latest-Ubuntu_22.04
+  image_name           = "wordpress"                            # WordPress-latest-Ubuntu_22.04
   source_image         = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   ssh_username         = "localadmin"
   ssh_keypair_name     = "wordpress"
@@ -22,22 +22,23 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/wp-deploy/",
-      "sudo chown localadmin:localadmin -R /opt/wp-deploy",
+      "sudo mkdir -p /opt/deploy/",
+      "sudo chown localadmin:localadmin -R /opt/deploy",
       "sudo mkdir -p /config/nginx/site-confs",
       "sudo mkdir -p /config/nginx/templates",
+      "sudo mkdir -p /config/wordpress/plugins",
       "sudo chown localadmin:localadmin -R /config"
     ]
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/install.sh"
-    destination = "/opt/wp-deploy/install.sh"
+    destination = "/opt/deploy/install.sh"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/docker/docker-compose.yaml"
-    destination = "/opt/wp-deploy/docker-compose.yaml"
+    destination = "/opt/deploy/docker-compose.yaml"
   }
 
   provisioner "file" {
@@ -52,12 +53,12 @@ build {
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/aio-wp-migration.zip"
-    destination = "/opt/wp-deploy/aio-wp-migration.zip"
+    destination = "/config/wordpress/plugins/aio-wp-migration.zip"
   }
 
   provisioner "file" {
     source      = "${path.cwd}/projects/wordpress/aio-wp-migration-unlimited.zip"
-    destination = "/opt/wp-deploy/aio-wp-migration-unlimited.zip"
+    destination = "/config/wordpress/plugins/aio-wp-migration-unlimited.zip"
   }
 
   provisioner "shell" {
@@ -65,8 +66,8 @@ build {
       "cp -f /etc/skel/.bashrc /home/localadmin/.profile",
       "sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile",
       "sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config",
-      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/wp-deploy",
-      "echo '@reboot /opt/wp-deploy/install.sh > /var/log/wp-deploy.log 2>&1' | sudo crontab -",
+      "sudo chown localadmin:localadmin -R /home/localadmin && sudo chown localadmin:localadmin -R /opt/deploy",
+      "echo '@reboot /opt/deploy/install.sh > /var/log/deploy.log 2>&1' | sudo crontab -",
       "cloud-init status --wait"
     ]
   }

@@ -1,7 +1,7 @@
 variable "hashed_passwd" { type = string }
-variable "dns_username"  { type = string }
-variable "dns_password"  { type = string }
-variable "ssh_pubkey"    { type = string }
+variable "dns_username" { type = string }
+variable "dns_password" { type = string }
+variable "ssh_pubkey" { type = string }
 
 locals {
   ssh_pubkey = file(pathexpand("~/.ssh/wordpress.pub"))

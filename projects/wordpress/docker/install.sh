@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # set -e
-cd /opt/wp-deploy
+cd /opt/deploy
 
 echo "Generating /opt/deploy/.env file..."
-if [ -f /opt/wp-deploy/.env ]; then
-    source /opt/wp-deploy/.env
+if [ -f /opt/deploy/.env ]; then
+    source /opt/deploy/.env
 else
     echo "COMPOSE_PROJECT_NAME=wordpress" | tee -a .env
     echo "WORDPRESS_DB_PASSWORD='$(openssl rand -base64 32)'" | tee -a .env
@@ -19,21 +19,25 @@ install-plugins() {
     echo "Waiting for user to complete WordPress setup..."
     while ! docker compose --profile selfsigned run --rm wp-cli wp --url="$URL" core is-installed --path="/var/www/html" --allow-root; do
         echo "Waiting for user to complete WordPress setup..."
-        sleep 30
+        sleep 10
     done
 
     echo "Installing migration plugins..."
-    docker cp /opt/wp-deploy/aio-wp-migration.zip wordpress:/var/www/html/wp-content/plugins/aio-wp-migration.zip
-    docker cp /opt/wp-deploy/aio-wp-migration-unlimited.zip wordpress:/var/www/html/wp-content/plugins/aio-wp-migration-unlimited.zip
-    plugin1_output=$(docker compose --profile selfsigned run --rm --user root wp-cli wp --url="$URL" plugin install --path="/var/www/html" /var/www/html/wp-content/plugins/aio-wp-migration.zip --activate --allow-root 2>&1)
-    plugin2_output=$(docker compose --profile selfsigned run --rm --user root wp-cli wp --url="$URL" plugin install --path="/var/www/html" /var/www/html/wp-content/plugins/aio-wp-migration-unlimited.zip --activate --allow-root 2>&1)
+    plugin1_output=$(docker compose run --rm --user root wp-cli wp --url="$URL" plugin install --path="/var/www/html" /config/wordpress/plugins/aio-wp-migration.zip --activate --allow-root 2>&1)
+    plugin2_output=$(docker compose run --rm --user root wp-cli wp --url="$URL" plugin install --path="/var/www/html" /config/wordpress/plugins/aio-wp-migration-unlimited.zip --activate --allow-root 2>&1)
 
     echo "Checking plugin installation for errors..."
     if [[ $plugin1_output == *"Destination folder already exists"* ]] && [[ "$plugin2_output" == *"Destination folder already exists"* ]]; then
         echo "Migration plugins already installed, continuing..."
+        echo "Cleaning up migration plugins installation..."
+        healthcheck wordpress
+        docker compose exec -u root wordpress chown -R www-data:www-data /var/www/html/
         return 0
     elif [[ $plugin1_output == *"Success"* ]] && [[ "$plugin2_output" == *"Success"* ]]; then
         echo "Migration plugins installed successfully"
+        echo "Cleaning up migration plugins installation..."
+        healthcheck wordpress
+        docker compose exec -u root wordpress chown -R www-data:www-data /var/www/html/
         return 0
     else
         echo "Error while installing migration plugins"
@@ -60,26 +64,7 @@ install() {
     
     echo "Starting containers..."
     docker compose --profile selfsigned down nginx
-    docker compose --profile swag -f /opt/wp-deploy/docker-compose.yaml up -d
-    while [[ ! -f /config/etc/letsencrypt/live/${URL}/fullchain.pem ]] && [[ ! -f /config/etc/letsencrypt/live/${URL}/privkey.pem ]]; do
-        echo "Waiting for SSL certs and keys to be generated..."
-        sleep 10
-    done
-    rm -f /config/nginx/ssl/privkey.pem /config/nginx/ssl/fullchain.pem
-    ln -s /etc/letsencrypt/live/$URL/fullchain.pem /config/nginx/ssl/fullchain.pem
-    ln -s /etc/letsencrypt/live/$URL/privkey.pem /config/nginx/ssl/privkey.pem
-    docker restart swag
-
-    install-plugins
-    if [[ "$?" -ne 0 ]]; then
-        if install-plugins | grep -q "Destination folder already exists"; then
-            docker compose --profile selfsigned exec -itu root wordpress chown -R www-data:www-data /var/www/html/wp-content
-            return 0
-        else
-            echo "Error while installing plugins"
-            return 1
-        fi
-    fi
+    docker compose --profile swag -f /opt/deploy/docker-compose.yaml up -d
 }
 
 install-self-signed() {
@@ -92,29 +77,22 @@ install-self-signed() {
     rm -rf /config/nginx/site-confs/wordpress.conf
     envsubst '$URL' < /config/nginx/templates/wordpress.conf.template > /config/nginx/site-confs/wordpress.conf
 
-    docker compose -f /opt/wp-deploy/docker-compose.yaml --profile selfsigned up -d
-    install-plugins
-    if [[ "$?" -ne 0 ]]; then
-        if install-plugins | grep -q "Destination folder already exists"; then
-            docker compose --profile selfsigned exec -itu root wordpress chown -R www-data:www-data /var/www/html/wp-content
-            return 0
-        else
-            echo "Error while installing plugins"
-            return 1
-        fi
-    fi
+    docker compose -f /opt/deploy/docker-compose.yaml --profile selfsigned up -d
 }
 
 cleanup() {
     echo "Checking health status of containers..."
-    sleep 30
-    for container in "wordpress" "swag"; do
-        healthcheck $container
-    done
+    healthcheck wordpress
+    docker exec -itu root wordpress chown -R www-data:www-data /var/www/html/
+    if [[ $(docker ps -q -f name=swag) == "" ]]; then
+        echo "Swag container not found, not cleaning up before exiting."
+        exit 1
+    fi
+    healthcheck swag
     sudo crontab -r
     echo "Deleting install files..."
     cd
-    rm -rf /opt/wp-deploy
+    rm -rf /opt/deploy
     echo "Finished cleanup"
 }
 
@@ -133,10 +111,6 @@ healthcheck() {
     fi
 }
 
-# Try to install with hostname in the URL variable, if that fails then install with a self-signed certificate
-install
-if [[ $? -eq 0 ]]; then
-    cleanup
-else
-    install-self-signed
-fi
+install -e || install-self-signed -e || (echo "Failed to install, exiting..." && exit 1) # install-self-signed -e ||
+install-plugins -e
+cleanup -e
