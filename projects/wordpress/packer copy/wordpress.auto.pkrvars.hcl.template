@@ -1,2 +1,0 @@
-hashed_passwd = "" # Create with `echo -n "YourPasswordHere" | mkpasswd --method=SHA-512 --rounds=4096 -s`
-ssh_pubkey    = ""
