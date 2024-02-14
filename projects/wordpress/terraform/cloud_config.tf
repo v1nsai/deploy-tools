@@ -10,7 +10,6 @@ locals {
       - path: /etc/environment
         content: |
           URL=
-          STAGING=false
         append: true
   EOF
 }

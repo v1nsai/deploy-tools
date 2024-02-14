@@ -1,21 +1,83 @@
 #!/bin/bash
 
-# set -e
 cd /opt/deploy
+COMPOSE_PROJECT_NAME=wordpress
+HEALTHCHECK_CONTAINERS=[ wordpress ]
 
-echo "Generating /opt/deploy/.env file..."
-if [ -f /opt/deploy/.env ]; then
-    source /opt/deploy/.env
-else
-    echo "COMPOSE_PROJECT_NAME=wordpress" | tee -a .env
-    echo "WORDPRESS_DB_PASSWORD='$(openssl rand -base64 32)'" | tee -a .env
-    echo "MYSQL_PASSWORD='$(openssl rand -base64 32)'" | tee -a .env
-    echo "COMPOSE_PROJECT_NAME=wordpress" | tee -a .env
-    source .env
-fi
+install() {
+    echo "Configuring SSL..."
+    if [[ -z "$URL" ]]; then
+        echo "URL variable not set, defaulting to self-signed certificate..."
+        return 1
+    fi
+    URL=$(echo $URL | sed 's/https\?:\/\///g') # strip http(s):// from URL
+    echo $URL    
+    docker compose down traefik # in case this isn't the first reboot
+    yq eval '.http.routers.router.tls.certResolver = "letsencrypt-staging"' -i /etc/traefik/routes.yaml
+    docker compose up -d
 
-install-plugins() {
-    echo "Installing migration plugins..."
+    post-install
+    cleanup
+}
+
+install-self-signed() {
+    echo "Configuring self-signed certificate..."
+    URL=$(curl -s ifconfig.io)
+    mkdir -p /etc/traefik/ssl
+    docker compose down traefik
+    yq eval '.http.routers.router.tls = {}' -i /etc/traefik/routes.yaml
+    docker compose up -d
+
+    post-install
+}
+
+cleanup() {
+    echo "Checking health status of containers..."
+    for container in $HEALTHCHECK_CONTAINERS ; do
+        healthcheck $container
+    done
+    sudo crontab -r
+    echo "Deleting install files..."
+    cd
+    rm -rf /opt/deploy
+    echo "Finished cleanup"
+}
+
+healthcheck() {
+    echo "Checking health status of container $1..."
+    while [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "starting" ]]; do
+        echo "Container $1 is still starting..."
+        sleep 10
+    done
+    if [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "healthy" ]]; then
+        echo "Container $1 is healthy"
+        return 0
+    else
+        echo "Container $1 is not healthy"
+        exit 1
+    fi
+}
+
+pre-install() {
+    echo "Installing dependencies..."
+    wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    mkdir -p /etc/traefik
+    touch /etc/traefik/acme.json
+    chmod 600 /etc/traefik/acme.json
+
+    echo "Generating /opt/deploy/.env file..."
+    if [ -f /opt/deploy/.env ]; then
+        source /opt/deploy/.env
+    else
+        echo "COMPOSE_PROJECT_NAME=wordpress" | tee -a .env
+        echo "WORDPRESS_DB_PASSWORD='$(openssl rand -base64 32)'" | tee -a .env
+        echo "MYSQL_PASSWORD='$(openssl rand -base64 32)'" | tee -a .env
+        echo "COMPOSE_PROJECT_NAME=wordpress" | tee -a .env
+        source .env
+    fi
+}
+
+post-install() {
     echo "Waiting for user to complete WordPress setup..."
     while ! docker compose --profile selfsigned run --rm wp-cli wp --url="$URL" core is-installed --path="/var/www/html" --allow-root; do
         echo "Waiting for user to complete WordPress setup..."
@@ -47,70 +109,5 @@ install-plugins() {
     fi
 }
 
-install() {
-    echo "Setting up WordPress with SSL..."
-    if [[ -z "$URL" ]]; then
-        echo "URL variable not set, defaulting to self-signed certificate..."
-        return 1
-    fi
-    URL=$(echo $URL | sed 's/https\?:\/\///g') # strip http(s):// from URL
-    echo "Your site will be available at https://$URL"
-
-    echo "Creating nginx config..."
-    mkdir -p /config/nginx/site-confs
-    rm -rf /config/nginx/site-confs/wordpress.conf
-    curl -o /config/nginx/site-confs/wordpress.conf https://raw.githubusercontent.com/linuxserver/reverse-proxy-confs/master/wordpress.subdomain.conf.sample
-    sed -i "s/server_name.*$/server_name $URL;/g" /config/nginx/site-confs/wordpress.conf
-    
-    echo "Starting containers..."
-    docker compose --profile selfsigned down nginx
-    docker compose --profile swag -f /opt/deploy/docker-compose.yaml up -d
-}
-
-install-self-signed() {
-    echo "Creating a self-signed certificate..."
-    URL=$(curl -s ifconfig.io)
-    mkdir -p /config/nginx/ssl
-    openssl req -newkey rsa:2048 -nodes -keyout /config/nginx/ssl/privkey.pem -x509 -days 365 -out /config/nginx/ssl/fullchain.pem -subj "/CN=$URL/emailAddress=support@techig.com/C=US"
-
-    echo "Your site will be available at https://$URL"
-    rm -rf /config/nginx/site-confs/wordpress.conf
-    envsubst '$URL' < /config/nginx/templates/wordpress.conf.template > /config/nginx/site-confs/wordpress.conf
-
-    docker compose -f /opt/deploy/docker-compose.yaml --profile selfsigned up -d
-}
-
-cleanup() {
-    echo "Checking health status of containers..."
-    healthcheck wordpress
-    docker exec -itu root wordpress chown -R www-data:www-data /var/www/html/
-    if [[ $(docker ps -q -f name=swag) == "" ]]; then
-        echo "Swag container not found, not cleaning up before exiting."
-        exit 1
-    fi
-    healthcheck swag
-    sudo crontab -r
-    echo "Deleting install files..."
-    cd
-    rm -rf /opt/deploy
-    echo "Finished cleanup"
-}
-
-healthcheck() {
-    echo "Checking health status of container $1..."
-    while [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "starting" ]]; do
-        echo "Container $1 is still starting..."
-        sleep 10
-    done
-    if [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "healthy" ]]; then
-        echo "Container $1 is healthy"
-        return 0
-    else
-        echo "Container $1 is not healthy"
-        exit 1
-    fi
-}
-
-install -e || install-self-signed -e || (echo "Failed to install, exiting..." && exit 1) # install-self-signed -e ||
-install-plugins -e
-cleanup -e
+pre-install -e || (echo "Failed to install dependencies, exiting..." && exit 1)
+install -e || install-self-signed -e || (echo "Failed to install, exiting..." && exit 1)

@@ -1,0 +1,15 @@
+http:
+  routers:
+    router:
+      rule: Host(`{{ env "URL" }}`) && PathPrefix(`/`)
+      service: service
+      entryPoints:
+        - websecure
+        - web
+      tls: {}
+  services:
+    service:
+      loadBalancer:
+        servers:
+          - url: http://wordpress:80
+        # - url: http://whoami:11000

@@ -24,10 +24,10 @@ build {
     inline = [
       "sudo mkdir -p /opt/deploy/",
       "sudo chown localadmin:localadmin -R /opt/deploy",
-      "sudo mkdir -p /config/nginx/site-confs",
-      "sudo mkdir -p /config/nginx/templates",
+      "sudo mkdir -p /etc/traefik",
+      "sudo chown localadmin:localadmin -R /etc/traefik",
       "sudo mkdir -p /config/wordpress/plugins",
-      "sudo chown localadmin:localadmin -R /config"
+      "sudo chown localadmin:localadmin -R /config/wordpress/plugins",
     ]
   }
 
@@ -42,13 +42,13 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/docker/nginx/conf-templates/wordpress.conf.template"
-    destination = "/config/nginx/templates/wordpress.conf.template"
+    source      = "${path.cwd}/projects/wordpress/traefik.yaml"
+    destination = "/etc/traefik/traefik.yaml"
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/docker/nginx/site-confs/default.conf"
-    destination = "/config/nginx/site-confs/default.conf"
+    source      = "${path.cwd}/projects/wordpress/routes.yaml"
+    destination = "/etc/traefik/routes.yaml"
   }
 
   provisioner "file" {
