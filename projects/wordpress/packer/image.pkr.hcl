@@ -42,12 +42,12 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/traefik.yaml"
+    source      = "${path.cwd}/projects/wordpress/docker/traefik.yaml"
     destination = "/etc/traefik/traefik.yaml"
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/wordpress/routes.yaml"
+    source      = "${path.cwd}/projects/wordpress/docker/routes.yaml"
     destination = "/etc/traefik/routes.yaml"
   }
 

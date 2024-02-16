@@ -1,7 +1,7 @@
 http:
   routers:
     router:
-      rule: Host(`test.techig.com`) && PathPrefix(`/whoami`)
+      rule: Host(`test.techig.com`) && PathPrefix(`/`)
       service: service
       entryPoints:
         - websecure
