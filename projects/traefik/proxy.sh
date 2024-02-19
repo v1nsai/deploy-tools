@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd /opt/deploy
+COMPOSE_PROJECT_NAME=wordpress
+HEALTHCHECK_CONTAINERS=( "wordpress" )
 
 install() {
     echo "Configuring SSL..."
@@ -8,20 +10,26 @@ install() {
         echo "URL variable not set, defaulting to self-signed certificate..."
         return 1
     fi
-    URL=$(echo $URL | sed 's/https\?:\/\///g') # strip http(s):// from URL
-    echo $URL    
+    export URL=$(echo $URL | sed 's/https\?:\/\///g') # strip http(s):// from URL
+    echo "Your site will be available at https://$URL"
+       
     docker compose down traefik # in case this isn't the first reboot
-    yq eval '.http.routers.router.tls.certResolver = '"$CERTSRESOLVER" -i /etc/traefik/routes.yaml
+    yq eval '.http.routers.router.tls.certResolver = "'${CERTRESOLVER:-letsencrypt-prod}'"' -i /etc/traefik/routes.yaml
     docker compose up -d
+
+    post-install -e
+    cleanup
 }
 
 install-self-signed() {
     echo "Configuring self-signed certificate..."
-    URL=$(curl -s ifconfig.io)
-    mkdir -p /etc/traefik/ssl
+    export URL=$(curl -s ifconfig.io)
+    echo "Your site will be available at https://$URL"
     docker compose down traefik
     yq eval '.http.routers.router.tls = {}' -i /etc/traefik/routes.yaml
     docker compose up -d
+
+    post-install -e
 }
 
 cleanup() {
@@ -51,16 +59,5 @@ healthcheck() {
     fi
 }
 
-pre-install() {
-    echo "Installing dependencies..."
-    wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-    mkdir -p /etc/traefik
-    touch /etc/traefik/acme.json
-    chmod 600 /etc/traefik/acme.json
-}
-
 pre-install -e || (echo "Failed to install dependencies, exiting..." && exit 1)
-install -e && cleanup || (echo "Failed to install, exiting...") # install-self-signed -e ||
-install-self-signed -e || (echo "Failed to install self-signed certificate, exiting..." && exit 1)
-# post-install -e || (echo "Failed to configure trusted proxies, exiting..." && exit 1)
-# cleanup -e || (echo "Failed to cleanup, exiting..." && exit 1)
+install -e || install-self-signed -e || (echo "Failed to install, exiting..." && exit 1)

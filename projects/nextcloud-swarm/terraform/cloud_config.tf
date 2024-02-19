@@ -23,29 +23,15 @@ locals {
     write_files:
       - path: /etc/environment
         content: |
-          URL=nextcloud-testing.techig.com
-          STAGING=true
+          URL=
         append: true
       - path: /opt/deploy/install.sh
         content: |
-          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/install.sh"))}
+          ${indent(10, file("${path.cwd}/projects/nextcloud-swarm/docker/install.sh"))}
         permissions: '0755'
-      - path: /config/nginx/site-confs/default.conf
+      - path: /opt/deploy/docker-compose.yaml
         content: |
-          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/nginx/site-confs/default.conf"))}
-        permissions: '0644'
-      - path: /config/nginx/conf-templates/nextcloud.conf.template
-        content: |
-          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/nginx/conf-templates/nextcloud.conf.template"))}
-        permissions: '0644'
-      - path: /opt/deploy/nginx.yaml
-        content: |
-          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/nginx.yaml"))}
-        permissions: '0644'
-      - path: /opt/deploy/swag.yaml
-        content: |
-          ${indent(6, file("${path.cwd}/projects/nextcloud-swarm/docker/swag.yaml"))}
-        permissions: '0644'
+          ${indent(10, file("${path.cwd}/projects/nextcloud-swarm/docker/docker-compose.yaml"))}
     runcmd:
       - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
       - /opt/deploy/install.sh > /var/log/deploy.log 2>&1 &
