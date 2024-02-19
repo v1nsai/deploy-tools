@@ -72,12 +72,6 @@ services:
       - 443:443
     labels:
       traefik.http.services.traefik-dashboard-service.loadbalancer.server.port: 9999
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080"]
-    #   interval: 1m30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 2m
 
 volumes:
   db_data:

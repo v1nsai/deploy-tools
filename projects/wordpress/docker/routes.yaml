@@ -1,7 +1,7 @@
 http:
   routers:
     router:
-      rule: Host(`{{ env "URL" }}`) && PathPrefix(`{root:/.*}`)
+      rule: Host(`{{ env "URL" }}`)
       service: service
       entryPoints:
         - websecure

@@ -9,7 +9,7 @@ locals {
     write_files:
       - path: /etc/environment
         content: |
-          URL=
+          CERTRESOLVER=letsencrypt-staging
         append: true
   EOF
 }

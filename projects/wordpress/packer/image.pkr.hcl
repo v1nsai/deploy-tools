@@ -4,7 +4,7 @@ source "openstack" "wordpress" {
   tenant_name          = var.tenant_name
   identity_endpoint    = var.auth_url
   flavor               = "alt.st1.nano"
-  image_name           = "wordpress"                            # WordPress-latest-Ubuntu_22.04
+  image_name           = "wordpress-dev"                        # WordPress-latest-Ubuntu_22.04
   source_image         = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   ssh_username         = "localadmin"
   ssh_keypair_name     = "wordpress"
