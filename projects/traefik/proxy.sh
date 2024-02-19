@@ -1,9 +1,6 @@
 #!/bin/bash
 
 cd /opt/deploy
-COMPOSE_PROJECT_NAME=wordpress
-HEALTHCHECK_CONTAINERS=[ wordpress ]
-CERTSRESOLVER=letsencrypt-staging
 
 install() {
     echo "Configuring SSL..."
