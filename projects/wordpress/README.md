@@ -26,5 +26,7 @@ Terraform is used to deploy a new instance and its build files are located at `p
 you
 * Remove the `.template` suffix from from the 3 `*.template` files in the `terraform` and `packer` directories
 * Fill in the variables with values from your Openstack `clouds.yml` or `openrc.sh`
-* `scripts/image-test.sh wordpress --rebuild` to build the image and deploy a new instance from it or
-* `scripts/image-test.sh wordpress` to only deploy a new instance from the most recently created Wordpress image.
+* Build the image and deploy a new instance from it:
+    * `scripts/image-test.sh wordpress --rebuild`
+* Only deploy a new instance from the most recently created Wordpress image:
+    * `scripts/image-test.sh wordpress`

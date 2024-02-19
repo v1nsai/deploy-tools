@@ -1,16 +1,14 @@
 http:
   routers:
     router:
-      rule: Host(`test.techig.com`)
+      rule: Host(`{{ env "URL" }}`)
       service: service
       entryPoints:
         - websecure
+        - web
       tls: {}
-      # tls: 
-      #   certResolver: letsencrypt-staging
-
   services:
     service:
       loadBalancer:
         servers:
-          - url: http://127.0.0.1:11000
+          - url: http://wordpress:80

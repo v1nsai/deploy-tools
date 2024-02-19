@@ -37,25 +37,31 @@ locals {
         owner: localadmin
         defer: true
         content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/docker-compose.yaml"))}
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"))}
       - path: /etc/traefik/traefik.yaml
         permissions: '0644'
         owner: localadmin
         defer: true
         content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/traefik.yaml"))}
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/traefik.yaml"))}
       - path: /etc/traefik/routes.yaml
         permissions: '0644'
         owner: localadmin
         defer: true
         content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/routes.yaml"))}
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/routes.yaml"))}
       - path: /opt/deploy/install.sh
         permissions: '0755'
         owner: localadmin
         defer: true
         content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/install.sh"))}
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/install.sh"))}
+      - path: /opt/deploy/proxy.sh
+        permissions: '0755'
+        owner: localadmin
+        defer: true
+        content: |
+          ${indent(10, file("${path.cwd}/projects/traefik/proxy.sh"))}
     runcmd:
       - echo "/opt/deploy/install.sh > /var/log/install.log 2>&1" | crontab -
   EOF

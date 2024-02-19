@@ -3,9 +3,6 @@ services:
   wordpress:
     container_name: wordpress
     image: wordpress:latest
-    profiles:
-      - selfsigned
-      - swag
     restart: always
     stdin_open: true
     tty: true
@@ -38,15 +35,13 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - wordpress_data:/var/www/html
+      - /config/wordpress/plugins:/config/wordpress/plugins
     networks:
       - wordpress_network
 
   mariadb:
     container_name: mariadb
     image: mariadb
-    profiles:
-      - selfsigned
-      - swag
     restart: always
     environment:
       MYSQL_DATABASE: wordpress
@@ -58,54 +53,25 @@ services:
     networks:
       - wordpress_network
 
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    profiles:
-      - swag
-    cap_add:
-      - NET_ADMIN
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/traefik/traefik.yaml:/etc/traefik/traefik.yaml
+      - /etc/traefik/routes.yaml:/etc/traefik/routes.yaml
+      - /etc/traefik/acme.json:/acme.json
+      - /etc/traefik/certs:/etc/traefik/certs
+    # network_mode: host
+    networks: 
+      - wordpress_network
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=US/Eastern
       - URL=${URL}
-      - VALIDATION=http
-      # - SUBDOMAINS= #optional
-      - EMAIL=support@techig.com #optional
-      - ONLY_SUBDOMAINS=false #optional
-      - EXTRA_DOMAINS= #optional
-      - STAGING=${STAGING:-false} #optional
-    volumes:
-      - /config:/config
-    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
-    healthcheck:
-      test: "curl --fail https://${URL}"
-      interval: "60s"
-      timeout: "3s"
-      start_period: "5s"
-      retries: 3
-    networks:
-      - wordpress_network
-
-  nginx:
-    container_name: nginx
-    image: nginx:latest
-    profiles:
-      - selfsigned
-    ports:
-      - 80:80
-      - 443:443
-    restart: always
-    volumes:
-      - /config/nginx/templates:/etc/nginx/templates/
-      - /config/nginx/site-confs:/etc/nginx/conf.d/
-      - /config/nginx/ssl:/etc/nginx/ssl/
-    networks:
-      - wordpress_network
+    labels:
+      traefik.http.services.traefik-dashboard-service.loadbalancer.server.port: 9999
 
 volumes:
   db_data:

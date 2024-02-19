@@ -19,6 +19,9 @@ do
             ENV=auth/production-openrpc.sh
             NAME="--prod"
             ;;
+        --imagename*)
+            IMAGENAME=`echo $1 | sed -e 's/^[^=]*=//g'`
+            ;;
         *)
             PROJECT=$arg
             ;;
@@ -41,7 +44,7 @@ source $ENV
 
 if $REBUILD; then
     echo "Building new image..."
-    scripts/packer-build.sh $PROJECT
+    scripts/packer-build.sh $PROJECT $IMAGENAME
 fi
 
 echo "Deleting and recreating new instance..."
