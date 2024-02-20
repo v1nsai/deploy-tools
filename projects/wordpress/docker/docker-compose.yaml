@@ -17,7 +17,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     networks:
-      - wordpress_network
+      - wordpress
     healthcheck:
       test: "curl --fail http://localhost:80"
       interval: "60s"
@@ -37,7 +37,7 @@ services:
       - wordpress_data:/var/www/html
       - /config/wordpress/plugins:/config/wordpress/plugins
     networks:
-      - wordpress_network
+      - wordpress
 
   mariadb:
     container_name: mariadb
@@ -51,7 +51,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - wordpress_network
+      - wordpress
 
   traefik:
     image: traefik:latest
@@ -64,7 +64,7 @@ services:
       - /etc/traefik/certs:/etc/traefik/certs
     # network_mode: host
     networks: 
-      - wordpress_network
+      - wordpress
     environment:
       - URL=${URL}
     ports:
@@ -78,4 +78,4 @@ volumes:
   wordpress_data:
 
 networks:
-  wordpress_network:
+  wordpress:
