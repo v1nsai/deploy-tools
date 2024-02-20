@@ -23,14 +23,10 @@ locals {
         ssh_authorized_keys:
           - ${local.ssh_pubkey}
     write_files:
-      - path: /etc/environment
-        content: |
-          URL=
-          STAGING=true
-        append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'
         content: |
           PermitRootLogin no
+        append: true
   EOF
 }

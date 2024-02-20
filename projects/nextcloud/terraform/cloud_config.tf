@@ -26,43 +26,12 @@ locals {
       - path: /etc/environment
         content: |
           URL=test.techig.com
-          STAGING=true
+          CERTRESOLVER=letsencrypt-staging
         append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'
         content: |
           PermitRootLogin no
-      - path: /opt/deploy/docker-compose.yaml
-        permissions: '0644'
-        owner: localadmin
-        defer: true
-        content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"))}
-      - path: /etc/traefik/traefik.yaml
-        permissions: '0644'
-        owner: localadmin
-        defer: true
-        content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/traefik.yaml"))}
-      - path: /etc/traefik/routes.yaml
-        permissions: '0644'
-        owner: localadmin
-        defer: true
-        content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/routes.yaml"))}
-      - path: /opt/deploy/install.sh
-        permissions: '0755'
-        owner: localadmin
-        defer: true
-        content: |
-          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/install.sh"))}
-      - path: /opt/deploy/proxy.sh
-        permissions: '0755'
-        owner: localadmin
-        defer: true
-        content: |
-          ${indent(10, file("${path.cwd}/projects/traefik/proxy.sh"))}
-    runcmd:
-      - echo "/opt/deploy/install.sh > /var/log/install.log 2>&1" | crontab -
+        append: true
   EOF
 }
