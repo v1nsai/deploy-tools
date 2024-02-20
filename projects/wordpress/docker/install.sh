@@ -80,9 +80,9 @@ pre-install() {
 
 post-install() {
     echo "Waiting for user to complete WordPress setup..."
+    echo "You may see database connection errors due to the database not being ready yet, they are safe to ignore"
     while ! docker compose --profile selfsigned run --rm wp-cli wp --url="$URL" core is-installed --path="/var/www/html" --allow-root; do
-        echo "Waiting for user to complete WordPress setup..."
-        sleep 10
+        sleep 1
     done
 
     echo "Installing migration plugins..."
