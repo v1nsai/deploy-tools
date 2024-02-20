@@ -16,8 +16,8 @@ services:
         define( 'WP_AUTO_UPDATE_CORE', true );
     volumes:
       - wordpress_data:/var/www/html
-    ports:
-      - 80:80
+    networks:
+      - wordpress
     healthcheck:
       test: "curl --fail http://localhost:80"
       interval: "60s"
@@ -36,6 +36,8 @@ services:
     volumes:
       - wordpress_data:/var/www/html
       - /config/wordpress/plugins:/config/wordpress/plugins
+    networks:
+      - wordpress
 
   mariadb:
     container_name: mariadb
@@ -48,6 +50,8 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - wordpress
 
   traefik:
     image: traefik:latest
@@ -57,7 +61,10 @@ services:
       - /etc/traefik/traefik.yaml:/etc/traefik/traefik.yaml
       - /etc/traefik/routes.yaml:/etc/traefik/routes.yaml
       - /etc/traefik/acme.json:/acme.json
-    network_mode: host
+      - /etc/traefik/certs:/etc/traefik/certs
+    # network_mode: host
+    networks: 
+      - wordpress
     environment:
       - URL=${URL}
     ports:
@@ -65,13 +72,10 @@ services:
       - 443:443
     labels:
       traefik.http.services.traefik-dashboard-service.loadbalancer.server.port: 9999
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080"]
-    #   interval: 1m30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 2m
 
 volumes:
   db_data:
   wordpress_data:
+
+networks:
+  wordpress:
