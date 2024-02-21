@@ -42,17 +42,19 @@ fi
 
 source $ENV
 
+echo "Removing old instance..."
+scripts/destroy-terraform.sh $PROJECT
+
 if $REBUILD; then
     echo "Building new image..."
     scripts/packer-build.sh $PROJECT $IMAGENAME
 fi
 
-echo "Deleting and recreating new instance..."
-scripts/destroy-terraform.sh $PROJECT
+echo "Creating new instance..."
 scripts/apply-terraform.sh $PROJECT
 
 echo "Switching to instance logs..."
-scripts/watch-log.sh $PROJECT
+scripts/watch-log.sh $PROJECT $IMAGENAME
 
 echo "Connecting to instance..."
-scripts/ssh-servername.sh $PROJECT $NAME
+scripts/ssh-servername.sh $PROJECT $IMAGENAME

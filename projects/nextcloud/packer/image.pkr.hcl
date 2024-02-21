@@ -4,7 +4,7 @@ source "openstack" "nextcloud" {
   tenant_name          = var.tenant_name
   identity_endpoint    = var.auth_url
   flavor               = "alt.st1.nano"
-  image_name           = "nextcloud"
+  image_name           = "nextcloud-dev"
   source_image         = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   ssh_username         = "localadmin"
   ssh_keypair_name     = "nextcloud"
@@ -18,7 +18,7 @@ source "openstack" "nextcloud" {
   # use_blockstorage_volume = true
   # volume_size             = 10
 }
-df
+
 build {
   sources = ["source.openstack.nextcloud"]
 
@@ -26,31 +26,34 @@ build {
     inline = [
       "sudo mkdir -p /opt/deploy/",
       "sudo chown localadmin:localadmin -R /opt/deploy",
-      # "sudo mkdir -p /config/nginx/conf-templates",
-      # "sudo chown localadmin:localadmin -R /config/nginx/conf-templates",
-      # "sudo mkdir -p /config/nginx/site-confs/",
-      # "sudo chown localadmin:localadmin -R /config/nginx/site-confs/",
+      "sudo mkdir -p /etc/traefik/",
+      "sudo chown localadmin:localadmin -R /etc/traefik/",
     ]
   }
 
-  # provisioner "file" {
-  #   source      = "${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"
-  #   destination = "/opt/deploy/docker-compose.yaml"
-  # }
-
-  # provisioner "file" {
-  #   source      = "${path.cwd}/projects/nextcloud/docker/nginx/site-confs/default.conf"
-  #   destination = "/config/nginx/site-confs/default.conf"
-  # }
-
-  # provisioner "file" {
-  #   source      = "${path.cwd}/projects/nextcloud/docker/nginx/conf-templates/nextcloud.conf.template"
-  #   destination = "/config/nginx/conf-templates/nextcloud.conf.template"
-  # }
+  provisioner "file" {
+    source      = "${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"
+    destination = "/opt/deploy/docker-compose.yaml"
+  }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/nextcloud/install.sh"
+    source      = "${path.cwd}/projects/nextcloud/docker/routes.yaml"
+    destination = "/etc/traefik/routes.yaml"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/nextcloud/docker/traefik.yaml"
+    destination = "/etc/traefik/traefik.yaml"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/nextcloud/docker/install.sh"
     destination = "/opt/deploy/install.sh"
+  }
+
+  provisioner "file" {
+    source      = "${path.cwd}/projects/traefik/proxy.sh"
+    destination = "/opt/deploy/proxy.sh"
   }
 
   provisioner "shell" {

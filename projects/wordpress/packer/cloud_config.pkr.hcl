@@ -23,5 +23,10 @@ locals {
         passwd: ${var.hashed_passwd}
         ssh_authorized_keys:
           - ${local.ssh_pubkey}
+    write_files:
+      - path: /etc/ssh/sshd_config
+        permissions: '0644'
+        content: |
+          PermitRootLogin no
   EOF
 }

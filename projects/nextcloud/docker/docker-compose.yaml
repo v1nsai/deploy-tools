@@ -31,7 +31,7 @@ services:
       # - WATCHTOWER_DOCKER_SOCKET_PATH=/var/run/docker.sock # Needs to be specified if the docker socket on the host is not located in the default '/var/run/docker.sock'. Otherwise mastercontainer updates will fail. For macos it needs to be '/var/run/docker.sock'
     # networks: # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
     #   - nextcloud-aio # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
-      # - SKIP_DOMAIN_VALIDATION=true # REMOVE IF POSSIBLE
+      # - SKIP_DOMAIN_VALIDATION=true # UNSAFE
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 1m30s
@@ -49,8 +49,6 @@ services:
       - /etc/traefik/acme.json:/acme.json
       - /etc/traefik/certs:/etc/traefik/certs
     network_mode: host
-    # networks: 
-    #   - traefik-net
     environment:
       - URL=${URL}
     ports:
@@ -58,18 +56,10 @@ services:
       - 443:443
     labels:
       traefik.http.services.traefik-dashboard-service.loadbalancer.server.port: 9999
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080"]
-    #   interval: 1m30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 2m
 
 volumes:
   nextcloud_aio_mastercontainer:
     name: nextcloud_aio_mastercontainer # This line is not allowed to be changed as otherwise the built-in backup solution will not work
-  # swag:
-  #   name: swag
 
 # # Optional: If you need ipv6, follow step 1 and 2 of https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md first and then uncomment the below config in order to activate ipv6 for the internal nextcloud-aio network.
 # # Please make sure to uncomment also the networking lines of the mastercontainer above in order to actually create the network with docker-compose

@@ -1,9 +1,5 @@
 #!/bin/bash
 
-cd /opt/deploy
-COMPOSE_PROJECT_NAME=wordpress
-HEALTHCHECK_CONTAINERS=( "wordpress" )
-
 install() {
     echo "Configuring SSL..."
     if [[ -z "$URL" ]]; then
@@ -16,9 +12,6 @@ install() {
     docker compose down traefik # in case this isn't the first reboot
     yq eval '.http.routers.router.tls.certResolver = "'${CERTRESOLVER:-letsencrypt-prod}'"' -i /etc/traefik/routes.yaml
     docker compose up -d
-
-    post-install -e
-    cleanup
 }
 
 install-self-signed() {
@@ -28,8 +21,6 @@ install-self-signed() {
     docker compose down traefik
     yq eval '.http.routers.router.tls = {}' -i /etc/traefik/routes.yaml
     docker compose up -d
-
-    post-install -e
 }
 
 cleanup() {
@@ -57,6 +48,16 @@ healthcheck() {
         echo "Container $1 is not healthy"
         exit 1
     fi
+}
+
+pre-install() {
+    cd /opt/deploy
+
+    echo "Installing dependencies..."
+    wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    mkdir -p /etc/traefik
+    touch /etc/traefik/acme.json
+    chmod 600 /etc/traefik/acme.json
 }
 
 pre-install -e || (echo "Failed to install dependencies, exiting..." && exit 1)

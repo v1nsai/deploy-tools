@@ -1,7 +1,7 @@
 http:
   routers:
     router:
-      rule: Host(`{{ env "URL" }}`) && PathPrefix(`/`)
+      rule: Host(`{{ env "URL" }}`)
       service: service
       entryPoints:
         - websecure
@@ -13,4 +13,3 @@ http:
       loadBalancer:
         servers:
           - url: http://127.0.0.1:11000
-        # - url: http://whoami:11000
