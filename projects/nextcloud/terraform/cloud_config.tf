@@ -26,7 +26,7 @@ locals {
       - path: /etc/environment
         content: |
           URL=test.techig.com
-          CERTRESOLVER=letsencrypt-staging
+          CERTRESOLVER=letsencrypt-prod
         append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'

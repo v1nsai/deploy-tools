@@ -31,6 +31,7 @@ services:
       # - WATCHTOWER_DOCKER_SOCKET_PATH=/var/run/docker.sock # Needs to be specified if the docker socket on the host is not located in the default '/var/run/docker.sock'. Otherwise mastercontainer updates will fail. For macos it needs to be '/var/run/docker.sock'
     # networks: # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
     #   - nextcloud-aio # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
+      # - SKIP_DOMAIN_VALIDATION=true # UNSAFE
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 1m30s
