@@ -1,10 +1,8 @@
 #!/bin/bash
 
+# Set error handling and logging
 set -e
 
-REBUILD=false
-ENV=auth/sandbox-openrpc.sh
-NODESTROY=false
 while [ $# -ne 0 ]
 do
     arg="$1"
@@ -22,9 +20,6 @@ do
             ;;
         --imagename*)
             IMAGENAME=`echo $1 | sed -e 's/^[^=]*=//g'`
-            ;;
-        --nodestroy)
-            NODESTROY=true
             ;;
         *)
             PROJECT=$arg
@@ -44,27 +39,4 @@ elif [ ! -f "$ENV" ]; then
     exit 1
 fi
 
-source $ENV
-
-if $DESTROY; then
-    echo "Removing old instance..."
-    scripts/destroy-terraform.sh $PROJECT
-fi
-
-if $REBUILD; then
-    echo "Building new image..."
-    scripts/packer-build.sh $PROJECT
-fi
-
-echo "Creating new instance..."
-scripts/apply-terraform.sh $PROJECT
-
-if [ ! -z "$IMAGENAME" ]; then
-    PROJECT=$IMAGENAME
-fi
-
-echo "Switching to instance logs..."
-scripts/watch-log.sh $PROJECT
-
-echo "Connecting to instance..."
-scripts/ssh-servername.sh $PROJECT
+terraform -chdir=projects/$PROJECT/terraform plan
