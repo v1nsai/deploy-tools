@@ -25,7 +25,7 @@ locals {
     write_files:
       - path: /etc/environment
         content: |
-          URL=test.techig.com
+          URL=nextcloud.techig.com
           CERTRESOLVER=letsencrypt-prod
         append: true
       - path: /etc/ssh/sshd_config
@@ -33,5 +33,25 @@ locals {
         content: |
           PermitRootLogin no
         append: true
+      - path: /opt/deploy/proxy.sh
+        permissions: '0755'
+        content: |
+          ${indent(10, file("${path.cwd}/projects/traefik/proxy.sh"))}
+      - path: /opt/deploy/install.sh
+        permissions: '0755'
+        content: |
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/install.sh"))}
+      - path: /opt/deploy/docker-compose.yaml
+        permissions: '0755'
+        content: |
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/docker-compose.yaml"))}
+      - path: /etc/traefik/traefik.yaml
+        permissions: '0644'
+        content: |
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/traefik.yaml"))}
+      - path: /etc/traefik/routes.yaml
+        permissions: '0644'
+        content: |
+          ${indent(10, file("${path.cwd}/projects/nextcloud/docker/routes.yaml"))}
   EOF
 }

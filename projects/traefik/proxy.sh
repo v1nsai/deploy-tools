@@ -23,18 +23,6 @@ install-self-signed() {
     docker compose up -d
 }
 
-cleanup() {
-    echo "Checking health status of containers..."
-    for container in $HEALTHCHECK_CONTAINERS ; do
-        healthcheck $container
-    done
-    sudo crontab -r
-    echo "Deleting install files..."
-    cd
-    rm -rf /opt/deploy
-    echo "Finished cleanup"
-}
-
 healthcheck() {
     echo "Checking health status of container $1..."
     while [[ $(docker inspect -f '{{.State.Health.Status}}' $1) == "starting" ]]; do
