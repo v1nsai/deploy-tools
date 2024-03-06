@@ -1,7 +1,7 @@
 resource "openstack_compute_instance_v2" "openproject" {
   name            = "openproject"
   # image_name      = "openproject" # Wordpress-latest-Ubuntu_22.04
-  image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23"
+  image_id        = "5557a492-f9f9-4a8a-98ec-5f642b611d23" # Ubuntu 22.04
   flavor_name     = "alt.st1.small"
   key_pair        = "openproject"
   security_groups = ["default", "ssh-ingress", "http-ingress", "https-ingress"]

@@ -10,9 +10,9 @@ entryPoints:
     address: :443
 providers:
   docker:
-    exposedByDefault: true
+    exposedByDefault: false
   file:
-    directory: /etc/traefik/dynamic-configs/
+    filename: /etc/traefik/routes.yaml
 certificatesResolvers:
   letsencrypt-prod:
     acme:

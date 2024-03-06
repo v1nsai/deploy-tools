@@ -30,23 +30,19 @@ locals {
       - path: /opt/deploy/install.sh
         permissions: '0755'
         content: |
-          ${indent(6, file("${path.cwd}/projects/openproject/install.sh"))}
-      - path: /opt/deploy/docker-compose.yml
+          ${indent(10, file("${path.cwd}/projects/openproject/install.sh"))}
+      - path: /opt/deploy/docker-compose.yaml
         permissions: '0644'
         content: |
-          ${indent(6, file("${path.cwd}/projects/openproject/docker-compose.yml"))}
-      - path: /opt/deploy/proxy-docker-compose.yml
+          ${indent(10, file("${path.cwd}/projects/openproject/docker-compose.yaml"))}
+      - path: /etc/traefik/traefik.yaml
         permissions: '0644'
         content: |
-          ${indent(6, file("${path.cwd}/projects/openproject/proxy-docker-compose.yml"))}
-      - path: /etc/nginx/templates/openproject.conf.template
+          ${indent(10, file("${path.cwd}/projects/traefik/traefik.yaml"))}
+      - path: /etc/traefik/routes.yaml
         permissions: '0644'
         content: |
-          ${indent(6, file("${path.cwd}/projects/openproject/openproject.conf.template"))}
-      - path: /etc/nginx/conf/default.conf
-        permissions: '0644'
-        content: |
-          ${indent(6, file("${path.cwd}/projects/openproject/default.conf"))}
+          ${indent(10, file("${path.cwd}/projects/openproject/routes.yaml"))}
     runcmd:
       - cp -f /etc/skel/.bashrc /home/localadmin/.bashrc
       - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc

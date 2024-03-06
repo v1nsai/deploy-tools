@@ -33,13 +33,13 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/openproject/docker-compose.yml"
-    destination = "/opt/deploy/docker-compose.yml"
+    source      = "${path.cwd}/projects/openproject/docker-compose.yaml"
+    destination = "/opt/deploy/docker-compose.yaml"
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/projects/openproject/swag-docker-compose.yml"
-    destination = "/opt/deploy/swag-docker-compose.yml"
+    source      = "${path.cwd}/projects/openproject/swag-docker-compose.yaml"
+    destination = "/opt/deploy/swag-docker-compose.yaml"
   }
 
   provisioner "shell" {
