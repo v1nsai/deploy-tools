@@ -1,0 +1,8 @@
+backups:
+  - name: openproject
+    backup_directories:
+      - /var/lib/openproject/opdata
+      - /var/lib/openproject/pgdata
+    archive_name: home
+    borg_options: --compression lz4
+    repository: ssh://
