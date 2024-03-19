@@ -10,10 +10,19 @@ locals {
       - net-tools
       - docker
       - docker-compose
+      - borgbackup
     package_update: true
     ssh_pwauth: true
     users:
       - name: localadmin
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        groups: users, admin, sudo, docker
+        shell: /bin/bash
+        lock_passwd: false
+        passwd: ${var.hashed_passwd}
+        ssh_authorized_keys:
+          - ${file(pathexpand("~/.ssh/openproject.pub"))}
+      - name: backupuser
         sudo: ALL=(ALL) NOPASSWD:ALL
         groups: users, admin, sudo, docker
         shell: /bin/bash
@@ -26,6 +35,8 @@ locals {
         content: |
           OPENPROJECT_ADMIN__EMAIL="${var.openproject_email}"
           OPENPROJECT_HOST__NAME="${var.openproject_host}"
+          OPDATA=/var/lib/openproject/opdata
+          PGDATA=/var/lib/openproject/pgdata
         append: true
       - path: /opt/deploy/install.sh
         permissions: '0755'
@@ -51,4 +62,8 @@ locals {
       - chown localadmin:localadmin -R /home/localadmin/
       - chown localadmin:localadmin -R /opt/deploy/
   EOF
+}
+
+output "cloud_config" {
+  value = local.cloud_config
 }

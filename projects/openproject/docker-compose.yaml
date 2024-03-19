@@ -44,7 +44,7 @@ services:
       - /etc/traefik/certs:/etc/traefik/certs
     # network_mode: host
     networks:
-      - openproject_frontend
+      - frontend
     environment:
       - URL=${URL}
     ports:
