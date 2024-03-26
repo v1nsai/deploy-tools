@@ -7,7 +7,6 @@ locals {
       - nnn
       - net-tools
       - borgbackup
-      - sshfs
     users:
       - name: localadmin
         sudo: ALL=(ALL) NOPASSWD:ALL
@@ -17,10 +16,5 @@ locals {
         passwd: ${var.hashed_passwd}
         ssh_authorized_keys:
           - ${file(pathexpand("~/.ssh/borgbackup.pub"))}
-    write_files:
-      - path: /etc/environment
-        content: |
-          CERTRESOLVER=
-        append: true
   EOF
 }
