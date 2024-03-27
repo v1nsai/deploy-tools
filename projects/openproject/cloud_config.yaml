@@ -23,7 +23,7 @@ write_files:
       OPENPROJECT_HOST__NAME="openproject.techig.com"
       OPDATA=/var/lib/openproject/opdata
       PGDATA=/var/lib/openproject/pgdata
-      URL=$OPENPROJECT_HOST__NAME
+      URL=openproject.techig.com
     append: true
   - path: /opt/deploy/install.sh
     permissions: '0755'
@@ -250,6 +250,9 @@ write_files:
             loadBalancer:
               servers:
                 - url: http://openproject-proxy-1:80
+  - path: /etc/traefik/acme.json
+    permissions: '0600'
+    content: ''
 runcmd:
   - cp -f /etc/skel/.bashrc /home/localadmin/.bashrc
   - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc
