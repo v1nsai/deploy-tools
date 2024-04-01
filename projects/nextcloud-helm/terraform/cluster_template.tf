@@ -2,8 +2,8 @@ resource "openstack_containerinfra_clustertemplate_v1" "nextcloud-helm" {
   name                  = "nextcloud-helm"
   image                 = "f6ed7a8b-f808-4cfe-ab9d-0a492e14f2ff"
   coe                   = "kubernetes"
-  flavor                = "alt.st1.small"
-  master_flavor         = "alt.st1.small"
+  flavor                = "alt.st1.medium"
+  master_flavor         = "alt.st1.medium"
   # dns_nameserver        = "1.1.1.1"
   docker_storage_driver = "overlay"
   docker_volume_size    = 10
@@ -15,7 +15,7 @@ resource "openstack_containerinfra_clustertemplate_v1" "nextcloud-helm" {
 
   labels = {
     auto_scaling_enabled             = true
-    min_node_count                   = 1
+    min_node_count                   = 0
     max_node_count                   = 7
     csi_snapshotter_tag              = "v4.0.0"
     kube_tag                         = "v1.23.3-rancher1"
