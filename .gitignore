@@ -1,0 +1,30 @@
+.\$*
+.DS_Store
+*.log
+*.zip
+*.base64
+
+# Protect auth info
+ssh_config
+auth/
+*.pem*
+.kube*
+*.subst
+wg-configs/
+*.env*
+config/*
+
+# Terraform
+.terraform*
+terraform.tfstate
+*.tfstate*
+*.auto.tfvars
+
+# Packer
+output-*
+*.auto.pkrvars.hcl
+*.img
+
+# Python
+*.png
+.virtualenv/
