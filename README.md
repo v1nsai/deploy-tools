@@ -38,8 +38,16 @@ The `scripts/image-test.sh` script is a convenience script that runs several oth
 4. Switches to the logs on the newly created instance
 5. When the logs are manually exited with `ctrl+c` by the developer, it opens an SSH connection to the new instance
 
+### Available flags
+* `--nodestroy`
+* `--rebuild`
+* `--dev | --test | --stage | --prod`
+
 ### Deploy a project in dev
 `scripts/image-test.sh PROJECTNAME --dev`
 
 ### Deploy a project in prod after rebuilding custom image
 `scripts/image-test.sh PROJECTNAME --prod --rebuild`
+
+### Deploy a project in dev without destroying first
+`scripts/image-test.sh PROJECTNAME --dev --nodestroy`

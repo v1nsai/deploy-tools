@@ -54,7 +54,7 @@ fi
 
 source $ENV
 
-if $DESTROY; then
+if ! $NODESTROY; then
     echo "Removing old instance..."
     scripts/destroy-terraform.sh $PROJECT
 fi
