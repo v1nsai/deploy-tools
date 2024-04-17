@@ -18,9 +18,19 @@ projects/
     └── install.sh
 ```
 
-You can then deploy an instance using the folder name from the `projects/` folder (ie project1)
+You can then deploy an instance using the folder name from the `projects/` folder (ie project1), referred to as PROJECTNAME here.
 
-## Deploy an instance
+## Authentication
+### Get `openrc.sh`
+You'll need to get the `openrc.sh` file from ALTERNcloud first to deploy anything.  Log into the client area, select your product (EZ Cloud, HPC or VPC) and select "API" from the column on the left.  Copy the contents into `auth/ENV-openrc.sh`, replacing `ENV` with the short name of the environment you're working with.  The currently supported names are "dev", "test", "stage" and "prod".  So for example if you're working in "dev", you would go retrieve the `openrc.sh` and put it in `auth/dev-openrc.sh`.
+
+### Authenticating OpenStack CLI Client
+Once you have copy and pasted the `openrc.sh` file, you have to source it first using the command `source auth/openrc.sh`.  You should now be able to run `openstack image list` to get a list of images available to your account.
+
+### Authenticating Terraform
+To run any of the deploy scripts, you must first authenticate terraform. Simply copy the `alterncloud.auto.tfvars.template` file into `projects/PROJECTNAME/terraform/` folder, remove `.template` from the file name and fill in the corresponding info from the `openrc.sh` file explained in the comments on each line.
+
+## Deploying Projects
 The `scripts/image-test.sh` script is a convenience script that runs several other scripts.  It does the following:
 1. Builds image (if specified with `--rebuild`)
 2. Runs `terraform destroy` on the project's `terraform/` folder
@@ -28,12 +38,8 @@ The `scripts/image-test.sh` script is a convenience script that runs several oth
 4. Switches to the logs on the newly created instance
 5. When the logs are manually exited with `ctrl+c` by the developer, it opens an SSH connection to the new instance
 
-```
-PROJECT_NAME="project1" # use the folder name from projects/ 
+### Deploy a project in dev
+`scripts/image-test.sh PROJECTNAME --dev`
 
-# Build the packer image, then launch an instance from that image on the dev/sandbox environment
-scripts/image-test.sh $PROJECT_NAME --rebuild --dev
-
-# Only perform the `terraform` deployment without rebuilding the image first
-scripts/image-test.sh $PROJECT_NAME --dev
-```
+### Deploy a project in prod after rebuilding custom image
+`scripts/image-test.sh PROJECTNAME --prod --rebuild`

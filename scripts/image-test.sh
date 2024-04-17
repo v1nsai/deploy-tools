@@ -12,11 +12,19 @@ do
         --rebuild)
             REBUILD=true
             ;;
-        --sandbox | --dev)
-            ENV=auth/sandbox-openrpc.sh
+        --dev)
+            ENV=auth/dev-openrpc.sh
             NAME="--dev"
             ;;
-        --production | --prod)
+        --test)
+            ENV=auth/testing-openrpc.sh
+            NAME="--test"
+            ;;
+        --stage)
+            ENV=auth/stage-openrpc.sh
+            NAME="--stage"
+            ;;
+        --prod)
             ENV=auth/production-openrpc.sh
             NAME="--prod"
             ;;

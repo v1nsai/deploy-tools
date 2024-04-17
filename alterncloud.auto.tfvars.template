@@ -1,0 +1,4 @@
+user_name   = "" # taken from OS_USERNAME in the openrc.sh file
+tenant_name = "" # taken from OS_PROJECT_NAME in the openrc.sh file
+password    = "" # taken from OS_PASSWORD in the openrc.sh file
+auth_url    = "" # taken from OS_AUTH_URL in the openrc.sh file
