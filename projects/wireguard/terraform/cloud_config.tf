@@ -10,7 +10,7 @@ locals {
       - net-tools
       - nnn
       - docker
-      - docker-compose
+      - docker-compose-v2
     package_update: true
     ssh_pwauth: true
     users:
@@ -27,7 +27,7 @@ locals {
         permissions: '0644'
         content: |
           PermitRootLogin no
-      - path: /home/localadmin/docker-compose.yml
+      - path: /opt/deploy/docker-compose.yml
         permissions: '0644'
         owner: localadmin
         content: |
@@ -36,5 +36,6 @@ locals {
       - cp -f /etc/skel/.bashrc /home/localadmin/.profile
       - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.profile
       - echo "WG_HOST=$(curl ifconfig.me)" >> /etc/environment
+      - docker compose -p wireguard -f /opt/deploy/docker-compose.yml up -d
   EOF
 }

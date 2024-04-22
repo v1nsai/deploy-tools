@@ -61,6 +61,14 @@ locals {
         permissions: '0600'
         content: |
           ${file(pathexpand("~/.ssh/backups-openproject"))}
+      - path: /etc/cron.d/weekly-backup
+        permissions: '0644'
+        content: |
+          0 0 * * 0 root /opt/deploy/backup.sh
+      - path: /opt/deploy/backup.sh
+        permissions: '0755'
+        content: |
+          ${indent(10, file("${path.cwd}/projects/openproject/backup.sh"))}
     runcmd:
       - cp -f /etc/skel/.bashrc /home/localadmin/.bashrc
       - sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /home/localadmin/.bashrc

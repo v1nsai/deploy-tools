@@ -12,6 +12,6 @@ resource "openstack_compute_instance_v2" "borgbackup" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "fip_1" {
-  floating_ip = "216.87.32.102"
+  floating_ip = "216.87.32.102" # register a floating IP and use it here
   instance_id = openstack_compute_instance_v2.borgbackup.id
 }
