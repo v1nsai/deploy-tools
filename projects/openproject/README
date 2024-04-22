@@ -1,0 +1,11 @@
+# Openproject
+
+Openproject is an agile/Kanban/wiki all in one project that runs on docker and uses borgbackup for backup since it doesn’t have a native backup system.  
+
+Copy the `projects/openproject/terraform/openproject.auto.tfvars.template` to `projects/openproject/terraform/openproject.auto.tfvars` and fill in all the info.  It’s ok to leave the `openproject_host` and `url` variables blank if you just want to test.  
+
+Deploy the image:
+`scripts/image-test.sh openproject –dev`
+
+If you want to rebuild the image, ensure that `projects/openproject/terraform/instance.tf` is using the image name from `projects/openproject/packer/image.pkr.hcl`, then run:
+`scripts/image-test.sh openproject –dev`

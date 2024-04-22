@@ -1,0 +1,11 @@
+# Monitoring Stack
+
+The monitoring project is a docker-based deployment of Prometheus, Grafana, node-exporter and blackbox.  These are basically the golden standard open source deployment for monitoring.  
+* Prometheus is a logging database that runs jobs and has a powerful querying language
+* blackbox tests your site availability and can send alerts when it goes down
+* node-exporter provides information about the instance its running on such as CPU, memory and network usage
+* Grafana is a graph dashboard that shows all these stats in 2  preconfigured dashboards 
+
+There are 2 ways to use this project.  One is to copy the docker files onto an existing deployment instance, update the `prometheus.yaml` to point to your web hosts, and run `docker compose -p monitoring -f path/to/docker-compose.yaml up -d`.  
+
+The other is to run this from your development machine as a Terraform project.  Grafana would only be able to provide details about the server its running on, however blackbox is more effective at checking if a remote host is up when its not actually running on that host.  If all this is acceptable, deploy the project with `scripts/image-test.sh monitoring –dev`.

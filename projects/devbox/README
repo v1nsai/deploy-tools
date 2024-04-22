@@ -1,0 +1,3 @@
+# Devbox
+
+Devbox is a template for a remote development machine.  I used it primarily for building images since uploading them within the network was far faster than doing it from my physical work machine at home.
