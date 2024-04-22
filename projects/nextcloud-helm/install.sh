@@ -2,10 +2,8 @@
 
 set -e
 
-# REMOVE FOR TESTING ONLY
-helm -n nextcloud uninstall nextcloud || true
-
 echo "Generating or retrieving credentials..."
+scripts/kubeconfig.sh nextcloud-helm
 source projects/nextcloud-helm/secrets.env
 NC_ADMIN_SECRET_NAME=nextcloud-admin
 NC_NAMESPACE=nextcloud
