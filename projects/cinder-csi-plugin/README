@@ -1,0 +1,3 @@
+# Cinder CSI Plugin
+
+This project may not be needed anymore.  Early on there were some issues with getting ALTERNcloud’s volume storage to work properly with Kubernetes, and after working extensively with ALTERNcloud support, we were able to solve it.  The fix that we used is mostly automated in this folder.

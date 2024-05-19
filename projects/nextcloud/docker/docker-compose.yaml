@@ -31,33 +31,31 @@ services:
       # - WATCHTOWER_DOCKER_SOCKET_PATH=/var/run/docker.sock # Needs to be specified if the docker socket on the host is not located in the default '/var/run/docker.sock'. Otherwise mastercontainer updates will fail. For macos it needs to be '/var/run/docker.sock'
     # networks: # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
     #   - nextcloud-aio # Is needed when you want to create the nextcloud-aio network with ipv6-support using this file, see the network config at the bottom of the file
+      # - SKIP_DOMAIN_VALIDATION=true # UNSAFE
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
 
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=US/Eastern
-      - URL=${DOMAIN}
-      - VALIDATION=http
-      - SUBDOMAINS=${SUBDOMAIN} #optional
-      - EMAIL= #optional
-      - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS} #optional
-      - EXTRA_DOMAINS= #optional
-      - STAGING=${STAGING} #optional
-      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=".template"
+  traefik:
+    image: traefik:latest
+    container_name: traefik
     volumes:
-      - ./config:/config
-    restart: unless-stopped
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/traefik/traefik.yaml:/etc/traefik/traefik.yaml
+      - /etc/traefik/routes.yaml:/etc/traefik/routes.yaml
+      - /etc/traefik/acme.json:/acme.json
+      - /etc/traefik/certs:/etc/traefik/certs
     network_mode: host
-    # networks:
-    #   - nextcloud-aio
-    # ports: 
-    #   - 80:80
-    #   - 443:443
+    environment:
+      - URL=${URL}
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      traefik.http.services.traefik-dashboard-service.loadbalancer.server.port: 9999
 
 volumes:
   nextcloud_aio_mastercontainer:

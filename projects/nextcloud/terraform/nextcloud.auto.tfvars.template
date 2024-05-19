@@ -1,0 +1,2 @@
+hashed_passwd = "" # create using `echo 'mySecurePassword` -n | mkpasswd --method=SHA-512 --rounds=4096 -s
+url           = "" # URL to use for SSL certificate

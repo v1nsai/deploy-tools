@@ -1,0 +1,10 @@
+hashed_passwd     = "" # Create with `echo -n "YourPasswordHere" | mkpasswd --method=SHA-512 --rounds=4096 -s`
+openproject_email = ""
+openproject_host  = ""
+url               = "" # URL to use for generating SSL certs, probably the same as openproject_host
+
+backuphost = "" # host of backup server
+backupdir  = "" # directory to backup on client
+backuprepo = "" # repo to backup to on backup server
+backupuser = "" # ssh login user for backup server
+backupkey  = "" # ssh login key for backup server

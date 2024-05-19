@@ -11,16 +11,20 @@ auth/
 .kube*
 *.subst
 wg-configs/
-.env
+*.env*
+config/*
 
 # Terraform
 .terraform*
 terraform.tfstate
 *.tfstate*
-.gitignore
 *.auto.tfvars
 
 # Packer
 output-*
 *.auto.pkrvars.hcl
 *.img
+
+# Python
+*.png
+.virtualenv/

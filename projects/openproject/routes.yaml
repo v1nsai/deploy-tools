@@ -1,0 +1,15 @@
+http:
+  routers:
+    router:
+      rule: Host(`openproject.techig.com`) && PathPrefix(`/`)
+      service: service
+      entryPoints:
+        - websecure
+      tls: 
+        certResolver: letsencrypt-prod
+
+  services:
+    service:
+      loadBalancer:
+        servers:
+          - url: http://openproject-proxy-1:80

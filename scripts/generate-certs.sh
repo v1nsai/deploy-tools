@@ -2,7 +2,7 @@
 
 set -e
 
-# Vars
+# Vars 
 CERT_FILENAME="$1"
 KEY_FILENAME="$2"
 DAYS=365

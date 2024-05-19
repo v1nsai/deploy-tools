@@ -1,0 +1,5 @@
+# traefik
+
+Traefik is a container-first reverse proxy.  This folder is referenced by any other project using a reverse proxy to avoid duplicate code.  The `projects/traefik/proxy.sh` file automates the process of setting up SSL and is copied/run from deployed instances by individual projects.  
+
+If the `URL` variable isn’t set (by the project’s install script or in /etc/environment), then it creates a self-signed SSL cert to secure connections.  If a URL variable is found, traefik will use letsencrypt to request a proper certificate.  It also handles renewals automatically, so once its set up its done.
