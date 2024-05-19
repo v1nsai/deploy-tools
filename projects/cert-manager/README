@@ -1,7 +1,0 @@
-# Cert-Manager
-
-Cert-manager is a Kubernetes project that automates SSL cert creation.  It’s tested and working, but none of our Kubernetes projects are currently production-ready since it hasn’t been very high priority.
-
-This requires and a Kubernetes cluster already be deployed and both `kubectl` and `helm` installed and configured before using.
-
-Deploy a new instance by running the `projects/cert-manager/install.sh` file

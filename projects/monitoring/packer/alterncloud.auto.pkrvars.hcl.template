@@ -3,4 +3,3 @@ tenant_name   = ""
 password      = ""
 auth_url      = ""
 hashed_passwd = "" # Create with `echo -n "YourPasswordHere" | mkpasswd --method=SHA-512 --rounds=4096 -s`
-bearer_token  = "" # Cloudflare token for custom techig.com domains

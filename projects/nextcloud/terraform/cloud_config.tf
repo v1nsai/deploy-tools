@@ -1,4 +1,5 @@
 variable "hashed_passwd" { type = string }
+variable "URL" { type = string }
 
 locals {
   ssh_pubkey = file(pathexpand("~/.ssh/nextcloud.pub"))
@@ -25,7 +26,7 @@ locals {
     write_files:
       - path: /etc/environment
         content: |
-          URL=nextcloud.techig.com
+          URL=${var.URL}
         append: true
       - path: /etc/ssh/sshd_config
         permissions: '0644'

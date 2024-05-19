@@ -1,9 +1,0 @@
-# nextcloud-helm
-
-This project can be used to launch Nextcloud onto Kubernetes.  It does not require  that a Kubernetes cluster be provisioned already, it contains Terraform templates to deploy a cluster, configure access to it on your development machine, then deploys Nextcloud onto the cluster.
-
-Deploy the cluster:
-`scripts/image-test.sh nextcloud-helm –dev`
-
-Then run the install script:
-`projects/nextcloud-helm/install.sh`

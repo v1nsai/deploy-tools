@@ -1,8 +1,0 @@
-# BorgBackup
-
-Borg is a centralized backup solution that offers compression, incremental backups and is designed to work securely over SSH.  The server that is deployed by this project is meant to server as the backup server.  Projects using the borgbackup system (currently only openproject) will have a `backup.sh` file defined in their folder in `deploy-tools` that will be copied by Terraform and called by a cron job on the instance to automatically backup and prune once a week.
-
-Authentication for backups is all handled over SSH, which means that a user must be created per project on the borgbackup server, an SSH public/private key set will need to be made and then distributed to the project server itself so it can login weekly to create its backups.  This is automated as much as possible but for security reasons cannot fully be automated.
-
-### Deploy a new instance
-`scripts/image-test.sh borgbackup --dev`
