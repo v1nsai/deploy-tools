@@ -9,7 +9,7 @@ resource "openstack_compute_instance_v2" "openproject" {
   user_data       = local.cloud_config
 
   network {
-    name = "techigsite" # prod
+    name = "" # prod
     # name = "nextcloud" # dev
   }
 }

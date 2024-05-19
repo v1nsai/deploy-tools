@@ -1,6 +1,6 @@
 # wireguard
 
-Wireguard is a fast, modern VPN protocol.  This project is designed to give quick access to servers on an internal ALTERNcloud network directly from your dev machine. By default it will create 5 peers.  This can be changed by changing the `PEERS` variable in `projects/wireguard/docker-compose.yaml` before launching.
+Wireguard is a fast, modern VPN protocol.  This project is designed to give quick access to servers on an internal openstack network directly from your dev machine. By default it will create 5 peers.  This can be changed by changing the `PEERS` variable in `projects/wireguard/docker-compose.yaml` before launching.
 
 To deploy, set the network you want to connect to in `projects/wireguard/terraform/instance.tf`, then run:
 `scripts/image-test.sh wireguard –dev`

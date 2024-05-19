@@ -1,5 +1,0 @@
-# Proton-Bridge
-
-This is an archived project.  I tried a few different things to be able to use Protonmail (TechIG’s email provider) with Nextcloud.  Since all emails over Protonmail are encrypted, to receive them from a non-Protonmail endpoint (such as Nextcloud or Outlook), you need a “bridge” that basically decrypts traffic and provides a local email server you can connect to to retrieve decrypted emails.  
-
-The proton-bridge is not designed to be accessible from anywhere but a local machine, so in this project I tried a few things to get it to work but never got it working.

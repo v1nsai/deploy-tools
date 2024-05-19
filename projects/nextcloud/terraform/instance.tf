@@ -11,7 +11,7 @@ resource "openstack_compute_instance_v2" "nextcloud" {
 
   network {
     # name = "nextcloud" # sandbox
-    name = "techigsite" # prod
+    name = "" # prod
   }
 }
 

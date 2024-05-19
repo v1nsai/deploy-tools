@@ -11,7 +11,7 @@ source $source_dir/.env
 rm $source_dir/.env
 
 echo "Getting token..."
-token=$(curl -s 'https://cloud.alterncloud.com/api/login' \
+token=$(curl -s 'https://cloud.openstack.com/api/login' \
     -d username="$dns_username" \
     -d password="$dns_password")
 if echo "$token" | grep -q "error"; then
@@ -21,7 +21,7 @@ else
 fi
 
 echo "Getting zone info for $domain..."
-zone=$(curl -sX GET "https://cloud.alterncloud.com/api/dns" \
+zone=$(curl -sX GET "https://cloud.openstack.com/api/dns" \
     -H "Authorization: Bearer $token" | jq -r '.zones[] | select(.name == "'$domain'")')
 
 # echo "Found record $zone"
@@ -31,7 +31,7 @@ service_id=$(echo $zone | jq -r '.service_id')
 zone_id=$(echo $zone | jq -r '.domain_id')
 
 echo "Getting records for domain: $domain"
-records=$(curl -sX GET "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id" \
+records=$(curl -sX GET "https://cloud.openstack.com/api/service/$service_id/dns/$zone_id" \
     -H "Authorization: Bearer $token" | jq -r '.records[]')
 
 echo "Checking for existing record..."
@@ -46,7 +46,7 @@ if [[ -z "$existing_record" ]]; then
         \"content\": \"$ip\"
     }"
 
-    response=$(curl -sX POST "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id/records" \
+    response=$(curl -sX POST "https://cloud.openstack.com/api/service/$service_id/dns/$zone_id/records" \
         -H "Authorization: Bearer $token" \
         -H "Content-Type: application/json" \
         -d "${POST_DATA}")
@@ -66,7 +66,7 @@ else
     #     \"content\": \"$ip\"
     # }"
 
-    # response=$(curl -sX PUT "https://cloud.alterncloud.com/api/service/$service_id/dns/$zone_id/records/$record_id" \
+    # response=$(curl -sX PUT "https://cloud.openstack.com/api/service/$service_id/dns/$zone_id/records/$record_id" \
     #     -H "Authorization: Bearer $token" \
     #     -H "Content-Type: application/json" \
     #     -d "${POST_DATA}")

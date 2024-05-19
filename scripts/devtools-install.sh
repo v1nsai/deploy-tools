@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-source auth/alterncloud.env
+source auth/openstack.env
 
 sudo apt update
 sudo apt install -y wget vim python3 python3-pip whois nnn net-utils dnsutils
@@ -34,7 +34,7 @@ sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/
 sudo chmod a+x /usr/local/bin/yq
 
 #cleanup
-# echo "source auth/alterncloud.env" >> ~/.profile
+# echo "source auth/openstack.env" >> ~/.profile
 # sudo chmod 666 /run/host-services/ssh-auth.sock # ssh agent forwarding
 source ~/.bashrc
 terraform -install-autocomplete

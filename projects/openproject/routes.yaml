@@ -1,7 +1,7 @@
 http:
   routers:
     router:
-      rule: Host(`openproject.techig.com`) && PathPrefix(`/`)
+      rule: Host(``) && PathPrefix(`/`)
       service: service
       entryPoints:
         - websecure

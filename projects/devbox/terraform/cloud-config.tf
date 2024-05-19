@@ -49,9 +49,9 @@ locals {
         permissions: '0600'
         append: true
         defer: true
-      - path: /home/localadmin/auth/alterncloud.env
+      - path: /home/localadmin/auth/openstack.env
         content: |
-          ${indent(6, data.local_sensitive_file.alterncloud-env.content)}
+          ${indent(6, data.local_sensitive_file.openstack-env.content)}
         owner: localadmin:localadmin
         defer: true
     runcmd:

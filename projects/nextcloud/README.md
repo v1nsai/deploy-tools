@@ -1,6 +1,6 @@
 # Nextcloud
 
-Although there are a few different nextcloud projects in the repo, this is the main one.  It uses the All-In-One (AIO) Docker image to deploy a single instance.  This is what the TechIG Nextcloud site runs on.  
+Although there are a few different nextcloud projects in the repo, this is the main one.  It uses the All-In-One (AIO) Docker image to deploy a single instance.  
 
 Copy the `projects/nextcloud/terraform/nextcloud.auto.tfvars.template` file to `projects/nextcloud/terraform/nextcloud.auto.tfvars` and fill in the variables with your info.  It’s ok to skip the `url` variable if you just want to test with a self signed cert.
 

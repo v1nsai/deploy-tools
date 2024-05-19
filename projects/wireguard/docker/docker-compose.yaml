@@ -54,28 +54,3 @@ services:
   #   volumes:
   #     - ./wireguard-ui-db:/app/db
   #     - ./wireguard-ui:/etc/wireguard
-
-  # swag:
-  #   image: lscr.io/linuxserver/swag:latest
-  #   container_name: swag
-  #   cap_add:
-  #     - NET_ADMIN
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=US/Eastern
-  #     - URL=wireguard.techig.com
-  #     - VALIDATION=http
-  #     # - SUBDOMAINS=${SUBDOMAIN} #optional
-  #     - EMAIL= #optional
-  #     - ONLY_SUBDOMAINS=false #optional
-  #     - EXTRA_DOMAINS= #optional
-  #     - STAGING=false #optional
-  #   volumes:
-  #     - ./swag:/config
-  #   restart: unless-stopped
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #     # port for wireguard-ui. this must be set here as the `wireguard-ui` container joins the network of this container and hasn't its own network over which it could publish the ports
-  #     - 5000:5000
