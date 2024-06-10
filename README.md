@@ -1,5 +1,7 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) ![OpenStack](https://img.shields.io/badge/Openstack-%23f01742.svg?style=for-the-badge&logo=openstack&logoColor=white) ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Shell Script](https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white) 
+
 # OpenStack Deploy Tools
-Scripts and templates and everything else needed to create and launch OpenStack images
+Scripts and templates I've been using to deploy resources on OpenStack powered providers
 
 # Usage
 General flow is to deploy and provision an instance with Terraform + cloud-init + scripts.  Once it has been tested and fixed and has reached a stable point and is ready for release, the cloud-init and scripts are moved to Packer templates and an image is created.  This image is then tested using Terraform.
